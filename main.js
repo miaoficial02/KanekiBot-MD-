@@ -158,7 +158,7 @@ printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
 mobile: MethodMobile, 
 browser: opcion == '1' ? ['WaBot', 'Edge', '20.0.04'] : methodCodeQR ? ['WaBot', 'Edge', '20.0.04'] : ["Ubuntu", "Opera", "20.0.04"],
 auth: {
-creds: state.creds,
+//creds: state.creds,
 keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
 },
 markOnlineOnConnect: true, 
