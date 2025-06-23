@@ -1,15 +1,15 @@
 <h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=40&pause=500&color=00F7FF&center=true&vCenter=true&width=500&lines=+¡HOLA+SOY+Meliodas-BOT!+" alt="Typing SVG">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=40&pause=500&color=00F7FF&center=true&vCenter=true&width=500&lines=+¡HOLA+SOY+Kaneki-BOT!+" alt="Typing SVG">
 </h1>
 ---
 
 <p align="center">
-  <img src="https://qu.ax/pjKoG.jpg" alt="Meliodas Bot MD Logo">
+  <img src="" alt="Kaneki Bot MD Logo">
 </p>
 
 ---
 
-# *Acerca de Meliodas Bot MD*
+# *Acerca de Kaneki Bot MD*
 
 > Un bot de WhatsApp potente y versátil, inspirado en el universo de Sword Art Online. Desarrollado para ofrecer una experiencia ágil, segura y funcional.
 
@@ -46,7 +46,7 @@ pkg install -y git nodejs ffmpeg imagemagick && pkg install yarn
 ```
 
 ```bash
-git clone  https://github.com/kleiner1-1/Meliodas-Bot-V2
+git clone  
 ```
 
 ```bash
@@ -104,7 +104,7 @@ ESCRIBE LOS SIGUIENTES COMANDOS UNO POR UNO:
 
 # *Comunidad*
 
-*   *Canal Oficial de WhatsApp:* [Únete aquí 👑](https://whatsapp.com/channel/0029Vb63Kf9KwqSQLOQOtk3N)
+*   *Canal Oficial de WhatsApp:* [Únete aquí 👑]()
 
 ---
 
