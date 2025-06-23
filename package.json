@@ -18,16 +18,16 @@
 "eslint": "eslint .",
 "eslintfix": "eslint --fix ."
 },
-"homepage": "https://github.com/CrxstianEscobar/ShadowUltra-MD",
+"homepage": "https://github.com/kleiner1-1/KanekiBot-MD-",
 "author": {
-"name": "Cristian Escobar"
+"name": "Bajo Bots"
 },
 "repository": {
 "type": "git",
-"url": "git+https://github.com/CrxstianEscobar/ShadowUltra-MD.git"
+"url": "git+https://github.com/kleiner1-1/KanekiBot-MD-.git"
 },
 "bugs": {
-"url": "https://github.com/CrxstianEscobar/ShadowUltra-MD/issues"
+"url": "https://github.com/kleiner1-1/KanekiBot-MD-/issues"
 },
 "license": "GPL-3.0-or-later",
 "dependencies": {
