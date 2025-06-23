@@ -4,7 +4,7 @@
 ---
 
 <p align="center">
-  <img src="" alt="Kaneki Bot MD Logo">
+  <img src="https://qu.ax/DjUuN.jpg" alt="Kaneki Bot MD Logo">
 </p>
 
 ---
