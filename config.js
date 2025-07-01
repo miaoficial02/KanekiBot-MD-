@@ -8,7 +8,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 global.owner = [
-  ['111270153982054@lid', "Bajo Bots", true],
+  ['573162402768', "Bajo Bots", true],
   [''],
   [""],
 ] 
