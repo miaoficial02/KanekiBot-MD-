@@ -19,7 +19,7 @@ let img = await fs.readFile("./src/menu.jpg");
       m.chat,
       {
         document: img,
-        fileName: "ѕуℓρнιєттє'ѕ",
+        fileName: "ᴋᴀɴᴇᴋɪ ʙᴏᴛ ᴠ𝟷",
         mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
@@ -29,7 +29,7 @@ let img = await fs.readFile("./src/menu.jpg");
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: "",
+            title: "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏",
             body: `あ ${wm}`,
             thumbnail: img,
             sourceUrl: "",
