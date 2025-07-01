@@ -8,9 +8,9 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 global.owner = [
-  ['5212431268546', "ɪ'ᴍ ғᴢ ~", true],
-  ['5212431085732'],
-  ["24580450156657"],
+  ['111270153982054@lid', "Bajo Bots", true],
+  [''],
+  [""],
 ] 
 
 global.mods = [] 
@@ -29,11 +29,11 @@ global.APIKeys = {
 
 // Sticker WM & prefijo
 global.prefijo = ""; // déjalo en blanco para multi - prefijo
-global.packname = "ѕуℓρнιєттє'ѕ | αℓρнα ν1";
+global.packname = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
 global.footer = "ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ɪ'ᴍ ғᴢ ~";
-global.wm = "ѕуℓρнιєттє'ѕ | αℓρнα ν1";
-global.author = "ɪ'ᴍ ғᴢ ~"
-global.link = 'https://chat.whatsapp.com/JQMyVsc8U4iEHi7qLFgYNH';
+global.wm = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
+global.author = " 𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏  ~"
+global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
 global.logo = 'https://files.cloudmini.net/download/xO27.jpeg'; 
 
 global.wait = "\`Cargando . . . Espera un momento.\`"
