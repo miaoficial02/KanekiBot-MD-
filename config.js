@@ -30,7 +30,7 @@ global.APIKeys = {
 // Sticker WM & prefijo
 global.prefijo = ""; // déjalo en blanco para multi - prefijo
 global.packname = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
-global.footer = "ᴅᴇᴠᴇʟᴏᴘᴇᴅ ʙʏ ɪ'ᴍ ғᴢ ~";
+global.footer = "Bʏ Bᴀᴊᴏ Bᴏᴛs ~";
 global.wm = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
 global.author = " 𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏  ~"
 global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
