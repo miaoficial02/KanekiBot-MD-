@@ -19,7 +19,7 @@ let img = await fs.readFile("./src/menu.jpg");
       m.chat,
       {
         document: img,
-        fileName: "KanekiBot-MD",
+        fileName: "ѕуℓρнιєттє'ѕ",
         mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
@@ -124,13 +124,13 @@ global.menu = async function getMenu() {
       )
       .map(async (menu) => {
         return await Promise.all(menu.help
-          .map(async (cmd) => `𖦹 𓈒 `${await style(cmd, 10)}``));
+          .map(async (cmd) => `𖦹 𓈒 \`${await style(cmd, 10)}\``));
       }));
 
     if (cmds.length > 0) {
-      text += `乂 `${await style(tags[category], 7)}`\n\n${cmds.map(cmdArray => cmdArray.join('n')).join('n')}n\n`;
+      text += `乂 \`${await style(tags[category], 7)}\`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
     }
   }
-  text += ``${footer}``;
+  text += `\`${footer}\``;
   global.menutext = text;
 };
