@@ -124,11 +124,11 @@ global.menu = async function getMenu() {
       )
       .map(async (menu) => {
         return await Promise.all(menu.help
-          .map(async (cmd) => `👹 𓈒 ${await style(cmd, 10)} ``));
+          .map(async (cmd) => `👹 𓈒 ${await style(cmd, 10)}\``));
       }));
 
     if (cmds.length > 0) {
-      text += `💥 \`${await style(tags[category], 7)}\`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
+      text += `💥 \`${await style(tags[category], 11)}\`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
     }
   }
   text += `\`${footer}\``;
