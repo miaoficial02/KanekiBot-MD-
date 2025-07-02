@@ -5,7 +5,7 @@ const handler = async (m, { conn, text, args, usedPrefix, command }) => {
         if (!args[0]) {
             return conn.reply(m.chat, `🥀 Ingresa un enlace válido de TikTok
             
-             > *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`, m);
+> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`, m);
         }
 
         if (!/(?:https:?\/{2})?(?:w{3}|vm|vt|t)?\.?tiktok.com\/([^\s&]+)/gi.test(text)) {
