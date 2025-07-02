@@ -124,7 +124,7 @@ global.menu = async function getMenu() {
       )
       .map(async (menu) => {
         return await Promise.all(menu.help
-          .map(async (cmd) => `👹 𓈒 ${await style(cmd, 10)} ``));
+          .map(async (cmd) => `👹 𓈒 `${await style(cmd, 10)} ``));
       }));
 
     if (cmds.length > 0) {
