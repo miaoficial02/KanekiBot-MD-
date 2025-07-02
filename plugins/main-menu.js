@@ -72,7 +72,7 @@ let handler = async (m, { conn, usedPrefix: _p}) => {
         const tagKey = Object.keys(categorizedCommands).find(key => {
           const clean = key.replace(/[^a-z]/gi, '').toLowerCase();
           return plugin.tags?.includes(clean);
-}) || "Otros";
+}) || "Otros"; "Owner";
         cmds.forEach(cmd => categorizedCommands[tagKey].add(cmd));
 }
 }
