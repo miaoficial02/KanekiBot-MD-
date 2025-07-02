@@ -1,7 +1,8 @@
 import { search, download } from 'aptoide-scraper';
 
 let handler = async(m, { conn, text }) => {
-    if (!text) return m.reply('🌳 Por favor, proporciona el nombre de una aplicación');
+    if (!text) return m.reply('🌳 Por favor, proporciona el nombre de una aplicación
+> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*');
 
     try {
         let dta = await conn.reply(m.chat, `Buscando la aplicación . . .`, m);
