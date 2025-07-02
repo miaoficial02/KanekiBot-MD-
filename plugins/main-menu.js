@@ -24,7 +24,7 @@ let img = await fs.readFile("./src/menu.jpg");
         caption: txt,
         fileLength: 1900,
       //  jpegThumbnail: imager,
-        contextInfo: {
+        //contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
           forwardingScore: 999,
