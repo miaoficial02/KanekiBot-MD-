@@ -68,7 +68,7 @@ const handler = async (m, { conn, text }) => {
 # 🌴 Su audio se enviará en un momento...
 \`\`\`
 
-тнe вeѕт wнaтѕapp вy ι'м ғz
+> *By BajoBots*
 `;
 await m.reply(cap);
 
