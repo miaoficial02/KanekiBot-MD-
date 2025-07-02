@@ -14,7 +14,7 @@ try {
 let imager = await sharp('./src/doc_image.jpg')
   .resize(400, 400)
   .toBuffer();
-//let img = await fs.readFile("./src/menu.jpg");
+let img = await fs.readFile("./src/menu.jpg");
  await conn.sendMessage(
       m.chat,
       {
