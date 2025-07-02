@@ -18,7 +18,7 @@ let img = await fs.readFile("./src/menu.jpg");
  await conn.sendMessage(
       m.chat,
       {
-        //document: img,
+        document: img,
      //   fileName: "KanekiBot-MD",
         mimetype: "image/png",
         caption: txt,
