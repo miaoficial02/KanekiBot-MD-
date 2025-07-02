@@ -21,7 +21,7 @@ const handler = async (m, { conn, text, command }) => {
 ≡ 🌴 \`Vistas\` : » ${video.views}
 ≡ ☘️ \`URL\`      : » ${video.url}
 
-тнe вeѕт wнaтѕapp вy ι'м ғz
+тнe вeѕт wнaтѕapp вy Bajo Bots
 `;
     await conn.sendFile(m.chat, await (await fetch(video.thumbnail)).buffer(), "image.jpg", cap, m);
 
