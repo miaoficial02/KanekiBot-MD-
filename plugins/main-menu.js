@@ -1,124 +1,113 @@
-import sharp from "sharp";
-import { promises as fs } from 'fs';
-import moment from 'moment-timezone';
+import { xpRange } from '../lib/levelling.js';
 
-let handler = async (m, { conn, usedPrefix }) => {
-  m.react("✨");
+// Reloj: uptime en formato hh:mm:ss
+const clockString = ms => {
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor(ms / 60000) % 60;
+  const s = Math.floor(ms / 1000) % 60;
+  return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+};
 
-  let name = await conn.getName(m.sender);
-  if (!global.menutext) {
-    await global.menu();
-  }
+// Video tipo GIF
+const videoUrl = "https://cdn.russellxz.click/f630e442.mp4";
 
-  let cap = global.menutext;
-  let greeting = ucapan();
-  let txt = `🌟 ${greeting} @${m.sender.split("@")[0]}!\n\n${cap}`;
+const menuHeader = `
+┏━『 ✦ 𝙹𝚄𝙹𝚄𝚃𝚂𝚄 𝙺𝙰𝙸𝚂𝙴𝙽 ✦ 』━┓
+┃ 🧩 𝙽𝚘𝚖𝚋𝚛𝚎: 𝑨 %name
+┃ 🧩 𝙽𝚒𝚟𝚎𝚕: %level | 𝑿𝑷: %exp/%max
+┃ 🧩 𝙻í𝚖𝚒𝚝𝚎: %limit | 𝙼𝚘𝚍𝚘: %mode
+┃ 🧩 𝚄𝚙𝚝𝚒𝚖𝚎: %uptime
+┃ 🧩 𝚄𝚜𝚞𝚊𝚛𝚒𝚘𝚜: %total
+┃ 🧩 𝙱𝚘𝚝 𝙾𝚙𝚝𝚒𝚖𝚒𝚣𝚊𝚍𝚘 🚀
+┗━━━━━━━━━━━━━━━━━━━┛
+`.trim();
 
-  let mention = conn.parseMention(txt);
+const sectionDivider = '⏤͟͟͞͞⏤͟͟͞͞⏤͟͟͞͞⏤͟͟͞͞⏤͟͟͞͞⏤͟͟͞͞';
 
+const menuFooter = `
+┏━『 ✦ 𝚈𝚄𝚃𝙰 ✦ 』━┓
+┃ Gracias por usar este bot.
+┗━━━━━━━━━━━━━━━━┛
+`.trim();
+
+let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
-    let imager = await sharp('./src/doc_image.jpg').resize(400, 400).toBuffer();
-    let img = await fs.readFile("./src/menu.jpg");
+    const user = global.db?.data?.users?.[m.sender] || { level: 1, exp: 0, limit: 5 };
+    const { exp, level, limit } = user;
+    const { min, xp } = xpRange(level, global.multiplier || 1);
+    const totalreg = Object.keys(global.db?.data?.users || {}).length;
 
-    await conn.sendMessage(
-      m.chat,
-      {
-        document: img,
-        fileName: "KANEKI BOT v1 | MODERN MENU",
-        mimetype: "image/png",
-        caption: txt,
-        fileLength: 1900,
-        jpegThumbnail: imager,
-        contextInfo: {
-          mentionedJid: mention,
-          isForwarded: true,
-          forwardingScore: 999,
-          externalAdReply: {
-            title: "KANEKI BOT ✨",
-            body: `✨ Powered by ${wm}`,
-            thumbnail: img,
-            sourceUrl: "",
-            mediaType: 1,
-            renderLargerThumbnail: true,
-          },
-        },
-      },
-      { quoted: m }
-    );
+    const mode = global.opts?.self ? 'Privado 🔒' : 'Público 🌐';
+    const uptime = clockString(process.uptime() * 1000);
+
+    let name = "Usuario";
+    try { name = await conn.getName(m.sender); } catch {}
+
+    let categorizedCommands = {};
+    Object.values(global.plugins)
+      .filter(p => p?.help && !p.disabled)
+      .forEach(p => {
+        const tags = Array.isArray(p.tags) ? p.tags : [typeof p.tags === 'string' ? p.tags : 'Otros'];
+        const tag = tags[0] || 'Otros';
+        const commands = Array.isArray(p.help) ? p.help : [p.help];
+        categorizedCommands[tag] = categorizedCommands[tag] || new Set();
+        commands.forEach(cmd => categorizedCommands[tag].add(cmd));
+      });
+
+    const emojis = {
+      anime: "🌸", info: "ℹ️", search: "🔎", diversión: "🎉",
+      subbots: "🤖", rpg: "🌀", registro: "📝", sticker: "🎨",
+      imagen: "🖼️", logo: "🖌️", configuración: "⚙️", premium: "💎",
+      descargas: "📥", herramientas: "🛠️", nsfw: "🔞",
+      "base de datos": "📀", audios: "🔊", "free fire": "🔥",
+      otros: "🪪"
+    };
+
+    const orderedTags = [
+      "anime", "info", "search", "diversión", "subbots", "rpg",
+      "registro", "sticker", "imagen", "logo", "configuración",
+      "premium", "descargas", "herramientas", "nsfw", "base de datos",
+      "audios", "free fire", "otros"
+    ];
+
+    const menuBody = orderedTags.filter(tag => categorizedCommands[tag]).map(tag => {
+      const emoji = emojis[tag] || "✦";
+      const entries = [...categorizedCommands[tag]].map(cmd =>
+        `┃ ✧ _${_p}${cmd}_`
+      ).join('\n');
+      return `┏━『 ${emoji} ${tag.toUpperCase()} 』━┓\n${entries}\n${sectionDivider}`;
+    }).join('\n\n');
+
+    const finalHeader = menuHeader
+      .replace('%name', name)
+      .replace('%level', level)
+      .replace('%exp', exp - min)
+      .replace('%max', xp)
+      .replace('%limit', limit)
+      .replace('%mode', mode)
+      .replace('%uptime', uptime)
+      .replace('%total', totalreg);
+
+    const fullMenu = `╭─────────────⟢
+${finalHeader}
+
+${menuBody}
+
+${menuFooter}
+╰─────────────⟢`;
+
+    await conn.sendMessage(m.chat, {
+      video: { url: videoUrl },
+      gifPlayback: true,
+      caption: fullMenu,
+      mentions: [m.sender]
+    }, { quoted: m });
+
   } catch (e) {
-    await conn.reply(m.chat, txt, m, { mentions: mention });
-    await conn.reply(m.chat, "❌ Error al mostrar el menú: " + e, m);
+    console.error(e);
+    conn.reply(m.chat, '⚠️ Error al generar el menú.', m);
   }
-
-  await global.menu();
 };
 
-handler.command = ["menu", "help", "menú", "commands", "comandos", "?"];
+handler.command = ['menu', 'help', 'menú'];
 export default handler;
-
-function ucapan() {
-  const time = moment.tz("America/Los_Angeles").format("HH");
-  if (time >= 18) return "Good Night 🌙";
-  if (time >= 15) return "Good Afternoon ☀️";
-  if (time >= 10) return "Good Day 🌤️";
-  if (time >= 4) return "Good Morning 🌅";
-  return "Hello 👋";
-}
-
-global.menu = async function getMenu() {
-  let text = "┏━━━━━━━━━━━━━━━┓\n";
-  text += "┃       📜 𝐌𝐀𝐈𝐍 𝐌𝐄𝐍𝐔 📜      ┃\n";
-  text += "┗━━━━━━━━━━━━━━━┛\n\n";
-
-  let help = Object.values(global.plugins)
-    .filter(plugin => !plugin.disabled)
-    .map(plugin => ({
-      help: Array.isArray(plugin.help) ? plugin.help : [plugin.help],
-      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-    }));
-
-  let tags = {};
-  for (let plugin of help) {
-    if (plugin && plugin.tags) {
-      for (let tag of plugin.tags) {
-        if (tag) tags[tag] = tag.toUpperCase();
-      }
-    }
-  }
-
-  for (let category of Object.keys(tags)) {
-    let cmds = await Promise.all(help
-      .filter(menu => menu.tags && menu.tags.includes(category) && menu.help)
-      .map(async menu => {
-        return await Promise.all(menu.help
-          .map(async cmd => `🔹 ${await style(cmd, 7)}`));
-      }));
-
-    if (cmds.length > 0) {
-      text += `📂 ${await style(tags[category], 3)}\n`;
-      text += `${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
-    }
-  }
-
-  text += `💠 *Use: ${usedPrefix}command*\n`;
-  text += `💠 *Bot by ${wm}*\n`;
-
-  global.menutext = text;
-};
-
-global.style = async function styles(text, style = 1) {
-  var replacer = [];
-  xStr.map((v, i) =>
-    replacer.push({
-      original: v,
-      convert: yStr[style][i],
-    })
-  );
-  var str = text.toLowerCase().split("");
-  var output = [];
-  str.map((v) => {
-    const find = replacer.find((x) => x.original == v);
-    find ? output.push(find.convert) : output.push(v);
-  });
-  return output.join("");
-};
