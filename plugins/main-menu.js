@@ -11,10 +11,10 @@ let handler = async (m, { conn, usedPrefix }) => {
     let txt = `👾𝐒𝐎𝐘 𝐊𝐀𝐍𝐄𝐊𝐈 𝐀 𝐓𝐔 𝐒𝐄𝐑𝐕𝐈𝐂𝐈𝐎 💥 ${ucapan()}, @${m.sender.split("@")[0]} !\n\n${cap}`;
     let mention = conn.parseMention(txt)
 try {
-//let imager = await sharp('./src/doc_image.jpg')
+let imager = await sharp('./src/doc_image.jpg')
   .resize(400, 400)
   .toBuffer();
-let img = await fs.readFile("./src/menu.jpg");
+//let img = await fs.readFile("./src/menu.jpg");
  await conn.sendMessage(
       m.chat,
       {
@@ -23,7 +23,7 @@ let img = await fs.readFile("./src/menu.jpg");
         //mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
-       // jpegThumbnail: imager,
+       jpegThumbnail: imager,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
