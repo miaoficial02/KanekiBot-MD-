@@ -31,7 +31,7 @@ let img = await fs.readFile("./src/menu.jpg");
           externalAdReply: {
             title: "",
             body: `あ ${wm}`,
-            //thumbnail: img,
+            thumbnail: img,
             sourceUrl: "",
             mediaType: 1,
             renderLargerThumbnail: true,
