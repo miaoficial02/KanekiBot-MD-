@@ -3,7 +3,8 @@ import fg from 'api-dylux';
 const handler = async (m, { conn, text, args, usedPrefix, command }) => {
     try {
         if (!args[0]) {
-            return conn.reply(m.chat, `🥀 Ingresa un enlace válido de TikTok.`, m);
+            return conn.reply(m.chat, `🥀 Ingresa un enlace válido de TikTok.
+            > *By BajoBots*`, m);
         }
 
         if (!/(?:https:?\/{2})?(?:w{3}|vm|vt|t)?\.?tiktok.com\/([^\s&]+)/gi.test(text)) {
