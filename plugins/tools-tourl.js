@@ -4,7 +4,9 @@ import FormData from "form-data";
 import mime from "mime-types";
 
 let handler = async (m, { conn, args, usedPrefix }) => {
-  if (!m.quoted) throw `☘️ Responde a una imagen o vídeo usando el comando.`;
+  if (!m.quoted) throw `☘️ Responde a una imagen o vídeo usando el comando.
+  
+> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`;
 
   if (!args[0]) throw `🌳 Elige una de las siguientes opciones:
 
