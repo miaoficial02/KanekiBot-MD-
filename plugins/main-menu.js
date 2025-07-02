@@ -8,7 +8,7 @@ let handler = async (m, { conn, usedPrefix }) => {
       await global.menu();
     }
     let cap = global.menutext;
-    let txt = `🍄 ${ucapan()}, @${m.sender.split("@")[0]} !\n\n${cap}`;
+    let txt = `👾𝐒𝐎𝐘 𝐊𝐀𝐍𝐄𝐊𝐈 𝐀 𝐓𝐔 𝐒𝐄𝐑𝐕𝐈𝐂𝐈𝐎 💥 ${ucapan()}, @${m.sender.split("@")[0]} !\n\n${cap}`;
     let mention = conn.parseMention(txt)
 try {
 let imager = await sharp('./src/doc_image.jpg')
