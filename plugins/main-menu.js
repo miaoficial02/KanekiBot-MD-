@@ -128,7 +128,7 @@ global.menu = async function getMenu() {
       }));
 
     if (cmds.length > 0) {
-      text += `ᥫ᭡ \「`${await style(tags[category], 7)}」\`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
+      text += `ᥫ᭡ \「`${await style(tags[category], 7)}`\」`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
     }
   }
   text += `\`${footer}\``;
