@@ -2,13 +2,13 @@ import sharp from "sharp";
 import { promises as fs } from 'fs';
 
 let handler = async (m, { conn, usedPrefix }) => {
-    m.react("🍂");
+    m.react("💯");
     let name = await conn.getName(m.sender);
     if (!global.menutext) {
       await global.menu();
     }
     let cap = global.menutext;
-    let txt = `👾𝐒𝐎𝐘 𝐊𝐀𝐍𝐄𝐊𝐈 𝐀 𝐓𝐔 𝐒𝐄𝐑𝐕𝐈𝐂𝐈𝐎 💥 ${ucapan()}, @${m.sender.split("@")[0]} !\n\n${cap}`;
+    let txt = `👾𝐒𝐎𝐘 𝐊𝐀𝐍𝐄𝐊𝐈 𝐀 𝐓𝐔 𝐒𝐄𝐑𝐕𝐈𝐂𝐈𝐎 ${ucapan()}, @${m.sender.split("@")[0]} !\n\n${cap}`;
     let mention = conn.parseMention(txt)
 try {
 let imager = await sharp('./src/doc_image.jpg')
@@ -23,7 +23,7 @@ let img = await fs.readFile("./src/menu.jpg");
         mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
-       jpegThumbnail: imager,
+        jpegThumbnail: imager,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
@@ -124,11 +124,11 @@ global.menu = async function getMenu() {
       )
       .map(async (menu) => {
         return await Promise.all(menu.help
-          .map(async (cmd) => `👹 𓈒 ${await style(cmd, 10)}`));
+          .map(async (cmd) => `👹 𓈒 `${await style(cmd, 10)}``));
       }));
 
     if (cmds.length > 0) {
-      text += `ᥫ᭡ \`${await style(tags[category], 7)}\ `\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
+      text += `乂 `${await style(tags[category], 7)}`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
     }
   }
   text += `\`${footer}\``;
