@@ -12,8 +12,8 @@ let handler = async (m, { conn, usedPrefix }) => {
     let mention = conn.parseMention(txt)
 try {
 //let imager = await sharp('./src/doc_image.jpg')
-  .resize(400, 400)
-  .toBuffer();
+  //.resize(400, 400)
+ // .toBuffer();
 let img = await fs.readFile("./src/menu.jpg");
  await conn.sendMessage(
       m.chat,
