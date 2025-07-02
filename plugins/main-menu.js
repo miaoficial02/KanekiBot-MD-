@@ -20,10 +20,10 @@ let img = await fs.readFile("./src/menu.jpg");
       {
         document: img,
      //   fileName: "KanekiBot-MD",
-        //mimetype: "image/png",
+        mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
-        jpegThumbnail: imager,
+      //  jpegThumbnail: imager,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
