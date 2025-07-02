@@ -192,7 +192,9 @@ ${usedPrefix + command} -c -blur Texto | Autor
     if (stiker) {
       conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
     } else {
-      return conn.reply(m.chat, `🍄 Responde a una *imagen/video/gif* para convertirlo en sticker. Para saber la lista de efectos y formas usa *"---i"*`, m)
+      return conn.reply(m.chat, `💯 𝐑𝐞𝐬𝐩𝐨𝐧𝐝𝐞 𝐚 𝐮𝐧𝐚 *𝐢𝐦𝐚𝐠𝐞𝐧/𝐯𝐢𝐝𝐞𝐨/𝐠𝐢𝐟* 𝐩𝐚𝐫𝐚 𝐜𝐨𝐧𝐯𝐞𝐫𝐭𝐢𝐫𝐥𝐨 𝐞𝐧 𝐬𝐭𝐢𝐜𝐤𝐞𝐫. 𝐏𝐚𝐫𝐚 𝐬𝐚𝐛𝐞𝐫 𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞 𝐞𝐟𝐞𝐜𝐭𝐨𝐬 𝐲 𝐟𝐨𝐫𝐦𝐚𝐬 𝐮𝐬𝐚 *"---𝐢"*
+
+\B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬\`, m)
     }
   }
 }
