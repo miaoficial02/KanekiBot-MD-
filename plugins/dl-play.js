@@ -2,9 +2,9 @@ import yts from "yt-search";
 import { ytv, yta } from "./_ytdl.js";
 const limit = 100;
 const handler = async (m, { conn, text, command }) => {
-  if (!text) return m.reply("🌴 𝐈𝐧𝐠𝐫𝐞𝐬𝐚 𝐞𝐥 𝐧𝐨𝐦𝐛𝐫𝐞 𝐝𝐞 𝐮𝐧 𝐯𝐢𝐝𝐞𝐨 𝐨 𝐮𝐧𝐚 𝐔𝐑𝐋 𝐝𝐞 𝐘𝐨𝐮𝐓𝐮𝐛𝐞
+  if (!text) return m.reply('🌴 𝐈𝐧𝐠𝐫𝐞𝐬𝐚 𝐞𝐥 𝐧𝐨𝐦𝐛𝐫𝐞 𝐝𝐞 𝐮𝐧 𝐯𝐢𝐝𝐞𝐨 𝐨 𝐮𝐧𝐚 𝐔𝐑𝐋 𝐝𝐞 𝐘𝐨𝐮𝐓𝐮𝐛𝐞
 
-> 𝐁𝐲 𝐁𝐚𝐣𝐨 𝐁𝐨𝐭𝐬 ");
+> 𝐁𝐲 𝐁𝐚𝐣𝐨 𝐁𝐨𝐭𝐬 ');
     m.react("🌱")
     let res = await yts(text);
     if (!res || !res.all || res.all.length === 0) {
