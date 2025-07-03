@@ -29,7 +29,7 @@ let handler = async (m, { conn }) => {
   const footer = `
 ╭━〔 📌 *Información* 〕━⬣
 ┃ 💡 Usa los comandos con precaución.
-┃ 📬 Contacto: wa.me/3162402768
+┃ 📬 Contacto: wa.me/573162402768
 ╰━━━━━━━━━━━━━━━━━━━━⬣ `;
 
   const txt = header + "\n" + global.menutext + "\n" + footer;
@@ -105,56 +105,73 @@ var yStr = Object.freeze({
 20: ['𝖆', '𝖇', '𝖈', '𝖉', '𝖊', '𝖋', '𝖌', '𝖍', '𝖎', '𝖏', '𝖐', '𝖑', '𝖒', '𝖓', '𝖔', '𝖕', '𝖖', '𝖗', '𝖘', '𝖙', '𝖚', '𝖛', '𝖜', '𝖝', '𝖞', '𝖟', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
 })
 
-global.style = async function styles(text, style = 1) {
-  var replacer = [];
-  xStr.map((v, i) =>
-    replacer.push({
-      original: v,
-      convert: yStr[style][i],
-    })
-  );
-  var str = text.toLowerCase().split("");
-  var output = [];
-  str.map((v) => {
-    const find = replacer.find((x) => x.original == v);
-    find ? output.push(find.convert) : output.push(v);
-  });
-  return output.join("");
+global.style = async function style(text, style = 1) {
+  const replacer = xStr.map((v, i) => ({
+    original: v,
+    convert: yStr[style]?.[i] || v,
+  }));
+
+  return text
+    .toLowerCase()
+    .split("")
+    .map((char) => replacer.find((x) => x.original === char)?.convert || char)
+    .join("");
 };
 
 global.menu = async function getMenu() {
   let text = "";
-  let help = Object.values(global.plugins)
-    .filter((plugin) => !plugin.disabled)
-    .map((plugin) => {
-      return {
-        help: Array.isArray(plugin.help) ? plugin.help : [plugin.help],
-        tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-      };
-    });
 
-  let tags = {};
-  for (let plugin of help) {
-    if (plugin && plugin.tags) {
-      for (let tag of plugin.tags) {
+  const help = Object.values(global.plugins)
+    .filter((plugin) => !plugin.disabled)
+    .map((plugin) => ({
+      help: Array.isArray(plugin.help) ? plugin.help : [plugin.help],
+      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
+    }));
+
+  const tags = {};
+  for (const plugin of help) {
+    if (plugin.tags) {
+      for (const tag of plugin.tags) {
         if (tag) tags[tag] = tag.toUpperCase();
       }
     }
   }
-  for (let category of Object.keys(tags)) {
-    let cmds = await Promise.all(help
-      .filter(
-        (menu) => menu.tags && menu.tags.includes(category) && menu.help
-      )
-      .map(async (menu) => {
-        return await Promise.all(menu.help
-          .map(async (cmd) => `👹 𓈒 ${await style(cmd, 10)}\``));
-      }));
+
+  // Opcional: íconos personalizados por categoría
+  const categoryIcons = {
+    tools: "🧰",
+    fun: "🎮",
+    game: "🕹️",
+    admin: "🛠️",
+    sticker: "🎨",
+    group: "👥",
+    internet: "🌐",
+    download: "⬇️",
+    anime: "🍥",
+    roleplay: "🎭",
+    default: "📁"
+  };
+
+  for (const category of Object.keys(tags)) {
+    const cmds = await Promise.all(
+      help
+        .filter((menu) => menu.tags?.includes(category) && menu.help)
+        .map(async (menu) => {
+          return await Promise.all(
+            menu.help.map(
+              async (cmd) => `   ┆ ⏣ ${await style(cmd, 10)}`
+            )
+          );
+        })
+    );
 
     if (cmds.length > 0) {
-      text += `💥 \`${await style(tags[category], 8)}\`\n\n${cmds.map(cmdArray => cmdArray.join('\n')).join('\n')}\n\n`;
+      const icon = categoryIcons[category] || categoryIcons.default;
+      text += `╭━━━〔 ${icon} ${await style(tags[category], 3)} 〕━━⬣\n`;
+      text += cmds.map((cmdArray) => cmdArray.join("\n")).join("\n");
+      text += `\n╰━━━━━━━━━━━━━━━━━━━━━━⬣\n\n`;
     }
   }
-  text += `\`${footer}\``;
+
   global.menutext = text;
 };
