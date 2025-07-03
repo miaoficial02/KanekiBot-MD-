@@ -73,32 +73,7 @@ ESCRIBE LOS SIGUIENTES COMANDOS UNO POR UNO:
 > npm start
 ```
 
-### `—◉ ❗OBTENER OTRO CODIGO QR EN TERMUX❗`
-- DETENER EL BOT DANDO CLICK EN EL SIMBOLO CTROL EN TERMUX MAS LA LETRA Z EN SU TECLADO MOVIL HASTA QUE SALGA ALGO EN VERDE SIMILAR A Black-termux $  
-```bash
-ESCRIBE LOS SIGUIENTES COMANDOS UNO POR UNO:
-> cd 
-> rm -rf Blacksession
-> npm start
 
-  *Nota:* Los errores en rojo durante el escaneo del código QR son normales.
-
-  *Reiniciar el bot:*
-
-  ```bash
-  cdMeliodas-Bot-V2
-  yarn start
-  ```
-
-  *Mantener el bot activo en segundo plano:*
-
-  ```bash
-  npm i -g pm2
-  pm2 start index.js
-  pm2 save
-  pm2 logs
-  ```
-</details>
 
 ---
 
