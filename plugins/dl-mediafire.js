@@ -9,7 +9,17 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
         }
 
         m.react('📥');
+
         const res = await fetch(`https://api.sylphy.xyz/download/mediafire?url=${args[0]}&apikey=sylph-96ccb836bc`);
+        const contentType = res.headers.get("content-type");
+
+        // 🚨 Si no es JSON, es HTML (probablemente error)
+        if (!contentType || !contentType.includes("application/json")) {
+            const html = await res.text();
+            console.error("❗ API respondió HTML:\n", html.slice(0, 500));
+            return conn.reply(m.chat, `⚠️ *La API respondió un error HTML.*\nRevisa si el enlace es válido o si la API está caída.`, m);
+        }
+
         const json = await res.json();
 
         if (!json.data || !json.data.download) {
@@ -31,6 +41,7 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
         await conn.sendFile(m.chat, download, filename, `✅ *Archivo descargado correctamente.*`, m);
 
     } catch (e) {
+        console.error("❌ Error al procesar MediaFire:", e);
         return conn.reply(m.chat, `❌ *Error inesperado:*\n${e.message}`, m);
     }
 };
