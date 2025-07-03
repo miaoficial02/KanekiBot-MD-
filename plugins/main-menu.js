@@ -31,20 +31,20 @@ let handler = async (m, { conn }) => {
 ┃ 💡 Usa los comandos con precaución.
 ┃ 📬 Contacto: wa.me/3162402768
 ╰━━━━━━━━━━━━━━━━━━━━⬣ `;
-try {
-//let imager = await sharp('./src/doc_image.jpg')
-  //.resize(400, 400)
- // .toBuffer();
-let img = await fs.readFile("./src/menu.jpg");
- await conn.sendMessage(
+
+  const txt = header + "\n" + global.menutext + "\n" + footer;
+  const mention = [m.sender];
+  const wm = "KanekiBot"; // Marca personalizada
+
+  try {
+    let img = await fs.readFile("./src/menu.jpg");
+    await conn.sendMessage(
       m.chat,
       {
         document: img,
-     //   fileName: "KanekiBot-MD",
         mimetype: "image/png",
         caption: txt,
         fileLength: 1900,
-      //  jpegThumbnail: imager,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
@@ -62,11 +62,14 @@ let img = await fs.readFile("./src/menu.jpg");
       { quoted: m }
     );
   } catch (e) {
-  conn.reply(m.chat, txt, m, { mentions: mention })
-    conn.reply(m.chat, "❎ Error al mostrar el menú principal : " + e, m);
+    conn.reply(m.chat, txt, m, { mentions: mention });
+    conn.reply(m.chat, "❎ Error al mostrar el menú principal: " + e, m);
   }
-await global.menu();
+
+  await global.menu();
 };
+
+
 handler.command = ["menu", "help", "menú", "commands", "comandos", "?"];
 export default handler;
 
