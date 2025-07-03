@@ -1,32 +1,48 @@
 import fetch from 'node-fetch';
 
-let handler = async (m, {
-    conn,
-    usedPrefix,
-    command,
-    args
-}) => {
+let handler = async (m, { conn, usedPrefix, command, args }) => {
     try {
-        if (!args || !args[0]) return conn.reply(m.chat, `🌱 Ejemplo de uso: ${usedPrefix}${command} https://www.instagram.com/p/CK0tLXyAzEI`, m);
-        if (!args[0].match(/(https:\/\/www.instagram.com)/gi)) return conn.reply(m.chat, global.status.invalid, m);
+        if (!args || !args[0]) {
+            return conn.reply(m.chat, `📸 *Ejemplo de uso:*\n${usedPrefix}${command} https://www.instagram.com/p/CK0tLXyAzEI`, m);
+        }
 
-        let old = new Date();
+        if (!args[0].match(/(https:\/\/www.instagram.com)/gi)) {
+            return conn.reply(m.chat, `🚫 *Enlace inválido.*\nAsegúrate de enviar un enlace correcto de Instagram.`, m);
+        }
+
+        let startTime = new Date();
         m.react('🕒');
 
-        var json = await (await fetch(`https://api.neoxr.eu/api/ig?url=${args[0]}&apikey=GataDios`)).json();
-        if (!json.status) return conn.reply(m.chat, JSON.stringify(json, null, 2), m);
+        const res = await fetch(`https://api.neoxr.eu/api/ig?url=${args[0]}&apikey=GataDios`);
+        const json = await res.json();
 
-        conn.sendFile(m.chat, json.data[0].url, "Instagram.mp4", `🍟 *Proceso* : ${((new Date - old) * 1)} ms`, m);
+        if (!json.status || !json.data || !json.data[0]) {
+            return conn.reply(m.chat, `❎ *No se pudo obtener el contenido.*\n${JSON.stringify(json, null, 2)}`, m);
+        }
+
+        const media = json.data[0];
+        const elapsed = new Date() - startTime;
+
+        const caption = `
+╭━━〔 📷 *Instagram Downloader* 〕━━⬣
+┃🌐 *Link:* ${args[0]}
+┃🎞️ *Tipo:* ${media.type || 'Desconocido'}
+┃📦 *Tamaño:* Automático
+┃⏱️ *Tiempo:* ${elapsed} ms
+╰━━━━━━━━━━━━━━━━━━━━⬣
+        `.trim();
+
+        await conn.sendFile(m.chat, media.url, `Instagram.${media.type == 'image' ? 'jpg' : 'mp4'}`, caption, m);
         await delay(1500);
 
     } catch (e) {
-        return conn.reply(m.chat, `Error: ${e.message}`, m);
+        return conn.reply(m.chat, `❌ *Error inesperado:*\n${e.message}`, m);
     }
 };
 
 handler.help = ['instagram'];
-handler.command = ['ig', 'instagram']
-handler.tags = ["download"];;
+handler.command = ['ig', 'instagram'];
+handler.tags = ['download'];
 export default handler;
 
 function delay(ms) {
