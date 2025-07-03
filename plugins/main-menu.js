@@ -2,30 +2,46 @@ import moment from "moment-timezone";
 import { promises as fs } from "fs";
 
 let handler = async (m, { conn }) => {
-  m.react("⚙️");
+  m.react("📜");
 
   const senderId = m.sender;
   const userNumber = senderId.split("@")[0];
   const userName = await conn.getName(senderId);
   const time = moment().tz("America/Mexico_City");
   const formattedDate = time.format("dddd, D [de] MMMM YYYY");
-  const formattedTime = time.format("HH:mm A");
+  const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
   if (!global.menutext) await global.menu();
 
-  const userInfo = [
-    `👤 Usuario: ${userName}`,
-    `📞 Número: +${userNumber}`,
-    `🕒 Hora: ${formattedTime}`,
-    `📅 Fecha: ${formattedDate}`,
-    "",
-    `👾 𝐒𝐎𝐘 𝐊𝐀𝐍𝐄𝐊𝐈 𝐀 𝐓𝐔 𝐒𝐄𝐑𝐕𝐈𝐂𝐈𝐎 ${saludo}, @${userNumber}!`,
-    "",
-    global.menutext
-  ].join("\n");
+  // ━━━ Diseño del encabezado ━━━
+  const header = `
+╭━〔 🤖 *KANEKIBOT* 〕━⬣
+┃ 🧑‍💼 *Usuario:* ${userName}
+┃ 📱 *Número:* +${userNumber}
+┃ 📅 *Fecha:* ${formattedDate}
+┃ ⏰ *Hora:* ${formattedTime}
+┃ 💬 *Saludo:* ${saludo}
+╰━━━━━━━━━━━━━━━━━━━━⬣
+`;
 
-  const mention = conn.parseMention(userInfo);
+  // ━━━ Pie del mensaje ━━━
+  const footer = `
+╭━〔 📌 *Información* 〕━⬣
+┃ 💡 Usa los comandos con precaución.
+┃ 📬 Contacto: wa.me/1234567890
+╰━━━━━━━━━━━━━━━━━━━━⬣
+`;
+
+  // ━━━ Combinamos todo ━━━
+  const fullMenu = [
+    header.trim(),
+    "📚 *Menú de comandos:*",
+    global.menutext.trim(),
+    footer.trim()
+  ].join("\n\n");
+
+  const mention = conn.parseMention(fullMenu);
 
   try {
     const img = await fs.readFile("./src/menu.jpg");
@@ -35,17 +51,16 @@ let handler = async (m, { conn }) => {
       {
         document: img,
         mimetype: "image/png",
-        caption: userInfo,
+        caption: fullMenu,
         fileLength: 1900,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: "Menú de comandos",
-            body: `Atte: KanekiBot`,
+            title: "Menú de comandos KanekiBot",
+            body: `Gracias por usar KanekiBot`,
             thumbnail: img,
-            sourceUrl: "",
             mediaType: 1,
             renderLargerThumbnail: true,
           },
@@ -54,7 +69,7 @@ let handler = async (m, { conn }) => {
       { quoted: m }
     );
   } catch (e) {
-    conn.reply(m.chat, userInfo, m, { mentions: mention });
+    conn.reply(m.chat, fullMenu, m, { mentions: mention });
     conn.reply(m.chat, "❎ Error al mostrar el menú: " + e.message, m);
   }
 
