@@ -1,27 +1,43 @@
-
 import PhoneNumber from 'awesome-phonenumber';
 
-async function handler(m, { conn }) { 
-    let numcreador = '573162402768';
-    let ownerJid = numcreador + '@s.whatsapp.net';
+async function handler(m, { conn }) {
+  const numcreador = '573162402768';
+  const ownerJid = numcreador + '@s.whatsapp.net';
 
-    let name = await conn.getName(ownerJid) || 'Owner'; 
-    let about = (await conn.fetchStatus(ownerJid).catch(() => {}))?.status || 'Creador de bots de WhatsApp y del Bot Meliodas MD';
-    let empresa = 'Bajo Bots- Servicios Tecnológicos';
-    let imagen = 'https://qu.ax/VGCPX.jpg'; // Reemplaza con la URL de la imagen que deseas mostrar
+  const name = await conn.getName(ownerJid) || 'Owner';
+  const about =
+    (await conn.fetchStatus(ownerJid).catch(() => {}))?.status ||
+    'Creador de bots de WhatsApp y del Bot Meliodas MD';
+  const empresa = 'Bajo Bots - Servicios Tecnológicos';
+  const imagen = 'https://qu.ax/VGCPX.jpg'; // Puedes cambiar esta imagen
+  const correo = 'kleinergalindo4@gmail.com';
+  const instagram = 'https://instagram.com/kleinercg';
 
-    // Enviar imagen junto con el número del dueño y sus detalles
-     
-    
-    
-    await conn.sendMessage(m.chat, { 
-        image: { url: imagen },
-        caption: `👤 *Dueño del bot*\n📌 *Nombre:* ${name}\n📞 *Número:* wa.me/${numcreador}\n📝 *Descripción:* ${about}\n🏢 *Empresa:* ${empresa}\n📧 *Email:* kleinergalindo4@gmail.com\n🌐 *Instagram:* `,
-    }, { quoted: m });
+  const caption = `
+╭━━━〔 👤 *Información del Dueño* 〕━━⬣
+┃ 🧑‍💼 *Nombre:* ${name}
+┃ 📞 *Número:* wa.me/${numcreador}
+┃ 📝 *Estado:* ${about}
+┃ 🏢 *Empresa:* ${empresa}
+┃ 📧 *Correo:* ${correo}
+┃ 🌐 *Instagram:* ${instagram}
+╰━━━━━━━━━━━━━━━━━━━━⬣
+
+🤖 Si deseas adquirir un bot o soporte, no dudes en contactar.
+`;
+
+  await conn.sendMessage(
+    m.chat,
+    {
+      image: { url: imagen },
+      caption,
+    },
+    { quoted: m }
+  );
 }
 
-handler.help = ['owner']; 
-handler.tags = ['main']; 
+handler.help = ['owner'];
+handler.tags = ['main'];
 handler.command = ['owner', 'creator', 'creador', 'dueño'];
 
 export default handler;
