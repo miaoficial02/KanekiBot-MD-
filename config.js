@@ -41,7 +41,7 @@ global.rcanal = {
   key: {
     fromMe: false,
     participant: "0@s.whatsapp.net",
-    remoteJid: "status@broadcast"
+    remoteJid: "120363344288629189@newsletter"
   },
   message: {
     extendedTextMessage: {
