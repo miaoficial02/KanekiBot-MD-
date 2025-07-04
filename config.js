@@ -36,6 +36,21 @@ global.author = " 𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏  ~"
 global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
 global.logo = 'https://qu.ax/tyxJP.jpg'; 
 
+//rcanal xd
+global.rcanal = {
+  key: {
+    fromMe: false,
+    participant: "0@s.whatsapp.net",
+    remoteJid: "status@broadcast"
+  },
+  message: {
+    extendedTextMessage: {
+      text: '〘 𝐊𝐀𝐍𝐄𝐊𝐈𝐁𝐎𝐓 〙'
+    }
+  }
+};
+
+
 global.wait = "\`Cargando . . . Espera un momento.\`"
 global.rwait = '⌛'
 global.dmoji = '🤭'
