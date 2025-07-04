@@ -19,8 +19,8 @@ global.rcanal = {
    }, 
    externalAdReply: {
     showAdAttribution: true, 
-    title: botname, 
-    body: textbot, 
+ //   title: botname, 
+ //   body: textbot, 
     mediaUrl: null, 
     description: null, 
     previewType: "PHOTO", 
