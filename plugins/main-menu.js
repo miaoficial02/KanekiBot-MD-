@@ -25,12 +25,26 @@ let handler = async (m, { conn }) => {
 ╰━━━━━━━━━━━━━━━━━━━━⬣
 `;
 
-  // ━━━ Pie del mensaje ━━━
-  const footer = `
-╭━〔 📌 *Información* 〕━⬣
-┃ 💡 Usa los comandos con precaución.
-┃ 📬 Contacto: wa.me/573162402768
-╰━━━━━━━━━━━━━━━━━━━━⬣ `;
+// ━━━ Pie del mensaje con más información ━━━
+const footer = `
+╭─〔 👤 *Creador del Bot* 〕──⬣
+┃ 👨‍💻 Nombre: *Bajo Bots*
+┃ 🌐 GitHub: github.com/kleiner1-1
+┃ 📱 WhatsApp: wa.me/573162402768
+╰────────────────────────⬣
+
+╭─〔 📦 *Acerca de KanekiBot* 〕──⬣
+┃ 🤖 Bot estable y optimizado
+┃ 🧠 IA y funciones múltiples
+┃ 🛠 En constante desarrollo
+┃ 🔒 Privacidad garantizada
+╰────────────────────────⬣
+
+╭─〔 📢 *Soporte y Comunidad* 〕──⬣
+┃ 💬 Únete a nuestro grupo
+┃ 📣 Próximas actualizaciones
+┃ 📌 Usa .help para más info
+╰────────────────────────⬣`;
 
   const txt = header + "\n" + global.menutext + "\n" + footer;
   const mention = [m.sender];
