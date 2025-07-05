@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 import { Sticker } from 'wa-sticker-formatter'
 import { sticker } from '../lib/sticker.js'
 import uploadFile from '../lib/uploadFile.js'
@@ -198,7 +200,7 @@ ${usedPrefix + command} -c -blur Texto | Autor
           externalAdReply: {
             title: 'KanekiBot-MD',
             body: '🖼️ Sticker personalizado con efectos y formas',
-            thumbnailUrl: 'https://qu.ax/VGCPX.jpg', // <--- CAMBIA POR TU LINK
+            thumbnail: await (await fetch('https://qu.ax/VGCPX.jpg')).buffer(),// <--- CAMBIA POR TU LINK
             mediaType: 1,
             renderLargerThumbnail: true,
             sourceUrl: 'https://github.com/kleiner1-1' // link al que lleva si hacen clic
