@@ -3,8 +3,6 @@
 //https://github.com/kleiner1-1
 //©BajoBots
 
-
-
 var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     const emoji = '😈';
     const emoji2 = '⚠️';
@@ -37,10 +35,21 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     }
 
     try {
+        // Enviar mensaje previo que se auto eliminará después de 10s
+        const warningMsg = await conn.sendMessage(m.chat, {
+            text: `*Gracias por estar en el grupo, serán domados por los 666.* 🔥\n\n*Creaciones by Bajo Bots*`,
+        }, { quoted: m });
+
+        // Esperar 10 segundos y luego eliminar el mensaje
+        await new Promise(res => setTimeout(res, 10000));
+        await conn.sendMessage(m.chat, {
+            delete: warningMsg.key
+        });
+
+        // Eliminar a los miembros
         await conn.groupParticipantsUpdate(m.chat, toKick, 'remove');
-        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥
-        
-> *By BajoPerfil*   `, m);
+
+        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥\n\n> *By BajoPerfil*`, m);
         
     } catch (e) {
         console.error(e);
