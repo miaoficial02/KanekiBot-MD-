@@ -50,8 +50,21 @@ const footer = `
   const mention = [m.sender];
   const wm = "KanekiBot"; // Marca personalizada
 
-  try {
-    let img = await fs.readFile("./src/menu.jpg");
+  
+
+  await global.menu();
+};
+
+
+handler.command = /^menu|help|menú|commands|comandos|\?$/i; // ✅ SIN prefijo
+
+export default handler;
+
+function ucapan() {
+  const time = moment.tz("America/Los_Ange  try {
+    const imageURL = "https://qu.ax/RkiEC.jpg"; // 🔁 Tu imagen del menú aquí
+    const { body: img } = await got(imageURL, { responseType: 'buffer' });
+
     await conn.sendMessage(
       m.chat,
       {
@@ -79,17 +92,7 @@ const footer = `
     conn.reply(m.chat, txt, m, { mentions: mention });
     conn.reply(m.chat, "❎ Error al mostrar el menú principal: " + e, m);
   }
-
-  await global.menu();
-};
-
-
-handler.command = /^menu|help|menú|commands|comandos|\?$/i; // ✅ SIN prefijo
-
-export default handler;
-
-function ucapan() {
-  const time = moment.tz("America/Los_Angeles").format("HH");
+les").format("HH");
   if (time >= 18) return "Good night.";
   if (time >= 15) return "Good afternoon.";
   if (time >= 10) return "Good afternoon.";
