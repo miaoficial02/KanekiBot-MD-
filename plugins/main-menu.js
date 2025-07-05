@@ -84,7 +84,8 @@ const footer = `
 };
 
 
-handler.command = ["menu", "help", "menú", "commands", "comandos", "?"];
+handler.command = /^menu|help|menú|commands|comandos|\?$/i; // ✅ SIN prefijo
+
 export default handler;
 
 function ucapan() {
@@ -186,6 +187,20 @@ global.menu = async function getMenu() {
       text += `\n╰━━━━━━━━━━━━━━━━━━━━━━⬣\n\n`;
     }
   }
+  // Añadir categoría fija para "Comandos sin prefijo"
+  const sinPrefijo = [
+    // Agrega aquí todos los comandos sin prefijo que uses
+    // puedes agregar más como 'menu', 'infobot', etc.
+  ];
 
+  if (sinPrefijo.length > 0) {
+    const title = await style("Comandos sin prefijo", 3);
+    text += `╭━━━〔 📌 ${title} 〕━━⬣\n`;
+    for (let cmd of sinPrefijo) {
+      text += `   ┆ ⏣ ${await style(cmd, 10)}\n`;
+    }
+    text += `╰━━━━━━━━━━━━━━━━━━━━━━⬣\n\n`;
+        }
+  
   global.menutext = text;
 };
