@@ -37,14 +37,11 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     }
 
     try {
-        for (let user of toKick) {
-            await conn.groupParticipantsUpdate(m.chat, [user], 'remove');
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa para evitar bloqueos
-        }
+        await conn.groupParticipantsUpdate(m.chat, toKick, 'remove');
         await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥`, m);
     } catch (e) {
         console.error(e);
-        await conn.reply(m.chat, `${emoji2} *Ocurrió un error al intentar eliminar a los miembros.*`, m);
+        await conn.reply(m.chat, `${emoji2} *Error al intentar eliminar a los miembros.*`, m);
     }
 };
 
@@ -53,6 +50,6 @@ handler.tags = ['grupo'];
 handler.command = ['kickall', 'eliminaratodos', 'sacaratodos'];
 handler.group = true;
 handler.botAdmin = true;
-handler.register = false; // ✅ No requiere registro
+handler.register = false;
 
 export default handler;
