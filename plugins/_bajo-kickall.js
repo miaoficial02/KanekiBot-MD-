@@ -5,28 +5,24 @@
 
 
 
-var handler = async (m, { conn, participants, isAdmin, isBotAdmin, args, usedPrefix, command }) => {
-    const emoji = '♫︎';
-    const emoji2 = '✿︎';
-
+var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
+    const emoji = '😈';
+    const emoji2 = '⚠️';
+    const emojiSuccess = '✅';
     const isOwner = global.owner.map(o => typeof o === 'string' ? o : o[0]).includes(m.sender);
+
     if (!isAdmin && !isOwner) {
-        return conn.reply(m.chat, `${emoji2} Este comando solo puede ser usado por administradores del grupo.`, m);
+        return conn.reply(m.chat, `${emoji2} *Solo los administradores pueden usar este comando.*`, m);
     }
 
     if (!isBotAdmin) {
-        return conn.reply(m.chat, `${emoji2} No puedo eliminar a nadie porque no soy administrador del grupo.`, m);
-    }
-
-    if (!args[0] || !/^(sí|si|confirmar)$/i.test(args[0])) {
-        return conn.reply(m.chat, `${emoji} ¿Estás seguro de que quieres eliminar a todos los miembros del grupo (excepto tú)?\n\nResponde con:\n*${usedPrefix}${command} sí*`, m);
+        return conn.reply(m.chat, `${emoji2} *Necesito permisos de administrador para eliminar miembros.*`, m);
     }
 
     const groupInfo = await conn.groupMetadata(m.chat);
     const ownerGroup = groupInfo.owner || m.chat.split`-`[0] + '@s.whatsapp.net';
     const globalOwners = global.owner.map(o => typeof o === 'string' ? o : o[0] + '@s.whatsapp.net');
 
-   
     let toKick = participants
         .map(p => p.id)
         .filter(id =>
@@ -37,22 +33,26 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin, args, usedPre
         );
 
     if (toKick.length === 0) {
-        return conn.reply(m.chat, `${emoji2} No hay miembros válidos para eliminar.`, m);
+        return conn.reply(m.chat, `${emoji2} *No hay miembros válidos para eliminar.*`, m);
     }
 
     try {
-        await conn.groupParticipantsUpdate(m.chat, toKick, 'remove');
-        await conn.reply(m.chat, `${emoji} Todos los miembros fueron eliminados exitosamente (excepto tú).`, m);
+        for (let user of toKick) {
+            await conn.groupParticipantsUpdate(m.chat, [user], 'remove');
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Pausa para evitar bloqueos
+        }
+        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥`, m);
     } catch (e) {
-        await conn.reply(m.chat, `${emoji2} Ocurrió un error al intentar eliminar a los miembros.`, m);
+        console.error(e);
+        await conn.reply(m.chat, `${emoji2} *Ocurrió un error al intentar eliminar a los miembros.*`, m);
     }
 };
 
-handler.help = ['kickall confirmar'];
+handler.help = ['kickall'];
 handler.tags = ['grupo'];
 handler.command = ['kickall', 'eliminaratodos', 'sacaratodos'];
 handler.group = true;
 handler.botAdmin = true;
-handler.register = true;
+handler.register = false; // ✅ No requiere registro
 
 export default handler;
