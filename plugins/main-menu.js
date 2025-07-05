@@ -54,11 +54,8 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(
       m.chat,
       {
-        document: imgBuffer,
-        fileName: 'menu.jpg',
-        mimetype: 'image/jpeg',
+        image: imgBuffer,
         caption: txt,
-        fileLength: 99999999,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
