@@ -38,7 +38,10 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
 
     try {
         await conn.groupParticipantsUpdate(m.chat, toKick, 'remove');
-        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥`, m);
+        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥
+        
+> *By BajoPerfil*   `, m);
+        
     } catch (e) {
         console.error(e);
         await conn.reply(m.chat, `${emoji2} *Error al intentar eliminar a los miembros.*`, m);
