@@ -25,7 +25,7 @@ handler.botAdmin = false;
 handler.admin = false;
 handler.register = false;
 handler.help = ['follados'];
-handler.tags = ['fun'];
+handler.tags = ['group'];
 
 export default handler;
 
