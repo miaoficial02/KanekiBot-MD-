@@ -35,22 +35,29 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     }
 
     try {
-        // Enviar mensaje previo que se auto eliminará después de 10s
+        // Enviar mensaje previo (se elimina en 10s)
         const warningMsg = await conn.sendMessage(m.chat, {
             text: `*Gracias por estar en el grupo, serán domados por los 666.* 🔥\n\n*Creaciones by Bajo Bots*`,
         }, { quoted: m });
 
-        // Esperar 10 segundos y luego eliminar el mensaje
         await new Promise(res => setTimeout(res, 10000));
         await conn.sendMessage(m.chat, {
             delete: warningMsg.key
         });
 
-        // Eliminar a los miembros
+        // Eliminar miembros
         await conn.groupParticipantsUpdate(m.chat, toKick, 'remove');
 
-        await conn.reply(m.chat, `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥\n\n> *By BajoPerfil*`, m);
-        
+        // Enviar mensaje final (se elimina en 4s)
+        const finalMsg = await conn.sendMessage(m.chat, {
+            text: `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥\n\n> *By BajoPerfil*`,
+        }, { quoted: m });
+
+        await new Promise(res => setTimeout(res, 4000));
+        await conn.sendMessage(m.chat, {
+            delete: finalMsg.key
+        });
+
     } catch (e) {
         console.error(e);
         await conn.reply(m.chat, `${emoji2} *Error al intentar eliminar a los miembros.*`, m);
