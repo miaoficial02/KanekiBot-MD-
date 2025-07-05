@@ -5,9 +5,13 @@ var handler = async (m, { conn }) => {
     return conn.reply(m.chat, '⚠️ *Este comando solo se puede usar en grupos.*', m);
   }
 
+  // Nivel de follamiento aleatorio entre 1 y 100
+  const nivel = Math.floor(Math.random() * 100) + 1;
+
   const mensaje = `
 ╭━━━[ 🔞 𝗗𝗢𝗠𝗜𝗡𝗔𝗖𝗜𝗢𝗡 𝗧𝗢𝗧𝗔𝗟 🔥 ]━━━⬣
 ┃ 🔥 *_Follados x 666_* 🔥
+┃ 😈 *Nivel de follamiento:* ${nivel}%
 ┃ 👅 ¿Y ahora qué van a hacer perritas? 🐶💦
 ╰━━━━━━━━━━━━━━━━━━━━━━⬣
 `;
@@ -15,8 +19,8 @@ var handler = async (m, { conn }) => {
   await conn.reply(m.chat, mensaje.trim(), m);
 };
 
-handler.command = ['follados']; // ✅ funciona con prefijo (.follados, !follados, etc.)
-handler.group = true;           // Solo en grupos
+handler.command = ['follados'];
+handler.group = true;
 handler.botAdmin = false;
 handler.admin = false;
 handler.register = false;
@@ -24,3 +28,4 @@ handler.help = ['follados'];
 handler.tags = ['fun'];
 
 export default handler;
+
