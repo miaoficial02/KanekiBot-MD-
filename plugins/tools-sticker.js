@@ -194,23 +194,22 @@ ${usedPrefix + command} -c -blur Texto | Autor
     conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
   } else {
     await conn.sendMessage(m.chat, {
-      document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
-      fileName: 'StickerBot.pdf',
-      mimetype: 'application/pdf',
-      caption: `💯 𝐑𝐞𝐬𝐩𝐨𝐧𝐝𝐞 𝐚 𝐮𝐧𝐚 *𝐢𝐦𝐚𝐠𝐞𝐧/𝐯𝐢𝐝𝐞𝐨/𝐠𝐢𝐟* 𝐩𝐚𝐫𝐚 𝐜𝐨𝐧𝐯𝐞𝐫𝐭𝐢𝐫𝐥𝐨 𝐞𝐧 𝐬𝐭𝐢𝐜𝐤𝐞𝐫.\n\n📌 Usa *"---i"* para ver los efectos disponibles.\n\n> *By BajoBots*`,
+      text: `💯 𝐑𝐞𝐬𝐩𝐨𝐧𝐝𝐞 𝐚 𝐮𝐧𝐚 *𝐢𝐦𝐚𝐠𝐞𝐧/𝐯𝐢𝐝𝐞𝐨/𝐠𝐢𝐟* 𝐩𝐚𝐫𝐚 𝐜𝐨𝐧𝐯𝐞𝐫𝐭𝐢𝐫𝐥𝐨 𝐞𝐧 𝐬𝐭𝐢𝐜𝐤𝐞𝐫.\n\n📌 Usa *"---i"* para ver efectos y formas disponibles.\n\n> *By BajoBots*`,
       contextInfo: {
         externalAdReply: {
           title: 'KanekiBot-MD',
           body: '🖼️ Sticker personalizado con efectos y formas',
-          thumbnail: await (await fetch('https://qu.ax/VGCPX.jpg')).buffer(),
+          thumbnail: await (await fetch('https://qu.ax/VGCPX.jpgimport fetch from 'node-fetch'')).buffer(),
           mediaType: 1,
           renderLargerThumbnail: true,
+          showAdAttribution: false,
           sourceUrl: 'https://github.com/kleiner1-1'
         }
       }
-    }, { quoted: m });
+    }, { quoted: m })
   }
 }
+
 
 
 handler.help = ['sticker']
