@@ -54,8 +54,11 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(
       m.chat,
       {
-        image: imgBuffer,
+        document: imgBuffer,
+        fileName: 'KanekiBot - Menu.pdf',
+        mimetype: 'application/pdf',
         caption: txt,
+        fileLength: 99999999,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
