@@ -190,24 +190,27 @@ ${usedPrefix + command} -c -blur Texto | Autor
     }
 
   } finally {
-    if (stiker) {
-      conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
-    } else {
-      await conn.sendMessage(m.chat, {
-        text: `💯 𝐑𝐞𝐬𝐩𝐨𝐧𝐝𝐞 𝐚 𝐮𝐧𝐚 *𝐢𝐦𝐚𝐠𝐞𝐧/𝐯𝐢𝐝𝐞𝐨/𝐠𝐢𝐟* 𝐩𝐚𝐫𝐚 𝐜𝐨𝐧𝐯𝐞𝐫𝐭𝐢𝐫𝐥𝐨 𝐞𝐧 𝐬𝐭𝐢𝐜𝐤𝐞𝐫. 𝐏𝐚𝐫𝐚 𝐬𝐚𝐛𝐞𝐫 𝐥𝐚 𝐥𝐢𝐬𝐭𝐚 𝐝𝐞 𝐞𝐟𝐞𝐜𝐭𝐨𝐬 𝐲 𝐟𝐨𝐫𝐦𝐚𝐬 𝐮𝐬𝐚 *"---𝐢"*\n\n> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`,
-        contextInfo: {
-          externalAdReply: {
-            title: 'KanekiBot-MD',
-            body: '🖼️ Sticker personalizado con efectos y formas',
-            thumbnail: await (await fetch('https://qu.ax/VGCPX.jpg')).buffer(),// <--- CAMBIA POR TU LINK
-            mediaType: 1,
-            renderLargerThumbnail: true,
-            sourceUrl: 'https://github.com/kleiner1-1' // link al que lleva si hacen clic
-          }
+  if (stiker) {
+    conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
+  } else {
+    await conn.sendMessage(m.chat, {
+      document: { url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      fileName: 'StickerBot.pdf',
+      mimetype: 'application/pdf',
+      caption: `💯 𝐑𝐞𝐬𝐩𝐨𝐧𝐝𝐞 𝐚 𝐮𝐧𝐚 *𝐢𝐦𝐚𝐠𝐞𝐧/𝐯𝐢𝐝𝐞𝐨/𝐠𝐢𝐟* 𝐩𝐚𝐫𝐚 𝐜𝐨𝐧𝐯𝐞𝐫𝐭𝐢𝐫𝐥𝐨 𝐞𝐧 𝐬𝐭𝐢𝐜𝐤𝐞𝐫.\n\n📌 Usa *"---i"* para ver los efectos disponibles.\n\n> *By BajoBots*`,
+      contextInfo: {
+        externalAdReply: {
+          title: 'KanekiBot-MD',
+          body: '🖼️ Sticker personalizado con efectos y formas',
+          thumbnail: await (await fetch('https://qu.ax/VGCPX.jpg')).buffer(),
+          mediaType: 1,
+          renderLargerThumbnail: true,
+          sourceUrl: 'https://github.com/kleiner1-1'
         }
-      }, { quoted: m });
-    }
+      }
+    }, { quoted: m });
   }
+}
 
 
 handler.help = ['sticker']
