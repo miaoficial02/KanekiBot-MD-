@@ -1,8 +1,7 @@
-//desarrollado por bajo bots
+// desarrollado por Bajo Bots
 
-
-var handler = async (m, { conn, isGroup }) => {
-  if (!isGroup) {
+var handler = async (m, { conn }) => {
+  if (!m.isGroup) {
     return conn.reply(m.chat, '⚠️ *Este comando solo se puede usar en grupos.*', m);
   }
 
@@ -16,14 +15,11 @@ var handler = async (m, { conn, isGroup }) => {
   await conn.reply(m.chat, mensaje.trim(), m);
 };
 
-// ✅ Con prefijo (por defecto .follados o !follados, etc.)
-handler.command = ['follados'];
-
-handler.group = true;
+handler.command = ['follados']; // ✅ funciona con prefijo (.follados, !follados, etc.)
+handler.group = true;           // Solo en grupos
 handler.botAdmin = false;
 handler.admin = false;
 handler.register = false;
-
 handler.help = ['follados'];
 handler.tags = ['fun'];
 
