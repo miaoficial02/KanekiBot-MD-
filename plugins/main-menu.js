@@ -1,3 +1,4 @@
+import got from "got"; // Asegúrate que esté al principio del archivo
 import moment from "moment-timezone";
 import { promises as fs } from "fs";
 
@@ -61,37 +62,10 @@ handler.command = /^menu|help|menú|commands|comandos|\?$/i; // ✅ SIN prefijo
 export default handler;
 
 function ucapan() {
-  const time = moment.tz("America/Los_Ange  try {
-    const imageURL = "https://qu.ax/RkiEC.jpg"; // 🔁 Tu imagen del menú aquí
-    const { body: img } = await got(imageURL, { responseType: 'buffer' });
+  const time = moment.tz("America/Los_Ange
+                         
+                         
 
-    await conn.sendMessage(
-      m.chat,
-      {
-        document: img,
-        mimetype: "image/png",
-        caption: txt,
-        fileLength: 1900,
-        contextInfo: {
-          mentionedJid: mention,
-          isForwarded: true,
-          forwardingScore: 999,
-          externalAdReply: {
-            title: "",
-            body: `あ ${wm}`,
-            thumbnail: img,
-            sourceUrl: "",
-            mediaType: 1,
-            renderLargerThumbnail: true,
-          },
-        },
-      },
-      { quoted: m }
-    );
-  } catch (e) {
-    conn.reply(m.chat, txt, m, { mentions: mention });
-    conn.reply(m.chat, "❎ Error al mostrar el menú principal: " + e, m);
-  }
 les").format("HH");
   if (time >= 18) return "Good night.";
   if (time >= 15) return "Good afternoon.";
@@ -101,7 +75,40 @@ les").format("HH");
 }
 var xStr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 var yStr = Object.freeze({
-1: ['ᴀ', 'ʙ', 'ᴄ', 'ᴅ', 'ᴇ', 'ꜰ', 'ɢ', 'ʜ', 'ɪ', 'ᴊ', 'ᴋ', 'ʟ', 'ᴍ', 'ɴ', 'ᴏ', 'ᴘ', 'q', 'ʀ', 'ꜱ', 'ᴛ', 'ᴜ', 'ᴠ', 'ᴡ', 'x', 'ʏ', 'ᴢ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+1: ['ᴀ', 'ʙ', 'ᴄ', 'ᴅ', 'ᴇ', 'ꜰ', 'ɢ', 'ʜ', 'ɪ', 'ᴊ', 'ᴋ', 'ʟ', 'ᴍ', 'ɴ', 'ᴏ', 'ᴘ', 'q', 'ʀ', 'ꜱ', 'ᴛ', 'ᴜ', 'ᴠ', 'ᴡ',try {
+  const imageURL = "https://qu.ax/RkiEC.jpg"; // 🔁 URL de tu imagen personalizada
+  const { body: imgBuffer } = await got(imageURL, { responseType: 'buffer' });
+
+  await conn.sendMessage(
+    m.chat,
+    {
+      document: imgBuffer,
+      fileName: 'menu.jpg',
+      mimetype: 'image/jpeg',
+      caption: txt,
+      fileLength: 99999999,
+      contextInfo: {
+        mentionedJid: mention,
+        isForwarded: true,
+        forwardingScore: 999,
+        externalAdReply: {
+          title: "✨ KanekiBot - Menú",
+          body: "🤖 Diseño único por Bajo Bots",
+          thumbnail: imgBuffer,
+          sourceUrl: "", // Puedes poner tu grupo o sitio aquí
+          mediaType: 1,
+          renderLargerThumbnail: true
+        }
+      }
+    },
+    { quoted: m }
+  );
+} catch (e) {
+  console.error(e); // para ver errores en consola
+  conn.reply(m.chat, txt, m, { mentions: mention });
+  conn.reply(m.chat, "❎ Error al mostrar el menú principal: " + e, m);
+}
+ 'x', 'ʏ', 'ᴢ', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
 2: ['𝑎', '𝑏', '𝑐', '𝑑', '𝑒', '𝑓', '𝑔', 'ℎ', '𝑖', '𝑗', '𝑘', '𝑙', '𝑚', '𝑛', '𝑜', '𝑝', '𝑞', '𝑟', '𝑠', '𝑡', '𝑢', '𝑣', '𝑤', '𝑥', '𝑦', '𝑧', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
 3: ['𝐚', '𝐛', '𝐜', '𝐝', '𝐞', '𝐟', '𝐠', '𝐡', '𝐢', '𝐣', '𝐤', '𝐥', '𝐦', '𝐧', '𝐨', '𝐩', '𝐪', '𝐫', '𝐬', '𝐭', '𝐮', '𝐯', '𝐰', '𝐱', '𝐲', '𝐳', '𝟏', '𝟐', '𝟑', '𝟒', '𝟓', '𝟔', '𝟕', '𝟖', '𝟗', '𝟎'],
 4: ['𝒂', '𝒃', '𝒄', '𝒅', '𝒆', '𝒇', '𝒈', '𝒉', '𝒊', '𝒋', '𝒌', '𝒍', '𝒎', '𝒏', '𝒐', '𝒑', '𝒒', '𝒓', '𝒔', '𝒕', '𝒖', '𝒗', '𝒘', '𝒙', '𝒚', '𝒛', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
