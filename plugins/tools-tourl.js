@@ -6,30 +6,32 @@ let handler = async (m, { conn }) => {
   let mime = (q.msg || q).mimetype || ''
 
   if (!mime) {
-    return conn.reply(m.chat, `📌 *Por favor, responde a una imagen o video para subir a qu.ax.*`, m)
+    return conn.reply(m.chat, `📌 *Responde a una imagen o video para subir a qu.ax*`, m)
   }
 
   const rwait = '🔄'
   const done = '✅'
   const error = '❌'
   const dev = 'KanekiBot-MD'
-  const fkontak = null // Puedes personalizar este contacto si usas uno falso
+  const fkontak = null // puedes personalizar con contacto falso
 
   await m.react(rwait)
 
   try {
     const media = await q.download()
-    const url = await uploadToQuax(media)
+    const ext = mime.split('/')[1].split(';')[0]
+    const filename = `kaneki_upload.${ext}`
+    const url = await uploadToQuax(media, filename)
 
     const txt = `
-┏━━⬣「 *ENLACE QU.AX* 」⬣
-┃ 🔗 *Enlace:* ${url}
+┏━━⬣「 *E N L A C E - Q U . A X* 」⬣
+┃ 🔗 *Link:* ${url}
 ┃ 📦 *Tamaño:* ${formatBytes(media.length)}
 ┃ ⏳ *Expira:* Desconocido
 ┗━━⬣ *${dev}*
     `.trim()
 
-    await conn.sendFile(m.chat, media, 'upload.jpg', txt, m, fkontak)
+    await conn.sendFile(m.chat, media, filename, txt, m, fkontak)
     await m.react(done)
 
   } catch (e) {
@@ -39,24 +41,30 @@ let handler = async (m, { conn }) => {
   }
 }
 
-handler.help = ['tourl']
+handler.help = ['tourl3']
 handler.tags = ['tools']
-handler.command = ['tourl', 'upload']
+handler.command = ['tourl3']
 handler.register = false
 
 export default handler
 
-async function uploadToQuax(buffer) {
+async function uploadToQuax(buffer, filename) {
   const form = new FormData()
-  form.append('file', buffer, 'kaneki_upload.jpg') // o .mp4 si es video
+  form.append('file', buffer, filename)
 
   const res = await fetch('https://qu.ax/upload', {
     method: 'POST',
-    body: form
+    body: form,
+    headers: {
+      ...form.getHeaders(),
+      'User-Agent': 'Mozilla/5.0 (KanekiBot-MD)',
+      'Accept': 'application/json'
+    }
   })
 
   const json = await res.json()
-  if (!json.url) throw '❌ Error al subir a qu.ax.'
+
+  if (!json.url || !json.success) throw '❌ No se pudo subir el archivo a qu.ax.'
 
   return json.url
 }
