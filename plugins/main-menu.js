@@ -29,19 +29,6 @@ let handler = async (m, { conn }) => {
 ┃ 👨‍💻 Nombre: *Bajo Bots*
 ┃ 🌐 GitHub: github.com/kleiner1-1
 ┃ 📱 WhatsApp: wa.me/573162402768
-╰────────────────────────⬣
-
-╭─〔 📦 *Acerca de KanekiBot* 〕──⬣
-┃ 🤖 Bot estable y optimizado
-┃ 🧠 IA y funciones múltiples
-┃ 🛠 En constante desarrollo
-┃ 🔒 Privacidad garantizada
-╰────────────────────────⬣
-
-╭─〔 📢 *Soporte y Comunidad* 〕──⬣
-┃ 💬 Únete a nuestro grupo
-┃ 📣 Próximas actualizaciones
-┃ 📌 Usa .help para más info
 ╰────────────────────────⬣`;
 
   const txt = header + "\n" + global.menutext + "\n" + footer;
