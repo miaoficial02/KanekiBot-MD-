@@ -75,11 +75,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       await m.react("🎵")
       const audio = await ytDownloader.get(url, "mp3")
       return await conn.sendMessage(m.chat, {
-        document: { url: audio.downloadUrl },
-        mimetype: 'audio/mpeg',
-        fileName: `${audio.title}.mp3`
-      }, { quoted: m })
-    }
+  audio: { url: audio.downloadUrl },
+  mimetype: 'audio/mpeg',
+  ptt: false // true si quieres que se escuche como nota de voz
+}, { quoted: m })
+
 
     if (["play2", "ytv", "ytmp4"].includes(command)) {
       await m.react("🎥")
