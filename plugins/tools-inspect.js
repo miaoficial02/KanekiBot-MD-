@@ -1,7 +1,7 @@
 let handler = async (m, { conn, text }) => {
       try {
          if (!text) {
-            return conn.reply(m.chat, `🌷 Ejemplo de uso: inspect https://whatsapp.com/channel/0029Va6InNBFCCoM9xzKFG3G`, m);
+            return conn.reply(m.chat, `🌷 Ejemplo de uso: inspect https://whatsapp.com/channel/0029Vb63Kf9KwqSQLOQOtk3N`, m);
          }
 
          if (text.includes('https://whatsapp.com/channel/')) {
