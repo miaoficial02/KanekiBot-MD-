@@ -66,9 +66,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 └───────────────────────────`.trim()
 
   await conn.sendMessage(m.chat, {
-    image: { url: thumbnail },
-    caption,
-  }, { quoted: m })
+  audio: { url: audio.downloadUrl },
+  mimetype: 'audio/mp4', // este mimetype asegura reproducción directa
+  ptt: false              // true si quieres que sea nota de voz
+}, { quoted: m })
 
   try {
     if (["play", "yta", "ytmp3"].includes(command)) {
