@@ -120,7 +120,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 handler.help = ['play', 'play2', 'yta', 'ytmp3', 'ytv', 'ytmp4']
 handler.tags = ['descargas']
 handler.command = /^play2?$|^yt(a|mp3|v|mp4)$/i
-handler.register = true
+handler.register = false
 
 export default handler
         
