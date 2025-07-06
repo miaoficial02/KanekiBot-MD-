@@ -1,40 +1,41 @@
-import uploadFile from '../lib/uploadFile.js'
-import uploadImage from '../lib/uploadImage.js'
 import fetch from 'node-fetch'
+import FormData from 'form-data'
 
 let handler = async (m, { conn }) => {
   let q = m.quoted ? m.quoted : m
   let mime = (q.msg || q).mimetype || ''
 
-  if (!mime) return conn.reply(m.chat, `📌 Por favor, responde a una *imagen* o *video* para subir.`, m)
+  if (!mime) {
+    return conn.reply(m.chat, `📌 *Responde a una imagen o video para subirlo a Catbox.*`, m)
+  }
 
   const rwait = '🔄'
   const done = '✅'
   const error = '❌'
   const dev = 'KanekiBot-MD'
-  const fkontak = null // Puedes cambiar esto por un contacto falso o dejarlo en null
+  const fkontak = null
 
   await m.react(rwait)
 
   try {
-    let media = await q.download()
-    let isImageOrVideo = /image\/(png|jpe?g|gif)|video\/mp4/.test(mime)
+    const media = await q.download()
+    const url = await uploadToCatbox(media)
 
-    let link = await (isImageOrVideo ? uploadImage : uploadFile)(media)
-
-    let txt = `┏━━⬣「 *E N L A C E - G E N E R A D O* 」⬣\n`
-    txt += `┃ 🔗 *Link:* ${link}\n`
-    txt += `┃ ✂️ *Acortado:* ${await shortUrl(link)}\n`
-    txt += `┃ 📦 *Tamaño:* ${formatBytes(media.length)}\n`
-    txt += `┃ ⏳ *Expiración:* ${isImageOrVideo ? 'No expira' : 'Desconocido'}\n`
-    txt += `┗━━⬣ *${dev}*`
+    const txt = `
+┏━━⬣「 *ENLACE CATBOX* 」⬣
+┃ 🔗 *Enlace:* ${url}
+┃ 📦 *Tamaño:* ${formatBytes(media.length)}
+┃ 🚫 *Expira:* Nunca (almacenamiento permanente)
+┗━━⬣ *${dev}*
+    `.trim()
 
     await conn.sendFile(m.chat, media, 'upload.jpg', txt, m, fkontak)
     await m.react(done)
+
   } catch (e) {
     console.error(e)
     await m.react(error)
-    return conn.reply(m.chat, '❌ Error al subir el archivo o generar enlace.', m)
+    return conn.reply(m.chat, '❌ *Error al subir el archivo a Catbox.*', m)
   }
 }
 
@@ -45,14 +46,25 @@ handler.register = false
 
 export default handler
 
+async function uploadToCatbox(buffer) {
+  const form = new FormData()
+  form.append('reqtype', 'fileupload')
+  form.append('fileToUpload', buffer, 'kaneki_upload.jpg')
+
+  const res = await fetch('https://catbox.moe/user/api.php', {
+    method: 'POST',
+    body: form
+  })
+
+  const text = await res.text()
+  if (!text.startsWith('https://')) throw '❌ Error al subir a Catbox.'
+
+  return text.trim()
+}
+
 function formatBytes(bytes) {
   if (bytes === 0) return '0 B'
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
   return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`
-}
-
-async function shortUrl(url) {
-  let res = await fetch(`https://qu.ax/upload.php}`)
-  return await res.text()
 }
