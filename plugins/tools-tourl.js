@@ -53,6 +53,6 @@ function formatBytes(bytes) {
 }
 
 async function shortUrl(url) {
-  let res = await fetch(`https://catbox.moe/user/api.php}`)
+  let res = await fetch(`https://qu.ax/upload.php}`)
   return await res.text()
 }
