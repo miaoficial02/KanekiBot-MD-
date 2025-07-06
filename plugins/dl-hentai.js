@@ -5,52 +5,57 @@ import { JSDOM } from "jsdom";
 let handler = async (m, { conn, text, args, setting }) => {
   try {
     if (!text) {
-      return conn.reply(m.chat, `🌱 Ejemplo de uso: hent Boku ni Harem Sexfriend`, m);
+      return conn.reply(m.chat, `🔞 *Ejemplo de uso:*
+
+.hent Boku ni Harem Sexfriend`, m);
     }
 
-    m.react('🕒');
+    m.react('⏳');
 
     if (text.includes('https://veohentai.com/ver/')) {
       const videoInfo = await getInfo(text);
       if (!videoInfo) {
-        return conn.reply(m.chat, 'No se encontró información del video.', m);
+        return conn.reply(m.chat, '❌ *No se encontró información del video.*', m);
       }
 
       const videoUrl = videoInfo.videoUrl;
       let peso = await size(videoInfo.videoUrl);
 
       let cap = `
-◜ Hentai - Download ◞
+┏━━⬣ *HENTAI - DESCARGA*
+┃ 🔞 *Título:* ${videoInfo.title}
+┃ 👁️ *Vistas:* ${videoInfo.views}
+┃ 👍 *Likes:* ${videoInfo.likes}
+┃ 👎 *Dislikes:* ${videoInfo.dislikes}
+┃ 💾 *Peso:* ${peso}
+┃ 🌐 *Link:* ${text}
+┗━━━━━━━━━━━━⬣`;
 
-≡ 🌴 \`Title :\` ${videoInfo.title}
-≡ 🌿 \`Views :\` ${videoInfo.views}
-≡ 🌾 \`Likes :\` ${videoInfo.likes}
-≡ 🌲 \`Peso :\` ${peso}
-≡ 🍄 \`Dislikes :\` ${videoInfo.dislikes}
-≡ 🌷 \`Link :\` ${text}
-`;
-      m.reply(cap)
+      m.reply(cap);
 
       await conn.sendFile(m.chat, videoUrl, `${videoInfo.title}.mp4`, '', m, null, {
         asDocument: true, mimetype: "video/mp4"
       });
-      m.react('☑️');
+      m.react('✅');
     } else {
       const results = await searchHentai(text);
       if (results.length === 0) {
-        return conn.reply(m.chat, 'No se encontraron resultados.', m);
+        return conn.reply(m.chat, '⚠️ *No se encontraron resultados.*', m);
       }
 
-      let cap = `◜ Hentai - Search ◞\n`;
+      let cap = `┏━━⬣ *HENTAI - RESULTADOS*
+┃ 📝 *Búsqueda:* ${text}
+┗━━━━━━━━━━━━⬣\n`;
 
       results.slice(0, 15).forEach((res, index) => {
-        cap += `\n\`${index + 1}\`\n≡ 🌴 \`Title :\` ${res.titulo}\n≡ 🌱 \`Link :\` ${res.url}\n`;
+        cap += `\n┣ 🔸 *${index + 1}.* ${res.titulo}\n┣ 🔗 ${res.url}`;
       });
-      m.reply(cap)
+
+      m.reply(cap);
       m.react("🔞");
     }
   } catch (err) {
-    return conn.reply(m.chat, 'Error en la ejecución.\n\n' + err, m);
+    return conn.reply(m.chat, '❌ *Error en la ejecución.*\n\n' + err, m);
   }
 };
 
@@ -103,7 +108,7 @@ async function getInfo(url) {
       const iframeSrc = iframe.src;
       const videoResponse = await fetch(iframeSrc);
       const videoHtml = await videoResponse.text();
-      const match = videoHtml.match(/data-id="\/player\.php\?u=([^&]*)/);
+      const match = videoHtml.match(/data-id=\"\/player\\.php\\?u=([^&]*)/);
 
       if (!match) throw new Error("No se encontró la URL del video");
 
