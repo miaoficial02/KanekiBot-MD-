@@ -1,13 +1,14 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+
 let handler = async (m, { conn, command }) => {
   conn.hdr = conn.hdr || {}
-  if (m.sender in conn.hdr) throw 'Aún hay un proceso que no se ha completado, por favor espere...'
+  if (m.sender in conn.hdr) throw '⚠️ Aún hay un proceso pendiente. Por favor, espera a que termine.'
 
   let q = m.quoted || m
   let mime = (q.msg || q).mimetype || q.mediaType || ''
-  if (!mime) throw 'Envía o responde a la imagen con el comando.'
-  if (!/image\/(jpe?g|png)/.test(mime)) throw `El formato ${mime} no es compatible`
+  if (!mime) throw '❗Envía o responde a una imagen con el comando.'
+  if (!/image\/(jpe?g|png)/.test(mime)) throw `⚠️ El formato *${mime}* no es compatible.`
 
   conn.hdr[m.sender] = true
   await conn.sendMessage(m.chat, { react: { text: "♻️", key: m.key } })
@@ -20,11 +21,11 @@ let handler = async (m, { conn, command }) => {
     const api = `https://fastrestapis.fasturl.cloud/aiimage/upscale?imageUrl=${encodeURIComponent(imageUrl)}&resize=4`
     const res = await fetch(api)
     const buffer = await res.buffer()
-    await conn.sendFile(m.chat, buffer, 'hd.jpg', footer, m)
+    await conn.sendFile(m.chat, buffer, 'hd.jpg', '✅ Imagen mejorada con KanekiBot-MD', m)
   } catch {
     error = true
   } finally {
-    if (error) m.reply(error)
+    if (error) m.reply('❌ Ocurrió un error al procesar la imagen.')
     delete conn.hdr[m.sender]
   }
 }
@@ -41,6 +42,6 @@ async function up(buffer) {
   form.append('fileToUpload', buffer, 'image.jpg')
   const res = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: form })
   const url = await res.text()
-  if (!url.startsWith('https://')) throw 'gagal upload ke Catbox'
+  if (!url.startsWith('https://')) throw '❌ Error al subir a Catbox.'
   return url.trim()
 }
