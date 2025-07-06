@@ -53,6 +53,6 @@ function formatBytes(bytes) {
 }
 
 async function shortUrl(url) {
-  let res = await fetch(`https://api.lolhuman.xyz/api/urltoimg?apikey=b8d3bec7f13fa5231ba88431&url=}`)
+  let res = await fetch(`https://catbox.moe/user/api.php}`)
   return await res.text()
 }
