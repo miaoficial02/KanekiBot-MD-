@@ -6,67 +6,60 @@ let handler = async (m, { conn }) => {
   let mime = (q.msg || q).mimetype || ''
 
   if (!mime) {
-    return conn.reply(m.chat, `📌 *Responde a una imagen o video para subir a qu.ax*`, m)
+    return conn.reply(m.chat, `📌 *Responde a una imagen o video para subirlo a Catbox.*`, m)
   }
 
   const rwait = '🔄'
   const done = '✅'
   const error = '❌'
   const dev = 'KanekiBot-MD'
-  const fkontak = null // puedes personalizar con contacto falso
+  const fkontak = null
 
   await m.react(rwait)
 
   try {
     const media = await q.download()
-    const ext = mime.split('/')[1].split(';')[0]
-    const filename = `kaneki_upload.${ext}`
-    const url = await uploadToQuax(media, filename)
+    const url = await uploadToCatbox(media)
 
     const txt = `
-┏━━⬣「 *E N L A C E - Q U . A X* 」⬣
-┃ 🔗 *Link:* ${url}
+┏━━⬣「 *ENLACE CATBOX* 」⬣
+┃ 🔗 *Enlace:* ${url}
 ┃ 📦 *Tamaño:* ${formatBytes(media.length)}
-┃ ⏳ *Expira:* Desconocido
+┃ 🚫 *Expira:* Nunca (almacenamiento permanente)
 ┗━━⬣ *${dev}*
     `.trim()
 
-    await conn.sendFile(m.chat, media, filename, txt, m, fkontak)
+    await conn.sendFile(m.chat, media, 'upload.jpg', txt, m, fkontak)
     await m.react(done)
 
   } catch (e) {
     console.error(e)
     await m.react(error)
-    return conn.reply(m.chat, '❌ *Error al subir el archivo a qu.ax.*', m)
+    return conn.reply(m.chat, '❌ *Error al subir el archivo a Catbox.*', m)
   }
 }
 
-handler.help = ['tourl3']
+handler.help = ['tourl']
 handler.tags = ['tools']
-handler.command = ['tourl3']
+handler.command = ['tourl', 'upload']
 handler.register = false
 
 export default handler
 
-async function uploadToQuax(buffer, filename) {
+async function uploadToCatbox(buffer) {
   const form = new FormData()
-  form.append('file', buffer, filename)
+  form.append('reqtype', 'fileupload')
+  form.append('fileToUpload', buffer, 'kaneki_upload.jpg')
 
-  const res = await fetch('https://qu.ax/upload', {
+  const res = await fetch('https://catbox.moe/user/api.php', {
     method: 'POST',
-    body: form,
-    headers: {
-      ...form.getHeaders(),
-      'User-Agent': 'Mozilla/5.0 (KanekiBot-MD)',
-      'Accept': 'application/json'
-    }
+    body: form
   })
 
-  const json = await res.json()
+  const text = await res.text()
+  if (!text.startsWith('https://')) throw '❌ Error al subir a Catbox.'
 
-  if (!json.url || !json.success) throw '❌ No se pudo subir el archivo a qu.ax.'
-
-  return json.url
+  return text.trim()
 }
 
 function formatBytes(bytes) {
