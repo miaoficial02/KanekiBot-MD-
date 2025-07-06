@@ -6,26 +6,26 @@ let handler = async (m, { conn }) => {
   let mime = (q.msg || q).mimetype || ''
 
   if (!mime) {
-    return conn.reply(m.chat, `📌 *Responde a una imagen o video para subirlo a Catbox.*`, m)
+    return conn.reply(m.chat, `📌 *Por favor, responde a una imagen o video para subir a qu.ax.*`, m)
   }
 
   const rwait = '🔄'
   const done = '✅'
   const error = '❌'
   const dev = 'KanekiBot-MD'
-  const fkontak = null
+  const fkontak = null // Puedes personalizar este contacto si usas uno falso
 
   await m.react(rwait)
 
   try {
     const media = await q.download()
-    const url = await uploadToCatbox(media)
+    const url = await uploadToQuax(media)
 
     const txt = `
-┏━━⬣「 *ENLACE CATBOX* 」⬣
+┏━━⬣「 *ENLACE QU.AX* 」⬣
 ┃ 🔗 *Enlace:* ${url}
 ┃ 📦 *Tamaño:* ${formatBytes(media.length)}
-┃ 🚫 *Expira:* Nunca (almacenamiento permanente)
+┃ ⏳ *Expira:* Desconocido
 ┗━━⬣ *${dev}*
     `.trim()
 
@@ -35,7 +35,7 @@ let handler = async (m, { conn }) => {
   } catch (e) {
     console.error(e)
     await m.react(error)
-    return conn.reply(m.chat, '❌ *Error al subir el archivo a Catbox.*', m)
+    return conn.reply(m.chat, '❌ *Error al subir el archivo a qu.ax.*', m)
   }
 }
 
@@ -46,20 +46,19 @@ handler.register = false
 
 export default handler
 
-async function uploadToCatbox(buffer) {
+async function uploadToQuax(buffer) {
   const form = new FormData()
-  form.append('reqtype', 'fileupload')
-  form.append('fileToUpload', buffer, 'kaneki_upload.jpg')
+  form.append('file', buffer, 'kaneki_upload.jpg') // o .mp4 si es video
 
-  const res = await fetch('https://catbox.moe/user/api.php', {
+  const res = await fetch('https://qu.ax/upload', {
     method: 'POST',
     body: form
   })
 
-  const text = await res.text()
-  if (!text.startsWith('https://')) throw '❌ Error al subir a Catbox.'
+  const json = await res.json()
+  if (!json.url) throw '❌ Error al subir a qu.ax.'
 
-  return text.trim()
+  return json.url
 }
 
 function formatBytes(bytes) {
