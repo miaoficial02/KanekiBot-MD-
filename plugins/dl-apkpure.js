@@ -1,53 +1,59 @@
+//by Bajo Bots 
+
 let handler = async (m, { conn, text, args }) => { 
    try {
       if (!text) {
-         return conn.reply(m.chat, `🌱 Ejemplo de uso: apkpure WhatsApp`, m);
+         return conn.reply(m.chat, `✨ *Uso Correcto:*
+
+Ejemplo: *.apkpure WhatsApp*`, m);
       }
       m.react('🕒');
+
       if (text.includes('https://apkpure.net/')) {
          try {
             let base = args[0].split("/")[4];
             const file = `https://d.apkpure.com/b/APK/${base}?version=latest`;
             let info = await getInfo(file);
             let { name, sizeB, sizeMB } = info;
+
             if (sizeB > 200 * 1024 * 1024) {
-               return conn.reply(m.chat, `La aplicación es demasiado grande para ser descargada por usuarios no premium. Hazte premium para descargar aplicaciones de hasta 500MB.\n\nPeso de la apk: ${sizeMB}`, m);
+               return conn.reply(m.chat, `⚠️ *Archivo muy pesado para usuarios normales.*\n\n💾 Peso de la APK: ${sizeMB}\n\n💎 Hazte premium para descargar hasta 500MB.`, m);
             }
             if (sizeB > 500 * 1024 * 1024) {
-               return conn.reply(m.chat, 'La aplicación supera el límite de 500MB para usuarios premium.', m);
+               return conn.reply(m.chat, '❌ *Este archivo supera el límite de descarga (500MB). Solo usuarios premium pueden descargarlo.*', m);
             }
 
             let cap = `
-◜ ApkPure - Download ◞
+┏━━⬣ *APKPURE DESCARGA*
+┃ 🔹 *Nombre:* ${name}
+┃ 📦 *Package:* ${base}
+┃ 💾 *Peso:* ${sizeMB}
+┃ 🌐 *Link:* ${args[0]}
+┗━━━━━━━━━━━━⬣`;
 
-≡ 🌴 \`Nombre :\` ${name}
-≡ 🌿 \`Package :\` ${base}
-≡ 🌾 \`Peso :\` ${sizeMB}
-
-≡ 🌷 \`Link :\` ${args[0]}
-`;
-m.reply(cap)
+            m.reply(cap);
             await conn.sendFile(m.chat, file, `${name}`, '', m, null, {
-               asDocument: true, mimetype: "application/vnd.android.package-archive"
+               asDocument: true,
+               mimetype: "application/vnd.android.package-archive"
             });
-            m.react('☑️');
+            m.react('✅');
          } catch (err) {
-            return conn.reply(m.chat, 'Error al obtener la información de la app.\n\n' + err, m);
+            return conn.reply(m.chat, '❌ *Error al obtener la información de la app.*\n\n' + err, m);
          }
       } else {
-      m.react("⌚")
+         m.react("⌚")
          let res = await search(text);
-         let cap = `◜ ApkPure - Search ◞\n\n`;         
-         cap += res.map(v => `
-≡ 🔍 \`Nombre :\` ${v.name}
-≡ 🍂 \`Rating :\` ${v.rating}
-≡ ✍️ \`Desarrollador :\` ${v.developer}
-≡ ⛓️ \`Link :\` ${v.link}`).join("\n\n");
-         m.reply(cap)
-         m.react("☑️");
+         let cap = `
+┏━━⬣ *APKPURE RESULTADOS*
+┃ 🔍 *Búsqueda:* ${text}
+┗━━━━━━━━━━━━⬣\n\n`;
+
+         cap += res.map(v => `┣ 💠 *Nombre:* ${v.name}\n┣ ⭐ *Rating:* ${v.rating}\n┣ 👤 *Dev:* ${v.developer}\n┗ 🔗 *Link:* ${v.link}`).join("\n\n");
+         m.reply(cap);
+         m.react("✅");
       }
    } catch (err) {
-      return conn.reply(m.chat, 'Error en la ejecución.\n\n' + err, m);
+      return conn.reply(m.chat, '❌ *Ocurrió un error en la ejecución.*\n\n' + err, m);
    }
 };
 
