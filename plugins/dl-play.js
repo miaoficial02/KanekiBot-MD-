@@ -1,76 +1,79 @@
-import yts from "yt-search";
+import fetch from 'node-fetch';
 
-const limit = 100;
-const APIKEY = "Sylphiette's";
+let handler = async (m, { conn, args, command, usedPrefix }) => {
+  const text = args.join(" ");
+  if (!text) {
+    return m.reply(
+      `┏━━━━━━━━━━━━━━⬣
+┃🎧 *KANEKIBOT-MD - SPOTIFY PLAY*
+┗━━━━━━━━━━━━━━⬣
 
-const handler = async (m, { conn, text, command }) => {
-  if (!text) return m.reply("🌴 Ingresa el nombre de un video o una URL de YouTube.");
-  m.react("🌱");
+🔎 *Uso correcto del comando:*
+» ${usedPrefix + command} shakira soltera
 
-  let res = await yts(text);
-  if (!res || !res.all || res.all.length === 0) {
-    return m.reply("No se encontraron resultados para tu búsqueda.");
+© KanekiBot-MD`
+    );
   }
 
-  let video = res.all[0];
+  await m.react('🎧');
 
-  const cap = `
-\`\`\`⊜─⌈ 📻 ◜YouTube Play◞ 📻 ⌋─⊜\`\`\`
+  try {
+    const res = await fetch(`https://api.nekorinn.my.id/downloader/spotifyplay?q=${encodeURIComponent(text)}`);
+    const json = await res.json();
 
-≡ 🌿 \`Título\` : » ${video.title}
-≡ 🌾 \`Author\` : » ${video.author.name}
-≡ 🌱 \`Duración\` : » ${video.duration.timestamp}
-≡ 🌴 \`Vistas\` : » ${video.views}
-≡ ☘️ \`URL\`      : » ${video.url}
-`;
+    if (!json.status || !json.result?.downloadUrl) {
+      return m.reply(
+        `┏━━━━━━━━━━━━━━⬣
+┃⚠️ *KANEKIBOT-MD - ERROR*
+┗━━━━━━━━━━━━━━⬣
 
-  await conn.sendFile(m.chat, await (await fetch(video.thumbnail)).buffer(), "image.jpg", cap, m);
-
-  const urlAudio = `https://api.sylphy.xyz/download/ytmp3?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
-  const urlVideo = `https://api.sylphy.xyz/download/ytmp4?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
-
-  if (command === "play") {
-    try {
-      let resApi = await fetch(urlAudio);
-      let json = await resApi.json();
-      if (!json.status) return m.reply("No se pudo obtener el audio del video.");
-
-      let audioUrl = json.res.downloadURL;
-      let title = json.res.title || "audio.mp3";
-
-      await conn.sendFile(m.chat, audioUrl, title + ".mp3", "", m);
-      await m.react("✔️");
-    } catch (error) {
-      return m.reply("Error al descargar audio: " + error.message);
+❌ No se encontró ningún resultado para:
+» ${text}`
+      );
     }
-  } else if (command === "play2" || command === "playvid") {
-    try {
-      let resApi = await fetch(urlVideo);
-      let json = await resApi.json();
-      if (!json.status) return m.reply("No se pudo obtener el video.");
 
-      let videoUrl = json.res.url;
-      let title = json.res.title || "video.mp4";
+    const { title, artist, duration, cover, url } = json.result.metadata;
+    const audio = json.result.downloadUrl;
 
-      const resHead = await fetch(videoUrl, { method: "HEAD" });
-      const cont = resHead.headers.get("content-length");
-      const bytes = parseInt(cont, 10);
-      const sizemb = bytes / (1024 * 1024);
-      const asDocument = sizemb >= limit;
+    await conn.sendMessage(m.chat, {
+      image: { url: cover },
+      caption: `
+┏━━━━━━━━━━━━━━⬣
+┃🎵 *KANEKIBOT-MD - SPOTIFY*
+┗━━━━━━━━━━━━━━⬣
 
-      await conn.sendFile(m.chat, videoUrl, title + ".mp4", "", m, null, {
-        asDocument,
-        mimetype: "video/mp4",
-      });
-      await m.react("✔️");
-    } catch (error) {
-      return m.reply("Error al descargar video: " + error.message);
-    }
+🎶 *Título:* ${title}
+👤 *Artista:* ${artist}
+⏱️ *Duración:* ${duration}
+🌐 *Spotify:* ${url}
+`.trim()
+    }, { quoted: m });
+
+    await conn.sendMessage(m.chat, {
+      audio: { url: audio },
+      mimetype: 'audio/mp4',
+      ptt: false,
+      fileName: `${title}.mp3`
+    }, { quoted: m });
+
+    await m.react('✅');
+
+  } catch (e) {
+    console.error(e);
+    return m.reply(
+      `┏━━━━━━━━━━━━━━⬣
+┃⚠️ *KANEKIBOT-MD - ERROR*
+┗━━━━━━━━━━━━━━⬣
+
+❌ Ocurrió un error al procesar tu solicitud.
+🔁 Intenta de nuevo más tarde.`
+    );
   }
 };
 
-handler.help = ["play", "play2"];
-handler.tags = ["download"];
-handler.command = ["play", "play2", "playvid"];
+handler.help = ['play <nombre>'];
+handler.tags = ['descargas'];
+handler.command = /^play$/i;
+handler.register = true;
 
 export default handler;
