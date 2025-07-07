@@ -3,7 +3,7 @@ import { fetch } from "undici";
 let handler = async (m, { conn, usedPrefix, command, args }) => {
   try {
     if (!args[0]) {
-      return m.reply(`🔰 *Uso correcto:*\n${usedPrefix + command} https://www.facebook.com/share/v/1FwfwCUQEv/`,m );
+      return m.reply(`🔰 *Uso correcto:*\n${usedPrefix + command} https://www.facebook.com/share/v/1FwfwCUQEv/`);
     }
 
     if (!args[0].match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/)) {
