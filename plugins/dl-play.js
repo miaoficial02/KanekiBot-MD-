@@ -1,127 +1,76 @@
-import fetch from "node-fetch"
-import yts from "yt-search"
-import axios from "axios"
+import yts from "yt-search";
 
-const AUDIO_FORMATS = ["mp3", "m4a", "webm", "aac", "flac", "opus", "ogg", "wav"]
-const VIDEO_FORMATS = ["360", "480", "720", "1080", "1440", "4k"]
+const limit = 100;
+const APIKEY = "Sylphiette's";
 
-const ytDownloader = {
-  get: async (url, format) => {
-    if (!AUDIO_FORMATS.includes(format) && !VIDEO_FORMATS.includes(format)) {
-      throw new Error("❗ Formato inválido, por favor intenta con otro.")
-    }
+const handler = async (m, { conn, text, command }) => {
+  if (!text) return m.reply("🌴 Ingresa el nombre de un video o una URL de YouTube.");
+  m.react("🌱");
 
-    const res = await axios.get(`https://p.oceansaver.in/ajax/download.php`, {
-      params: {
-        url,
-        format,
-        api: 'dfcb6d76f2f6a9894gjkege8a4ab232222'
-      },
-      headers: {
-        'User-Agent': 'KanekiBot-MD'
-      }
-    })
-
-    const { success, id, title, info } = res.data
-    if (!success) throw new Error("❌ No se pudo obtener la descarga.")
-
-    const downloadUrl = await ytDownloader.waitFor(id)
-    return { downloadUrl, title, thumb: info.image }
-  },
-
-  waitFor: async (id) => {
-    const endpoint = `https://p.oceansaver.in/ajax/progress.php?id=${id}`
-    for (;;) {
-      const { data } = await axios.get(endpoint)
-      if (data.success && data.progress === 1000) return data.download_url
-      await new Promise(res => setTimeout(res, 3000))
-    }
-  }
-}
-
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) {
-    return m.reply(`╭─「 *KanekiBot-MD* ⚙️ 」─⬣
-│ ✨ Usa:  ${usedPrefix + command} <nombre o link>
-╰────────────────────⬣`)
+  let res = await yts(text);
+  if (!res || !res.all || res.all.length === 0) {
+    return m.reply("No se encontraron resultados para tu búsqueda.");
   }
 
-  await m.react("🔎")
+  let video = res.all[0];
 
-  const search = await yts(text)
-  if (!search.all.length) return m.reply("❌ No se encontró ningún resultado.")
+  const cap = `
+\`\`\`⊜─⌈ 📻 ◜YouTube Play◞ 📻 ⌋─⊜\`\`\`
 
-  const video = search.videos[0]
-  const { title, url, thumbnail, timestamp, views, ago, author } = video
-  const viewStr = Number(views).toLocaleString()
+≡ 🌿 \`Título\` : » ${video.title}
+≡ 🌾 \`Author\` : » ${video.author.name}
+≡ 🌱 \`Duración\` : » ${video.duration.timestamp}
+≡ 🌴 \`Vistas\` : » ${video.views}
+≡ ☘️ \`URL\`      : » ${video.url}
+`;
 
-  const caption = `
-┌───「 *KANEKI-BOT DOWNLOADER* 」───
-│ 🎧 *Título:* ${title}
-│ 🕒 *Duración:* ${timestamp}
-│ 📅 *Publicado:* ${ago}
-│ 👤 *Canal:* ${author?.name || "Desconocido"}
-│ 👁️ *Vistas:* ${viewStr}
-│ 🔗 *Enlace:* ${url}
-└───────────────────────────`.trim()
+  await conn.sendFile(m.chat, await (await fetch(video.thumbnail)).buffer(), "image.jpg", cap, m);
 
-  await conn.sendMessage(m.chat, {
-  audio: { url: audio.downloadUrl },
-  mimetype: 'audio/mp4', // este mimetype asegura reproducción directa
-  ptt: false              // true si quieres que sea nota de voz
-}, { quoted: m })
+  const urlAudio = `https://api.sylphy.xyz/download/ytmp3?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
+  const urlVideo = `https://api.sylphy.xyz/download/ytmp4?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
 
-  try {
-    if (["play", "yta", "ytmp3"].includes(command)) {
-      await m.react("🎵")
-      const audio = await ytDownloader.get(url, "mp3")
-      return await conn.sendMessage(m.chat, {
-  audio: { url: audio.downloadUrl },
-  mimetype: 'audio/mpeg',
-  ptt: false // true si quieres que se escuche como nota de voz
-}, { quoted: m })
+  if (command === "play") {
+    try {
+      let resApi = await fetch(urlAudio);
+      let json = await resApi.json();
+      if (!json.status) return m.reply("No se pudo obtener el audio del video.");
 
+      let audioUrl = json.res.downloadURL;
+      let title = json.res.title || "audio.mp3";
 
-    if (["play2", "ytv", "ytmp4"].includes(command)) {
-      await m.react("🎥")
-      const sources = [
-        `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`,
-        `https://api.zenkey.my.id/api/download/ytmp4?apikey=zenkey&url=${url}`,
-        `https://axeel.my.id/api/download/video?url=${encodeURIComponent(url)}`,
-        `https://delirius-apiofc.vercel.app/download/ytmp4?url=${url}`
-      ]
-
-      for (let api of sources) {
-        try {
-          const res = await fetch(api)
-          const json = await res.json()
-          const link = json?.result?.download?.url || json?.data?.dl || json?.downloads?.url
-
-          if (link) {
-            return await conn.sendMessage(m.chat, {
-              video: { url: link },
-              mimetype: 'video/mp4',
-              caption: `🎬 Aquí tienes tu video\n📡 *Fuente:* ${api.split("/")[2]}`
-            }, { quoted: m })
-          }
-        } catch (err) {
-          console.error("❗ Fallo en una fuente:", err.message)
-        }
-      }
-
-      return m.reply("❌ No se pudo obtener el video desde ninguna fuente.")
+      await conn.sendFile(m.chat, audioUrl, title + ".mp3", "", m);
+      await m.react("✔️");
+    } catch (error) {
+      return m.reply("Error al descargar audio: " + error.message);
     }
+  } else if (command === "play2" || command === "playvid") {
+    try {
+      let resApi = await fetch(urlVideo);
+      let json = await resApi.json();
+      if (!json.status) return m.reply("No se pudo obtener el video.");
 
-  } catch (e) {
-    console.error("❗ Error:", e)
-    m.reply("💥 Ocurrió un error al procesar tu solicitud.")
+      let videoUrl = json.res.url;
+      let title = json.res.title || "video.mp4";
+
+      const resHead = await fetch(videoUrl, { method: "HEAD" });
+      const cont = resHead.headers.get("content-length");
+      const bytes = parseInt(cont, 10);
+      const sizemb = bytes / (1024 * 1024);
+      const asDocument = sizemb >= limit;
+
+      await conn.sendFile(m.chat, videoUrl, title + ".mp4", "", m, null, {
+        asDocument,
+        mimetype: "video/mp4",
+      });
+      await m.react("✔️");
+    } catch (error) {
+      return m.reply("Error al descargar video: " + error.message);
+    }
   }
-}
+};
 
-handler.help = ['play', 'play2', 'yta', 'ytmp3', 'ytv', 'ytmp4']
-handler.tags = ['descargas']
-handler.command = /^play2?$|^yt(a|mp3|v|mp4)$/i
-handler.register = false
+handler.help = ["play", "play2"];
+handler.tags = ["download"];
+handler.command = ["play", "play2", "playvid"];
 
-export default handler
-        
+export default handler;
