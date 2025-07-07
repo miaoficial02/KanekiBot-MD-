@@ -1,17 +1,17 @@
 let handler = async (m, { conn }) => {
-  let texto = `✨ *MeliodasBot-MD está activo*\nAquí va una respuesta con miniatura, sin canal, sin publicidad ni redirección.`
+  let texto = `✨ *MeliodasBot-MD está activo*\nEste mensaje solo tiene miniatura.`
 
   await conn.sendMessage(m.chat, {
     text: texto,
     contextInfo: {
       externalAdReply: {
-        title: '✅ KanekiBot-MD',
-        body: 'Diseño elegante y funcional',
-        thumbnailUrl: 'https://qu.ax/bjOsy.jpg', // Miniatura que aparecerá
+        title: '\u200e', // carácter invisible
+        body: '\u200e',  // carácter invisible
+        thumbnailUrl: 'https://qu.ax/bjOsy.jpg',
         mediaType: 1,
         renderLargerThumbnail: true,
         showAdAttribution: false,
-        sourceUrl: '' // No dirige a ningún lugar
+        sourceUrl: ''
       }
     }
   }, { quoted: m })
