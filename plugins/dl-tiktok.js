@@ -23,20 +23,7 @@ const handler = async (m, { conn, text, args, usedPrefix, command }) => {
 ◦ 📌 *Título:* ${title}
 ◦ ⏱️ *Duración:* ${duration}`.trim();
 
-    await conn.sendMessage(m.chat, {
-      video: { url: play },
-      caption,
-      contextInfo: {
-        externalAdReply: {
-          thumbnailUrl: 'https://qu.ax/RkiEC.jpg', // tu miniatura aquí
-          mediaType: 1,
-          renderLargerThumbnail: false,
-          showAdAttribution: false,
-          sourceUrl: ''
-        }
-      }
-    }, { quoted: m });
-
+    
     m.react('✅');
   } catch (e) {
     return respuestaMini(conn, m, `❌ *Error:* ${e.message}`);
