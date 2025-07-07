@@ -74,8 +74,8 @@ global.maxwarn = 2
 // 📢 Mensajes RC Canal con imagen por link
 global.rc_canal = {
   key: {
-    remoteJid: 'status@broadcast',
-    participant: '0@s.whatsapp.net'
+    //remoteJid: 'status@broadcast',
+   // participant: '0@s.whatsapp.net'
   },
   message: {
     extendedTextMessage: {
