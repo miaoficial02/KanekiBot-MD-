@@ -95,7 +95,7 @@ const handler = async (m, { conn, text, command }) => {
   }
 };
 
-handler.help = ["play <texto>", "play2 <texto>"];
+handler.help = ["", "play2 <texto>"];
 handler.tags = ["descargas"];
 handler.command = ["play", "play2", "playvid"];
 
