@@ -56,7 +56,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 }
 
 handler.help = ['tiktokmp3']
-handler.tags = ['descargas']
+handler.tags = ['download']
 handler.command = /^tiktokmp3$/i
 handler.register = false
 
