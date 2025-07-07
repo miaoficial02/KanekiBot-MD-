@@ -6,20 +6,6 @@ const handler = async (m, { conn, text }) => {
     return conn.reply(m.chat, `🧃 *Usa el comando así:*\n> .play [nombre de la canción o artista]`, m);
   }
 
-  try {
-    await conn.sendMessage(m.chat, {
-      text: `🎧 *Buscando tu música...*\nEspera un momento, Kaneki está cazando melodías en la red 🎭`,
-      contextInfo: {
-        externalAdReply: {
-          thumbnailUrl: 'https://qu.ax/RkiEC.jpg',
-          mediaType: 1,
-          renderLargerThumbnail: false,
-          showAdAttribution: false,
-          sourceUrl: ''
-        }
-      }
-    }, { quoted: m });
-
     const search = await yts(text);
     const video = search?.videos?.[0];
     if (!video) return conn.reply(m.chat, `❌ *No encontré resultados para:* "${text}"`, m);
