@@ -11,7 +11,7 @@ const handler = async (m, { conn, text }) => {
       text: `🎧 *Buscando tu música...*\nEspera un momento, Kaneki está cazando melodías en la red 🎭`,
       contextInfo: {
         externalAdReply: {
-          thumbnailUrl: 'https://i.imgur.com/CkZUvU2.jpg',
+          thumbnailUrl: 'https://qu.ax/RkiEC.jpg',
           mediaType: 1,
           renderLargerThumbnail: false,
           showAdAttribution: false,
