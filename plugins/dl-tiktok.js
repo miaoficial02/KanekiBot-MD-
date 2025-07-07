@@ -1,36 +1,46 @@
 import fg from 'api-dylux';
 
 const handler = async (m, { conn, text, args, usedPrefix, command }) => {
-    try {
-        if (!args[0]) {
-            return conn.reply(m.chat, `🥀 Ingresa un enlace válido de TikTok
-            
-> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`, m,);
-        }
-
-        if (!/(?:https:?\/{2})?(?:w{3}|vm|vt|t)?\.?tiktok.com\/([^\s&]+)/gi.test(text)) {
-            return conn.reply(m.chat, `❎ Enlace de TikTok inválido.`, m);
-        }
-
-        m.react('🕒');
-
-        let data = await fg.tiktok(`${args[0]}`);
-        let { title, play, duration } = data.result;
-        let { nickname } = data.result.author;
-
-        let caption = `
-  乂 TikTok Download
-
-  ◦ 👤 *Autor:* ${nickname}
-  ◦ 📌 *Título:* ${title}
-  ◦ ⏱️ *Duración:* ${duration}`;
-
-        await conn.sendFile(m.chat, play, `tiktok.mp4`, caption, m);
-
-        m.react('✅');
-    } catch (e) {
-        return conn.reply(m.chat, `❌ *Error:* ${e.message}`, m);
+  try {
+    if (!args[0]) {
+      return respuestaMini(conn, m, `🥀 Ingresa un enlace válido de TikTok\n\n> *B𝐲 𝐁𝐚𝐣𝐨𝐁𝐨𝐭𝐬*`);
     }
+
+    if (!/(?:https:?\/{2})?(?:w{3}|vm|vt|t)?\.?tiktok.com\/([^\s&]+)/gi.test(text)) {
+      return respuestaMini(conn, m, `❎ Enlace de TikTok inválido.`);
+    }
+
+    m.react('🕒');
+
+    let data = await fg.tiktok(args[0]);
+    let { title, play, duration } = data.result;
+    let { nickname } = data.result.author;
+
+    let caption = `
+乂 *TikTok Download*
+
+◦ 👤 *Autor:* ${nickname}
+◦ 📌 *Título:* ${title}
+◦ ⏱️ *Duración:* ${duration}`.trim();
+
+    await conn.sendMessage(m.chat, {
+      video: { url: play },
+      caption,
+      contextInfo: {
+        externalAdReply: {
+          thumbnailUrl: 'https://qu.ax/RkiEC.jpg', // tu miniatura aquí
+          mediaType: 1,
+          renderLargerThumbnail: true,
+          showAdAttribution: false,
+          sourceUrl: ''
+        }
+      }
+    }, { quoted: m });
+
+    m.react('✅');
+  } catch (e) {
+    return respuestaMini(conn, m, `❌ *Error:* ${e.message}`);
+  }
 };
 
 handler.help = ["tiktok"];
