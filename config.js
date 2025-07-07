@@ -35,6 +35,12 @@ global.wm = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
 global.author = " 𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏  ~"
 global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
 global.logo = 'https://qu.ax/tyxJP.jpg'; 
+global.botname = 'MeliodasBot-MD'
+global.textbot = 'Tu asistente confiable'
+global.canal = 'https://whatsapp.com/channel/0029Vb63Kf9KwqSQLOQOtk3N'
+global.group = ''
+global.packname = 'MeliodasBot'
+global.wm = 'Creador: +573162402768'
 
 
 global.wait = "\`Cargando . . . Espera un momento.\`"
