@@ -30,7 +30,7 @@ const handler = async (m, { conn, text, args, usedPrefix, command }) => {
         externalAdReply: {
           thumbnailUrl: 'https://qu.ax/RkiEC.jpg', // tu miniatura aquí
           mediaType: 1,
-          renderLargerThumbnail: true,
+          renderLargerThumbnail: false,
           showAdAttribution: false,
           sourceUrl: ''
         }
