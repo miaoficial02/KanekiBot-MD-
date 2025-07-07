@@ -3,30 +3,40 @@ import { fetch } from "undici";
 let handler = async (m, { conn, usedPrefix, command, args }) => {
   try {
     if (!args[0]) {
-      return m.reply(`🔰 *Uso correcto:*\n${usedPrefix + command} https://www.facebook.com/share/v/1FwfwCUQEv/`);
+      return m.reply(`🔰 *Uso correcto:*\n${usedPrefix + command} https://www.facebook.com/watch/?v=123456789`);
     }
 
-    if (!args[0].match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/)) {
-      return m.reply("❌ *Enlace inválido.*\nAsegúrate de que sea un enlace válido de Facebook.");
+    if (!args[0].match(/(?:https?:\/\/)?(?:www\.|m\.)?(facebook|fb)\.(com|watch)\S+/)) {
+      return m.reply("❌ *Enlace inválido.*\nAsegúrate de que sea un enlace de Facebook válido.");
     }
 
     m.react("🕒");
 
     let fb = await aio(args[0]);
-    if (!fb.medias[0]) {
-      return m.reply("⚠️ *No se pudo obtener el video.*\nPuede que el enlace no sea público o esté restringido.");
+
+    if (!fb?.medias?.length) {
+      return m.reply("⚠️ *No se encontró ningún video disponible.*");
     }
 
-    let media = fb.medias[1] || fb.medias[0];
+    // Buscar una versión con audio
+    let mediaConAudio = fb.medias.find(m => m.hasAudio && m.url.includes('.mp4'));
+
+    if (!mediaConAudio) {
+      return m.reply("❌ *No se encontró un archivo de video con audio disponible.*\nPuede que esté en un formato separado.");
+    }
 
     await conn.sendFile(
       m.chat,
-      media.url,
-      `video.mp4`,
-      `🎬 *Video Descargado*\n\n🌐 *Calidad:* ${media.quality}\n📦 *Tamaño:* ${media.formattedSize}\n\n📥 *Descargado desde:* Facebook`,
+      mediaConAudio.url,
+      `facebook.mp4`,
+      `🎬 *Facebook Video*\n\n📽️ *Calidad:* ${mediaConAudio.quality}\n📦 *Tamaño:* ${mediaConAudio.formattedSize || "Desconocido"}\n\n📥 *Extraído con KanekiBot-MD*`,
       m
     );
+
+    m.react("✅");
+
   } catch (e) {
+    console.error("❌ Error:", e);
     return conn.reply(m.chat, `❎ *Error al descargar el video:*\n${e.message}`, m);
   }
 };
