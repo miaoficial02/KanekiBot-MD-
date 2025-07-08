@@ -1,29 +1,29 @@
-let handler = async (m, { conn, isOwner, isPrems }) => {
-  const ownerNumber = '573162402768@s.whatsapp.net'; // ← TU NÚMERO AQUÍ
+let handler = async (m, { conn }) => {
+  const ownerNumber = '573162402768@s.whatsapp.net'; // <-- TU NÚMERO AQUÍ
 
-  // Si el mensaje es en privado y el remitente no es el owner
   if (!m.isGroup && m.sender !== ownerNumber) {
-    // Evitar procesar comandos en privado
-    if (m.text.startsWith('.')) {
-      await m.react('🛑');
+    // Ignora ciertos mensajes que no sean texto
+    if (!m.text) return;
 
-      await conn.sendMessage(m.chat, {
-        text: `
-╭━━〔 𝗔𝗖𝗖𝗘𝗦𝗢 𝗗𝗘𝗡𝗘𝗚𝗔𝗗𝗢 〕━━⬣
-┃ 🚫 *No puedes usar comandos en privado.*
-┃ 🧩 Este bot solo responde en grupos.
-┃ 🔐 *Tu número será bloqueado automáticamente.*
-╰━━━━━━━━━━━━━━━━━━⬣`.trim(),
-      }, { quoted: m });
+    // Enviar mensaje de advertencia decorado
+    await conn.sendMessage(m.chat, {
+      text: `
+╭━━〔 🔒 *ACCESO DENEGADO* 〕━━⬣
+┃ *⛔ Este bot no está disponible en chats privados.*
+┃ 
+┃ 👤 Usuario: wa.me/${m.sender.split('@')[0]}
+┃ 📛 Serás bloqueado por seguridad.
+╰━━━━━━━━━━━━━━━━━━⬣`,
+    }, { quoted: m });
 
-      // Bloquea al usuario
-      await conn.updateBlockStatus(m.sender, 'block');
+    // Bloquea al usuario
+    await conn.updateBlockStatus(m.sender, 'block');
 
-      return true; // Detiene el procesamiento del comando
-    }
+    // Detener otros handlers
+    return true;
   }
 
-  return false; // Permitir en grupos o si es el owner
+  return false;
 };
 
 export default handler;
