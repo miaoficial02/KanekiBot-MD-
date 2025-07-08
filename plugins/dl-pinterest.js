@@ -67,7 +67,7 @@ let handler = async (m, { conn, text, args }) => {
   }
 };
 
-//handler.help = ['pinterest <texto o link>'];
+handler.help = [''];
 handler.command = ['pinterest', 'pin'];
 handler.tags = ["descargar"];
 export default handler;
