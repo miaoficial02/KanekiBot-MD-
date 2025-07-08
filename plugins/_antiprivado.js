@@ -1,32 +1,29 @@
-let handler = async (m, { conn }) => {
-  const dueñosPermitidos = [
-    '573162402768@s.whatsapp.net', // ← TU NÚMERO AQUÍ ✅
-  ];
+let handler = async (m, { conn, isOwner, isPrems }) => {
+  const ownerNumber = '573162402768@s.whatsapp.net'; // ← TU NÚMERO AQUÍ
 
-  if (!m.isGroup && !dueñosPermitidos.includes(m.sender)) {
-    // ⏳ Reacción visual
-    await m.react('🔒');
+  // Si el mensaje es en privado y el remitente no es el owner
+  if (!m.isGroup && m.sender !== ownerNumber) {
+    // Evitar procesar comandos en privado
+    if (m.text.startsWith('.')) {
+      await m.react('🛑');
 
-    // 💬 Mensaje de advertencia
-    await conn.sendMessage(m.chat, {
-      text: `
-┌──「 *🔴 ACCESO DENEGADO* 」
-│
-│ ⚠️ *KanekiBot-MD no está disponible en chats privados.*
-│ 🧩 Solo el dueño puede usarlo aquí.
-│
-│ 🧱 *Tu número será bloqueado automáticamente.*
-│
-└─────⬣
-`.trim(),
-    }, { quoted: m });
+      await conn.sendMessage(m.chat, {
+        text: `
+╭━━〔 𝗔𝗖𝗖𝗘𝗦𝗢 𝗗𝗘𝗡𝗘𝗚𝗔𝗗𝗢 〕━━⬣
+┃ 🚫 *No puedes usar comandos en privado.*
+┃ 🧩 Este bot solo responde en grupos.
+┃ 🔐 *Tu número será bloqueado automáticamente.*
+╰━━━━━━━━━━━━━━━━━━⬣`.trim(),
+      }, { quoted: m });
 
-    // 🚫 Bloquear al usuario
-    await conn.updateBlockStatus(m.sender, 'block');
-    return true; // Detiene ejecución
+      // Bloquea al usuario
+      await conn.updateBlockStatus(m.sender, 'block');
+
+      return true; // Detiene el procesamiento del comando
+    }
   }
 
-  return false; // Si es grupo o autorizado, continúa normal
+  return false; // Permitir en grupos o si es el owner
 };
 
 export default handler;
