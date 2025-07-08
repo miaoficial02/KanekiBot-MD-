@@ -141,7 +141,7 @@ const handler = async (m, { text, conn }) => {
 };
 
 handler.command = /^play3|mp4|ytmp4|ytv$/i;
-handler.help = ['play3 <nombre del video>'];
+handler.help = [' '];
 handler.tags = ['descargar'];
 
 export default handler;
