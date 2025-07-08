@@ -86,13 +86,13 @@ const pins = async (judul) => {
 };
 
 let handler = async (m, { conn, text }) => {
-  if (!text) return conn.reply(m.chat, ` Ingresa un texto. Ejemplo: .pinterest ${botname}`, m, fake);
+  if (!text) return conn.reply(m.chat, ` Ingresa un texto. Ejemplo: .pinterest ${botname}`);
   
 
   try {
     m.react('🕒');
     const results = await pins(text);
-    if (!results || results.length === 0) return conn.reply(m.chat, `No se encontraron resultados para "${text}".`, m, fake);
+    if (!results || results.length === 0) return conn.reply(m.chat, `No se encontraron resultados para "${text}".`);
 
     const maxImages = Math.min(results.length, 15);
     const medias = [];
@@ -112,7 +112,7 @@ let handler = async (m, { conn, text }) => {
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
 
   } catch (error) {
-    conn.reply(m.chat, 'Error al obtener imágenes de Pinterest.', m, fake);
+    conn.reply(m.chat, 'Error al obtener imágenes de Pinterest.');
   }
 };
 
