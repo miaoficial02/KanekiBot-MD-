@@ -51,7 +51,7 @@ const handler = async (m, { text, conn }) => {
         externalAdReply: {
           title: "🎬 Explorando YouTube...",
           body: "⏳ Un momento...",
-          thumbnailUrl: "https://raw.githubusercontent.com/Kone457/Nexus/refs/heads/main/Shizuka.jpg",
+       //   thumbnailUrl: "https://raw.githubusercontent.com/Kone457/Nexus/refs/heads/main/Shizuka.jpg",
           mediaType: 1,
           previewType: 0,
           mediaUrl: "https://youtube.com",
@@ -89,7 +89,7 @@ const handler = async (m, { text, conn }) => {
       text: info,
       contextInfo: {
         externalAdReply: {
-          title: "🎬 Shizuka Video",
+          title: "🎬 KanekiBot-MD Video",
           body: "🎁 Preparando el MP4 para ti...",
           thumbnailUrl: thumb,
           mediaType: 1,
@@ -141,7 +141,7 @@ const handler = async (m, { text, conn }) => {
 };
 
 handler.command = /^play3|mp4|ytmp4|ytv$/i;
-handler.help = [' '];
+handler.help = ['play3 <nombre del video>'];
 handler.tags = ['descargar'];
 
 export default handler;
