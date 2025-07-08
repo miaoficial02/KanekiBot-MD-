@@ -35,7 +35,7 @@ global.wm = "𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏 | Bajo ν1";
 global.author = " 𝐤𝐚𝐧𝐞𝐤𝐢 𝐛𝐨𝐭 𝐯𝟏  ~"
 global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
 global.logo = 'https://qu.ax/tyxJP.jpg'; 
-
+global.botname = '☠️ 𝗞𝗮𝗻𝗲𝗸𝗶𝗕𝗼𝘁-𝗠𝗗 ☠️'
 
 global.wait = "\`Cargando . . . Espera un momento.\`"
 global.rwait = '⌛'
