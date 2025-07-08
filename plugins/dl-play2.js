@@ -5,60 +5,51 @@ const handler = async (m, { conn, args, command, usedPrefix }) => {
   if (!text) {
     return conn.reply(
       m.chat,
-      `🔍 *¿Qué deseas escuchar en YouTube?*\n\n📌 Uso: *${usedPrefix + command} nombre de canción/artista*`,
+      `╭─❖ 「 *💿 PLAY MUSIC* 」\n├ 🎵 *¿Qué deseas escuchar?*\n├ 📌 Usa: *${usedPrefix + command} Nombre de canción*\n╰───────────────⬣`,
       m
     );
   }
 
-  // Mensaje inicial con miniatura personalizada
-  await conn.sendMessage(m.chat, {
-    text: `🔎 *Buscando en YouTube...*\n🎬 Espera mientras encuentro la canción *${text}*`,
-    contextInfo: {
-      externalAdReply: {
-        title: "🎧 YouTube Music",
-        body: "Explorando el universo musical...",
-        mediaType: 1,
-        previewType: 0,
-        mediaUrl: "https://youtube.com",
-        sourceUrl: "https://youtube.com",
-        thumbnailUrl: "https://qu.ax/GoxWU.jpg",
-        renderLargerThumbnail: true
-      }
-    }
-  }, { quoted: m });
+  // Enviamos un mensaje decorado sin miniatura
+  await conn.reply(
+    m.chat,
+    `╭─❖ 「 *🔍 BUSCANDO...* 」\n├ 🎧 *Término:* ${text}\n├ ⏳ Espera mientras se procesa\n╰───────────────⬣`,
+    m
+  );
 
   try {
-    // 1) Buscar link de YouTube para mostrar usando API Dorratz
+    // 1) Buscar en YouTube para obtener el link (por si es útil)
     const searchRes = await fetch(`https://api.dorratz.com/v3/yt-search?query=${encodeURIComponent(text)}`);
     const searchJson = await searchRes.json();
 
-    let videoUrl = "https://youtube.com"; // fallback por si no hay resultado
-    if (searchJson && searchJson.data && searchJson.data.length > 0) {
+    let videoUrl = "https://youtube.com";
+    if (searchJson?.data?.length > 0) {
       const video = searchJson.data[0];
       videoUrl = `https://youtu.be/${video.videoId}`;
     }
 
-    // 2) Usar la API original con el texto de búsqueda para descargar info y audio
+    // 2) Descargar audio desde la API
     const downloadRes = await fetch(`https://api.nekorinn.my.id/downloader/spotifyplay?q=${encodeURIComponent(text)}`);
     const downloadJson = await downloadRes.json();
 
     if (!downloadJson.status || !downloadJson.result?.downloadUrl) {
-      return conn.reply(m.chat, `❌ *No pude descargar el audio para:* "${text}"`, m);
+      return conn.reply(m.chat, `❌ *No se encontró audio para:* "${text}"`, m);
     }
 
     const { title, artist, duration, cover } = downloadJson.result.metadata;
     const audio = downloadJson.result.downloadUrl;
 
     const caption = `
-🎶 *${title}*
-📺 *Canal:* ${artist}
-⏱️ *Duración:* ${duration}
-🔗 *YouTube:* ${videoUrl}
+╭───「 *🎶 MÚSICA ENCONTRADA* 」──⬣
+🔹 *Título:* ${title}
+🔹 *Artista:* ${artist}
+🔹 *Duración:* ${duration}
+🔹 *Link YouTube:* ${videoUrl}
+╰────────────────────────⬣
+🎧 ¡Audio listo para reproducir!
+    `.trim();
 
-✅ Audio listo. ¡Disfrútalo! 🔊
-`.trim();
-
-    // Enviar portada (solo una imagen)
+    // Enviar portada y datos
     await conn.sendMessage(m.chat, {
       image: { url: cover },
       caption: caption
@@ -73,8 +64,8 @@ const handler = async (m, { conn, args, command, usedPrefix }) => {
     }, { quoted: m });
 
   } catch (e) {
-    console.error("⚠️ Error al procesar YouTube:", e);
-    return conn.reply(m.chat, `❌ *Error al obtener el audio desde YouTube.*\n\n🛠️ ${e.message}`, m);
+    console.error("⚠️ Error en Play:", e);
+    return conn.reply(m.chat, `❌ *Error al descargar audio*\n\n🔧 ${e.message}`, m);
   }
 };
 
