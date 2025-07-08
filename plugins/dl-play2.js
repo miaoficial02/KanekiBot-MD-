@@ -71,5 +71,5 @@ const handler = async (m, { conn, args, command, usedPrefix }) => {
 
 handler.command = /^play2$/i;
 handler.tags = ['descargar'];
-handler.help = ['play <nombre de canción/artista>'];
+//handler.help = ['play <nombre de canción/artista>'];
 export default handler;
