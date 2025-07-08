@@ -86,7 +86,7 @@ const pins = async (judul) => {
 };
 
 let handler = async (m, { conn, text }) => {
-  if (!text) return conn.reply(m.chat, `${emojis} Ingresa un texto. Ejemplo: .pinterest ${botname}`, m, fake);
+  if (!text) return conn.reply(m.chat, ` Ingresa un texto. Ejemplo: .pinterest ${botname}`, m, fake);
   
 
   try {
