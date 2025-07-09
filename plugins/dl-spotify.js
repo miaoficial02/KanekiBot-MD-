@@ -1,64 +1,58 @@
 import axios from 'axios';
 
-let handler = async (m, { conn, text, args, usedPrefix, command }) => {
-  if (!text) {
-    return m.reply(`🎧 *Ingresa el nombre o enlace de una canción de Spotify*\n\n📌 *Ejemplo:* ${usedPrefix + command} kill bill sza\n📌 *Ejemplo:* ${usedPrefix + command} https://open.spotify.com/track/...`);
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text || !text.includes('spotify.com/track/')) {
+    return m.reply(
+      `✨ *Usa un enlace válido de Spotify*\n\n` +
+      `📌 *Ejemplo:* ${usedPrefix}${command} https://open.spotify.com/track/6UR5tB1wVm7qvH4xfsHr8m`
+    );
   }
 
+  await m.reply('*🔍 Buscando tu canción...*');
+
   try {
-    let spotifyUrl = '';
-    
-    if (text.includes('spotify.com')) {
-      // Si es un enlace directo de Spotify
-      spotifyUrl = text;
-    } else {
-      // Si es una búsqueda por nombre → buscar en API de búsqueda
-      let search = await axios.get(`https://zenzxz.dpdns.org/downloader/spotify`, {
-        params: { query: text }
-      });
+    let res = await axios.get(
+      `https://api.dorratz.com/spotifydl`,
+      { params: { url: text } }
+    );
 
-      let first = search?.data?.result?.[0];
-      if (!first || !first.url) return m.reply('❌ No se encontraron resultados en Spotify.');
+    let { status, title, artist, album, image, link } = res.data;
 
-      spotifyUrl = first.url;
+    if (!status || !link) {
+      return m.reply('❌ No se pudo descargar la canción. Revisa el enlace.');
     }
 
-    // Descargar usando el enlace obtenido
-    let res = await axios.get(`https://zenzxz.dpdns.org/downloader/spotify`, {
-      params: { url: spotifyUrl }
-    });
+    const caption =
+      `╭━━━『 *🎶 SPOTIFY DOWNLOAD* 』━━━\n` +
+      `┃ *Título:* ${title}\n` +
+      `┃ *Artista:* ${artist}\n` +
+      `┃ *Álbum:* ${album}\n` +
+      `╰━━━━━━━━━━━━━━━━━━━━━━━`;
 
-    let { result } = res.data;
+    await conn.sendMessage(
+      m.chat,
+      { image: { url: image }, caption },
+      { quoted: m }
+    );
 
-    if (!result || !result.status) {
-      return m.reply('❌ No se pudo obtener la canción. Asegúrate de que el enlace o nombre sea válido.');
-    }
-
-    let { title, artists, releaseDate, type, cover, music } = result;
-
-    let info = `
-🎧 *Título:* ${title}
-👤 *Artista:* ${artists}
-📀 *Tipo:* ${type}
-🗓️ *Lanzamiento:* ${releaseDate || 'No disponible'}
-`.trim();
-
-    await conn.sendMessage(m.chat, { image: { url: cover }, caption: info }, { quoted: m });
-
-    await conn.sendMessage(m.chat, {
-      audio: { url: music },
-      mimetype: 'audio/mpeg',
-      fileName: `${title}.mp3`
-    }, { quoted: m });
+    await conn.sendMessage(
+      m.chat,
+      {
+        audio: { url: link },
+        mimetype: 'audio/mpeg',
+        fileName: `${title}.mp3`
+      },
+      { quoted: m }
+    );
 
   } catch (e) {
     console.error(e);
-    m.reply('⚠️ Error al procesar la canción. Intenta con otro nombre o enlace.');
+    m.reply('⚠️ Ocurrió un error descargando tu canción. Intenta más tarde.');
   }
 };
 
-handler.help = ['spotify'].map(v => v + ' <nombre|link>');
-handler.tags = ['descargar'];
+handler.help = ['spotify'].map(v => v + ' <link>');
+handler.tags = ['descargas'];
 handler.command = /^spotify$/i;
 
 export default handler;
