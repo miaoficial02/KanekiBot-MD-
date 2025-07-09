@@ -2,18 +2,36 @@ import axios from 'axios';
 
 let handler = async (m, { conn, text, args, usedPrefix, command }) => {
   if (!text) {
-    return m.reply(`🎧 *Ingresa el enlace de una canción de Spotify*\n\n📌 *Ejemplo:* ${usedPrefix + command} https://open.spotify.com/track/509f8c7db081751fa290bea82eadb956`);
+    return m.reply(`🎧 *Ingresa el nombre o enlace de una canción de Spotify*\n\n📌 *Ejemplo:* ${usedPrefix + command} kill bill sza\n📌 *Ejemplo:* ${usedPrefix + command} https://open.spotify.com/track/...`);
   }
 
   try {
+    let spotifyUrl = '';
+    
+    if (text.includes('spotify.com')) {
+      // Si es un enlace directo de Spotify
+      spotifyUrl = text;
+    } else {
+      // Si es una búsqueda por nombre → buscar en API de búsqueda
+      let search = await axios.get(`https://api.vreden.my.id/api/search/spotify`, {
+        params: { query: text }
+      });
+
+      let first = search?.data?.result?.[0];
+      if (!first || !first.url) return m.reply('❌ No se encontraron resultados en Spotify.');
+
+      spotifyUrl = first.url;
+    }
+
+    // Descargar usando el enlace obtenido
     let res = await axios.get(`https://api.vreden.my.id/api/dowloader/spotify`, {
-      params: { url: text }
+      params: { url: spotifyUrl }
     });
 
     let { result } = res.data;
 
     if (!result || !result.status) {
-      return m.reply('❌ No se pudo obtener la canción. Asegúrate de que el enlace es válido.');
+      return m.reply('❌ No se pudo obtener la canción. Asegúrate de que el enlace o nombre sea válido.');
     }
 
     let { title, artists, releaseDate, type, cover, music } = result;
@@ -22,7 +40,7 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
 🎧 *Título:* ${title}
 👤 *Artista:* ${artists}
 📀 *Tipo:* ${type}
-🗓️ *Lanzamiento:* ${releaseDate}
+🗓️ *Lanzamiento:* ${releaseDate || 'No disponible'}
 `.trim();
 
     await conn.sendMessage(m.chat, { image: { url: cover }, caption: info }, { quoted: m });
@@ -35,11 +53,11 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
 
   } catch (e) {
     console.error(e);
-    m.reply('⚠️ Error al descargar la canción. Intenta con otro enlace.');
+    m.reply('⚠️ Error al procesar la canción. Intenta con otro nombre o enlace.');
   }
 };
 
-handler.help = ['spotify'].map(v => v + ' <link>');
+handler.help = ['spotify'].map(v => v + ' <nombre|link>');
 handler.tags = ['descargar'];
 handler.command = /^spotify$/i;
 
