@@ -13,7 +13,7 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
       spotifyUrl = text;
     } else {
       // Si es una búsqueda por nombre → buscar en API de búsqueda
-      let search = await axios.get(`https://api.vreden.my.id/api/search/spotify`, {
+      let search = await axios.get(`https://zenzxz.dpdns.org/downloader/spotify`, {
         params: { query: text }
       });
 
@@ -24,7 +24,7 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
     }
 
     // Descargar usando el enlace obtenido
-    let res = await axios.get(`https://api.vreden.my.id/api/dowloader/spotify`, {
+    let res = await axios.get(`https://zenzxz.dpdns.org/downloader/spotify`, {
       params: { url: spotifyUrl }
     });
 
