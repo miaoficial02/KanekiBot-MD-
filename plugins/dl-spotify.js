@@ -84,7 +84,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 };
 
-handler.command = ['spotifyvreden', 'trackvreden', 'songcard'];
-handler.tags = ['descargas'];
+handler.command = ['spotify', 'trackvreden', 'songcard'];
+handler.tags = ['descargar'];
 handler.help = ['spotifyvreden <nombre|link>'];
 export default handler;
