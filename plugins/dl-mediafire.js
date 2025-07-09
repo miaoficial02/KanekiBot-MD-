@@ -1,51 +1,80 @@
-let handler = async (m, { conn, usedPrefix, command, args }) => {
-    try {
-        if (!args || !args[0]) {
-            return conn.reply(m.chat, `📦 *Uso correcto:*\n${usedPrefix}${command} https://www.mediafire.com/file/archivo.zip`, m);
+// 📦 Descargador de MediaFire
+
+import fetch from 'node-fetch';
+
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  // 🛡️ Protección por ID único del mensaje
+  global._processedMessages ??= new Set();
+  if (global._processedMessages.has(m.key.id)) return;
+  global._processedMessages.add(m.key.id);
+
+  const thumbnailCard = 'https://qu.ax/phgPU.jpg';
+  const mainImage = 'https://qu.ax/AEkvz.jpg';
+
+  if (!text || !text.includes('mediafire.com')) {
+    return await conn.sendMessage(m.chat, {
+      text: `📥 *Proporciona un enlace válido de MediaFire para descargar.*\nEjemplo:\n${usedPrefix + command} https://www.mediafire.com/file/abc123/example.zip/file`,
+      footer: '🔗 MediaFire Downloader por Vreden API',
+      contextInfo: {
+        externalAdReply: {
+          title: 'Descarga directa desde MediaFire',
+          body: 'Convierte enlaces en descargas instantáneas',
+          thumbnailUrl: thumbnailCard,
+          sourceUrl: 'https://mediafire.com'
         }
+      }
+    }, { quoted: m });
+  }
 
-        if (!args[0].match(/(https:\/\/www.mediafire.com\/)/gi)) {
-            return conn.reply(m.chat, `🚫 *Enlace inválido.*\nAsegúrate de usar un enlace válido de MediaFire.`, m);
-        }
+  try {
+    const api = `https://api.vreden.my.id/api/mediafiredl?url=${encodeURIComponent(text)}`;
+    const res = await fetch(api);
+    const json = await res.json();
 
-        m.react('📥');
-
-        const res = await fetch(`https://api.sylphy.xyz/download/mediafire?url=${args[0]}&apikey=sylph-96ccb836bc`);
-        const contentType = res.headers.get("content-type");
-
-        // 🚨 Si no es JSON, es HTML (probablemente error)
-        if (!contentType || !contentType.includes("application/json")) {
-            const html = await res.text();
-            console.error("❗ API respondió HTML:\n", html.slice(0, 500));
-            return conn.reply(m.chat, `⚠️ *La API respondió un error HTML.*\nRevisa si el enlace es válido o si la API está caída.`, m);
-        }
-
-        const json = await res.json();
-
-        if (!json.data || !json.data.download) {
-            return conn.reply(m.chat, "❎ *No se pudo obtener la información del archivo.*", m);
-        }
-
-        const { filename, size, mimetype, download } = json.data;
-
-        const info = `
-╭━━━〔 🌐 *MediaFire Downloader* 〕━━⬣
-┃📄 *Nombre:* ${filename}
-┃📦 *Peso:* ${size}
-┃🧾 *Tipo:* ${mimetype}
-┃🔗 *Enlace:* 
-┃${args[0]}
-╰━━━━━━━━━━━━━━━━━━━━⬣`.trim();
-
-        await conn.reply(m.chat, info, m);
-        await conn.sendFile(m.chat, download, filename, `✅ *Archivo descargado correctamente.*`, m);
-
-    } catch (e) {
-        console.error("❌ Error al procesar MediaFire:", e);
-        return conn.reply(m.chat, `❌ *Error inesperado:*\n${e.message}`, m);
+    const file = json.result?.[0];
+    if (!file?.status || !file.link) {
+      return m.reply('❌ No se pudo obtener el archivo desde MediaFire.');
     }
+
+    const fileName = decodeURIComponent(file.nama);
+    const caption = `
+📄 *Nombre:* ${fileName}
+📁 *Tipo:* ${file.mime}
+📏 *Tamaño:* ${file.size}
+🖥️ *Servidor:* ${file.server}
+`.trim();
+
+    // 🖼️ Mensaje 1: descripción visual
+    await conn.sendMessage(m.chat, {
+      image: { url: mainImage },
+      caption,
+      footer: '📦 Información del archivo vía Vreden API',
+      contextInfo: {
+        externalAdReply: {
+          title: fileName,
+          body: `${file.size} • ${file.mime}`,
+          thumbnailUrl: thumbnailCard,
+          sourceUrl: file.link
+        }
+      }
+    }, { quoted: m });
+
+    // 📁 Mensaje 2: envío del archivo como documento ZIP
+    await conn.sendMessage(m.chat, {
+      document: {
+        url: file.link,
+        fileName,
+        mimetype: 'application/zip'
+      },
+      caption: '📥 Archivo descargado desde MediaFire'
+    }, { quoted: m });
+
+  } catch (error) {
+    console.error(error);
+    m.reply(`❌ Error al procesar el enlace.\n📛 Detalles: ${error.message}`);
+    m.react('⚠️');
+  }
 };
 
-handler.command = handler.help = ['mediafire'];
-handler.tags = ['download'];
+handler.command = ['mf'];
 export default handler;
