@@ -3,8 +3,8 @@
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const thumbnailCard = 'https://qu.ax/phgPU.jpg'; // Miniatura de la tarjeta
-  const mainImage = 'https://qu.ax/POPBx.jpg';     // Imagen principal del mensaje
+  const thumbnailCard = 'https://qu.ax/VGCPX.jpg'; // Miniatura de la tarjeta
+  const mainImage = 'https://qu.ax/RkiEC.jpg';     // Imagen principal del mensaje
 
   if (!text) {
     return conn.sendMessage(m.chat, {
