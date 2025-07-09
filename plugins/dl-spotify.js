@@ -5,12 +5,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (!text) {
     return conn.sendMessage(m.chat, {
-      text: `🎵 *Proporcióname un nombre o enlace válido de Spotify.*\n\n📌 *Ejemplo:* \n${usedPrefix + command} Kill Bill - SZA\n${usedPrefix + command} https://open.spotify.com/track/6UR5tB1wVm7qvH4xfsHr8m`,
-      footer: '🎶 Plugin Spotify por Vreden API',
+      text: `🎧 *Proporcióname un nombre o enlace válido de Spotify.*\n\n📌 Ejemplo:\n${usedPrefix + command} Kill Bill - SZA\n${usedPrefix + command} https://open.spotify.com/track/6UR5tB1wVm7qvH4xfsHr8m`,
       contextInfo: {
         externalAdReply: {
-          title: 'Descarga Spotify 🎶',
-          body: 'Escucha y descarga canciones con solo un nombre o enlace',
+          title: 'Spotify Downloader 🎵',
+          body: 'Descarga cualquier canción fácil',
           thumbnailUrl: thumbnailCard,
           sourceUrl: 'https://api.vreden.my.id'
         }
@@ -19,28 +18,19 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   try {
-    let spotifyURL = text;
+    // Buscar por nombre si no es link
+    let spotifyUrl = text.includes('spotify.com/track')
+      ? text
+      : await getSpotifyLink(text);
 
-    // Si no es un enlace, buscar por nombre
-    if (!text.includes('spotify.com/track')) {
-      const searchRes = await fetch(`https://api.vreden.my.id/api/search/spotify?query=${encodeURIComponent(text)}`);
-      const searchJson = await searchRes.json();
-      const result = searchJson?.result?.[0];
+    if (!spotifyUrl) return m.reply('❌ No se encontró ninguna canción con ese nombre.');
 
-      if (!result || !result.url) {
-        return m.reply('❌ No se encontraron resultados para ese nombre.');
-      }
+    // Obtener datos del track
+    let res = await fetch(`https://api.vreden.my.id/api/spotify?url=${encodeURIComponent(spotifyUrl)}`);
+    let json = await res.json();
+    let track = json?.result;
 
-      spotifyURL = result.url;
-    }
-
-    // Obtener datos de la canción desde el link
-    const api = `https://api.vreden.my.id/api/spotify?url=${encodeURIComponent(spotifyURL)}`;
-    const res = await fetch(api);
-    const json = await res.json();
-    const track = json.result;
-
-    if (!track?.status || !track.music) {
+    if (!track?.status || !track?.music) {
       return m.reply('❌ No se pudo obtener información del track. Verifica el enlace o nombre.');
     }
 
@@ -57,34 +47,42 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     await conn.sendMessage(m.chat, {
       image: { url: track.cover || thumbnailCard },
       caption,
-      footer: '🎶 Música desde Vreden API',
       contextInfo: {
         externalAdReply: {
           title: track.title,
-          body: 'Click para escuchar',
+          body: 'Spotify Downloader por Vreden',
           thumbnailUrl: track.cover || thumbnailCard,
           sourceUrl: track.music
         }
       }
     }, { quoted: m });
 
-    // Descargar audio
-    const mp3Res = await fetch(track.music);
-    const buffer = await mp3Res.buffer();
+    const audioBuffer = await fetch(track.music).then(res => res.buffer());
 
     await conn.sendMessage(m.chat, {
-      audio: buffer,
+      audio: audioBuffer,
       mimetype: 'audio/mpeg',
       fileName: `${track.title}.mp3`
     }, { quoted: m });
 
-  } catch (error) {
-    console.error(error);
-    m.reply(`💥 *Ocurrió un error descargando la canción.*\n📛 _Detalles:_ ${error.message}`);
+  } catch (e) {
+    console.error(e);
+    m.reply(`💥 *Error descargando música.*\n🧾 Detalles: ${e.message}`);
   }
 };
 
-handler.command = ['spotify', 'trackvreden', 'songcard'];
+async function getSpotifyLink(query) {
+  try {
+    let res = await fetch(`https://api.vreden.my.id/api/search/spotify?query=${encodeURIComponent(query)}`);
+    let json = await res.json();
+    return json?.result?.[0]?.url || null;
+  } catch {
+    return null;
+  }
+}
+
+handler.command = ['spotify', 'spotifytrack', 'songvreden'];
+handler.help = ['spotify <nombre o link>'];
 handler.tags = ['descargar'];
-handler.help = ['spotifyvreden <nombre|link>'];
+
 export default handler;
