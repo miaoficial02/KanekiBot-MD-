@@ -46,8 +46,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 };
 
-handler.help = ['facebook2', 'fb2'].map(v => v + ' <link>');
-handler.tags = ['descargas'];
+handler.help = ['facebook2', 'fb2']
+handler.tags = ['descargar'];
 handler.command = /^facebook2|fb2$/i;
 
 export default handler;
