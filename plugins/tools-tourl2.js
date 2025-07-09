@@ -26,7 +26,7 @@ await m.react(error)
 }}
 handler.help = ['tourl2']
 handler.tags = ['transformador']
-handler.register = true
+handler.register = false
 handler.command = ['tourl2', 'upload']
 
 export default handler
