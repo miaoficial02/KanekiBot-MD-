@@ -27,7 +27,6 @@ let handler = async (m, { conn }) => {
   const footer = `
 ╭─〔 👤 *Creador del Bot* 〕──⬣
 ┃ 👨‍💻 Nombre: *Bajo Bots*
-┃ 🌐 GitHub: github.com/kleiner1-1
 ┃ 📱 WhatsApp: wa.me/573162402768
 ╰────────────────────────⬣`;
 
