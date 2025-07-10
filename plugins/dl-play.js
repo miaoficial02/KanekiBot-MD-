@@ -2,7 +2,7 @@ import yts from 'yt-search';
 
 const handler = async (m, { conn, text, usedPrefix, command}) => {
   if (!text) {
-    return conn.reply(m.chat, `*${emoji} Ingresa un título para buscar en YouTube.*`,);
+    return conn.reply(m.chat, ` Ingresa un título para buscar en YouTube.*`,);
   }
 
   try {
