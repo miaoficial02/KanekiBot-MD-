@@ -1,63 +1,99 @@
-// 🥮 - _*Plugin Play (texto)*_
-// 🥮 - _*Descarga Musicas de YT por Texto*_
-// 🥮 - _*Codigo Realizado por Bajo!Bots
-
-import fetch from 'node-fetch'
+import fetch from "node-fetch"
 import yts from 'yt-search'
+import axios from "axios"
+const youtubeRegexID = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/
 
-let handler = async (m, { conn, text, args }) => {
-  if (!text) {
-    return m.reply(`╭━━〔 *❗ 𝗜𝗻𝗴𝗿𝗲𝘀𝗮 𝘂𝗻 𝘁𝗶𝘁𝘂𝗹𝗼* 〕━━⬣
-┃✧ *Ejemplo:* .play La Diabla
-╰━━━━━━━━━━━━━━━━━━━━⬣`)
-  }
-
-  let ytres = await search(args.join(" "))
-  if (!ytres.length) {
-    return m.reply("❌ No se encontraron resultados para tu búsqueda.")
-  }
-
-  let izumi = ytres[0]
-  let txt = `╭━━〔 *🔍 𝗥𝗲𝘀𝘂𝗹𝘁𝗮𝗱𝗼 𝗘𝗻𝗰𝗼𝗻𝘁𝗿𝗮𝗱𝗼* 〕━━⬣
-┃🎧 *Título:* ${izumi.title}
-┃⏱️ *Duración:* ${izumi.timestamp}
-┃📅 *Publicado:* ${izumi.ago}
-┃📺 *Canal:* ${izumi.author.name || 'Desconocido'}
-┃🔗 *Url:* ${izumi.url}
-╰━━━━━━━━━━━━━━━━━━━━⬣`
-
-  await conn.sendFile(m.chat, izumi.image, 'thumbnail.jpg', txt, m)
-
+const handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
-    const apiUrl = `https://cloudkutube.eu/api/yta?url=${encodeURIComponent(izumi.url)}`
-    const response = await fetch(apiUrl)
-    const data = await response.json()
+    if (!text.trim()) {
+      return conn.reply(m.chat, `*🌴 Por favor, ingresa el nombre de la música a descargar.*`, m)
+    }
+  
+let videoIdToFind = text.match(youtubeRegexID) || null
+let ytplay2 = await yts(videoIdToFind === null ? text : 'https://youtu.be/' + videoIdToFind[1])
 
-    if (data.status !== 'success') throw new Error('Fallo al obtener el audio.')
-
-    const title = data.result.title
-    const download = data.result.url
-
-    await conn.sendMessage(
-      m.chat,
-      {
-        audio: { url: download },
-        mimetype: 'audio/mpeg',
-        fileName: `${title}.mp3`,
-        ptt: false
+if (videoIdToFind) {
+const videoId = videoIdToFind[1]  
+ytplay2 = ytplay2.all.find(item => item.videoId === videoId) || ytplay2.videos.find(item => item.videoId === videoId)
+} 
+ytplay2 = ytplay2.all?.[0] || ytplay2.videos?.[0] || ytplay2  
+if (!ytplay2 || ytplay2.length == 0) {
+return m.reply('✧ No se encontraron resultados para tu búsqueda.')
+}
+let { title, thumbnail, timestamp, views, ago, url, author } = ytplay2
+title = title || 'no encontrado'
+thumbnail = thumbnail || 'no encontrado'
+timestamp = timestamp || 'no encontrado'
+views = views || 'no encontrado'
+ago = ago || 'no encontrado'
+url = url || 'no encontrado'
+author = author || 'no encontrado'
+    const vistas = formatViews(views)
+    const canal = author.name ? author.name : 'Desconocido'
+    const infoMessage = `
+≡ *🌴 𝗍í𝗍ᥙᥣ᥆* ${title || 'Desconocido'}
+≡ *🥥 ᥴᥲᥒᥲᥣ* ${canal}*
+≡ *⚡ ᥎іs𝗍ᥲs* ${vistas || 'Desconocido'}
+≡ *🌲 ძᥙrᥲᥴіóᥒ* ${timestamp || 'Desconocido'}
+≡ *🥞 ⍴ᥙᑲᥣіᥴᥲძ᥆* ${ago || 'Desconocido'}
+≡ *🪸 ᥣіᥒk* ${url}`
+    const thumb = (await conn.getFile(thumbnail))?.data
+    const JT = {
+      contextInfo: {
+        externalAdReply: {
+          title: `${title || 'Desconocido'}`,
+          body: dev,
+          mediaType: 1,
+          previewType: 0,
+          mediaUrl: url,
+          sourceUrl: url,
+          thumbnail: thumb,
+          renderLargerThumbnail: true,
+        },
       },
-      { quoted: m }
-    )
+    }
+    await conn.reply(m.chat, infoMessage, m, JT)    
+    if (command === 'play' || command === 'ytmp3' || command === 'playaudio') {
+      try {
+        const api = await (await fetch(`https://api.vreden.my.id/api/ytmp3?url=${url}`)).json()
+        const resulta = api.result
+        const result = resulta.download.url    
+        if (!result) throw new Error('⚠ El enlace de audio no se generó correctamente.')
+        await conn.sendMessage(m.chat, { audio: { url: result }, fileName: `${api.result.title}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
+      } catch (e) {
+        return conn.reply(m.chat, '⚠︎ No se pudo enviar el audio. Esto puede deberse a que el archivo es demasiado pesado o a un error en la generación de la URL. Por favor, intenta nuevamente más tarde.', m)
+      }
+    } else if (command === 'play2' || command === 'ytmp4' || command === 'mp4') {
+      try {
+        const response = await fetch(`https://api.neoxr.eu/api/youtube?url=${url}&type=video&quality=480p&apikey=GataDios`)
+        const json = await response.json()
+        await conn.sendFile(m.chat, json.data.url, json.title + '.mp4', title, m)
+      } catch (e) {
+        return conn.reply(m.chat, '⚠︎ No se pudo enviar el video. Esto puede deberse a que el archivo es demasiado pesado o a un error en la generación de la URL. Por favor, intenta nuevamente más tarde.', m)
+      }
+    } else {
+      return conn.reply(m.chat, '✧︎ Comando no reconocido.', m)
+    }
   } catch (error) {
-    console.error(error)
-    m.reply(`❌ 𝗘𝗿𝗿𝗼𝗿 𝗮𝗹 𝗱𝗲𝘀𝗰𝗮𝗿𝗴𝗮𝗿 𝗲𝗹 𝗮𝘂𝗱𝗶𝗼.\n*Detalles:* ${error.message}`)
+    return m.reply(`⚠︎ Ocurrió un error: ${error}`)
   }
 }
+handler.command = handler.help = ['play', 'ytmp3', 'play2', 'ytmp4', 'playaudio', 'mp4']
+handler.tags = ['descargas']
 
-handler.command = /^(play)$/i
 export default handler
 
-async function search(query, options = {}) {
-  let search = await yts.search({ query, hl: "es", gl: "ES", ...options })
-  return search.videos
+function formatViews(views) {
+  if (views === undefined) {
+    return "No disponible"
+  }
+
+  if (views >= 1_000_000_000) {
+    return `${(views / 1_000_000_000).toFixed(1)}B (${views.toLocaleString()})`
+  } else if (views >= 1_000_000) {
+    return `${(views / 1_000_000).toFixed(1)}M (${views.toLocaleString()})`
+  } else if (views >= 1_000) {
+    return `${(views / 1_000).toFixed(1)}k (${views.toLocaleString()})`
+  }
+  return views.toString()
 }
