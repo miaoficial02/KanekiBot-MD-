@@ -2,52 +2,47 @@ const ytdl = require('ytdl-core');
 const fs = require('fs');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const axios = require('axios');
+const ytSearch = require('yt-search');
 
 console.clear();
-console.log(chalk.red.bold('\n🎧 KanekiBot-MD — Descargador de YouTube 🎶\n'));
-console.log(chalk.gray('================================================'));
+console.log(chalk.red.bold('\n🎧 KanekiBot-MD — Reproductor YouTube\n'));
+console.log(chalk.gray('=============================================='));
 
 inquirer.prompt([
   {
     type: 'input',
     name: 'query',
-    message: chalk.cyan('🔍 Escribe el nombre o título del video:')
+    message: chalk.cyan('🔍 Escribe el nombre de la canción:')
   },
   {
     type: 'input',
     name: 'filename',
-    message: chalk.magenta('💾 Nombre del archivo MP3:')
+    message: chalk.magenta('💾 Nombre del archivo MP3 (sin .mp3):')
   }
 ]).then(async ({ query, filename }) => {
   try {
-    const res = await axios.get(`https://api.sylphy.xyz/search/youtube?q=${encodeURIComponent(query)}&hl=es`);
+    const res = await ytSearch(query);
 
-    if (!res.data || !res.data.result || res.data.result.length === 0) {
+    if (!res.videos.length) {
       console.log(chalk.yellow('⚠️ No se encontraron resultados.'));
       return;
     }
 
-    const video = res.data.result[0];
-    const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
-    const title = video.title;
+    const video = res.videos[0];
+    const videoUrl = video.url;
 
-    console.log(chalk.green(`\n🎬 Encontrado: ${title}`));
+    console.log(chalk.green(`\n🎬 Título: ${video.title}`));
+    console.log(chalk.green(`⏱ Duración: ${video.timestamp}`));
     console.log(chalk.green(`🌐 URL: ${videoUrl}`));
-    console.log(chalk.blue('🚀 Descargando...'));
-
-    const output = `${filename}.mp3`;
+    console.log(chalk.blue('\n🚀 Descargando audio...\n'));
 
     ytdl(videoUrl, { filter: 'audioonly' })
-      .pipe(fs.createWriteStream(output))
+      .pipe(fs.createWriteStream(`${filename}.mp3`))
       .on('finish', () => {
-        console.log(chalk.greenBright(`\n✅ ¡Descarga completada! Archivo guardado como: ${output}\n`));
-      })
-      .on('error', (err) => {
-        console.error(chalk.red('❌ Error al guardar el archivo:'), err);
+        console.log(chalk.greenBright(`✅ Descarga completa: ${filename}.mp3\n`));
       });
 
   } catch (err) {
-    console.error(chalk.red('❌ Error al buscar o descargar la canción:'), err.message || err);
+    console.error(chalk.red('❌ Error al buscar o descargar:'), err.message);
   }
 });
