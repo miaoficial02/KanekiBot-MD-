@@ -1,72 +1,43 @@
-let handler = async (m, { conn, text, args }) => {
-  // Validación: solo en grupos o canales
-  if (!m.isGroup && !text) throw "❌ Este comando solo puede usarse en grupos o se debe proporcionar el ID/enlace de un grupo o canal.";
+let handler = async (m, { conn, text }) => {
+  if (!text) throw '📌 *Ejemplo de uso:*\n.rcanal https://whatsapp.com/channel/123456789012345678';
 
-  // Obtener ID del grupo/canal
-  let groupId;
-  if (text) {
-    const regex = /chat\.whatsapp\.com\/([0-9A-Za-z]{20,24})/i;
-    const match = text.match(regex);
-    if (match) {
-      // Si es link, obtener el ID
-      const code = match[1];
-      try {
-        groupId = await conn.groupAcceptInvite(code); // Devuelve el ID sin unirse
-        await conn.groupLeave(groupId); // Salirse de inmediato si se unió por error
-      } catch {
-        throw "⚠️ No se pudo acceder al grupo con ese enlace. Asegúrate de que sea válido y público.";
-      }
-    } else if (text.endsWith("@g.us")) {
-      groupId = text;
-    } else {
-      throw "⚠️ Proporciona un link válido o el ID del grupo (terminado en @g.us)";
-    }
+  // Extraer ID del canal desde link
+  let channelId;
+  if (text.includes('whatsapp.com/channel/')) {
+    const match = text.match(/channel\/([\dA-Za-z]{20,})/);
+    if (!match) throw '❌ No se pudo leer el ID del canal.';
+    channelId = `${match[1]}@broadcast`;
+  } else if (text.endsWith('@broadcast')) {
+    channelId = text;
   } else {
-    groupId = m.chat;
+    throw '⚠️ Proporciona un enlace válido de canal de WhatsApp.';
   }
 
-  // Obtener metadata del grupo
   let metadata;
   try {
-    metadata = await conn.groupMetadata(groupId);
+    metadata = await conn.groupMetadata(channelId);
   } catch (e) {
-    throw "❌ No se pudo acceder al grupo. Verifica que el bot esté en él o que sea un grupo válido.";
+    throw '❌ No se pudo acceder al canal. Asegúrate de que el bot esté suscrito a él.';
   }
 
-  const { id, subject, owner, participants, creation, desc, restrict, announce, ephemeral } = metadata;
-
-  const admins = participants.filter(p => p.admin).map(p => "• @" + p.id.split("@")[0]).join("\n") || "Ninguno";
-  const creator = owner ? "@" + owner.split("@")[0] : "Desconocido";
-  const adminCount = participants.filter(p => p.admin).length;
+  const { id, subject, desc, creation, owner, participants } = metadata;
   const fechaCreacion = new Date(creation * 1000).toLocaleString("es", { timeZone: "America/Bogota" });
 
   const info = `
-╭━━〔 *📡 INFORMACIÓN DEL GRUPO/CANAL* 〕━━⬣
+╭━━〔 *📣 INFORMACIÓN DEL CANAL* 〕━━⬣
 ┃ 🆔 *ID:* ${id}
 ┃ 📛 *Nombre:* ${subject}
-┃ 👤 *Creador:* ${creator}
-┃ 👥 *Participantes:* ${participants.length}
-┃ 🛡️ *Admins:* ${adminCount}
-┃ 🔐 *Solo admins escriben:* ${announce ? '✅ Sí' : '❌ No'}
-┃ 🚫 *Restricciones:* ${restrict ? '✅ Sí' : '❌ No'}
-┃ ⏳ *Mensajes temporales:* ${ephemeral ? `${ephemeral / 60} min` : 'Desactivado'}
+┃ 👤 *Creador:* ${owner ? "@" + owner.split("@")[0] : "Desconocido"}
 ┃ 🕒 *Creado:* ${fechaCreacion}
-┃ 📝 *Descripción:* ${desc ? desc : 'Sin descripción'}
-┃
-┃ 🔧 *Lista de Admins:*
-${admins}
+┃ 👥 *Seguidores:* ${participants?.length || 'No disponible'}
+┃ 📝 *Descripción:* ${desc || 'Sin descripción'}
 ╰━━━━━━━━━━━━━━━━━━━━⬣
 `.trim();
 
-  const mentions = [
-    ...(owner ? [owner] : []),
-    ...participants.filter(p => p.admin).map(p => p.id)
-  ];
-
-  await m.reply(info, null, { mentions });
+  await m.reply(info);
 };
 
-handler.help = ["rcanal [link|ID]"];
+handler.help = ["rcanal <link del canal>"];
 handler.tags = ["tools"];
 handler.command = /^rcanal$/i;
 
