@@ -36,7 +36,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 };
 
-handler.command = /^rcanal$/i;
+// ✅ Comando limpio sin expresión regular mal formada
+handler.command = new RegExp('^rcanal$', 'i');
 handler.tags = ['tools'];
 handler.help = ['rcanal <link>'];
 
