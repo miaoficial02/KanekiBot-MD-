@@ -1,9 +1,8 @@
 import got from "got";
 import moment from "moment-timezone";
-import { promises as fs } from "fs";
 
 let handler = async (m, { conn }) => {
-  m.react("📜");
+  m.react("🌐");
 
   const senderId = m.sender;
   const userNumber = senderId.split("@")[0];
@@ -16,32 +15,32 @@ let handler = async (m, { conn }) => {
   if (!global.menutext) await global.menu();
 
   const header = `
-╭━〔 🤖 *KANEKIBOT* 〕━⬣
-┃ 🧑‍💼 *Usuario:* ${userName}
-┃ 📱 *Número:* +${userNumber}
-┃ 📅 *Fecha:* ${formattedDate}
-┃ ⏰ *Hora:* ${formattedTime}
-┃ 💬 *Saludo:* ${saludo}
-╰━━━━━━━━━━━━━━━━━━━━⬣`;
+╭═══〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 𝗠𝗘𝗡𝗨 〕═══⬣
+┃ 🧑‍💻 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
+┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
+┃ 📆 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
+┃ ⏰ 𝗛𝗼𝗿𝗮: ${formattedTime}
+┃ 💬 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
+╰════════════════════⬣\n`;
 
   const footer = `
-╭─〔 👤 *Creador del Bot* 〕──⬣
-┃ 👨‍💻 Nombre: *Bajo Bots*
-┃ 📱 WhatsApp: wa.me/573162402768
-╰────────────────────────⬣`;
+╭───〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕────⬣
+┃ 🐙 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
+┃ 🌎 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽: wa.me/573162402768
+╰────────────────────⬣`;
 
-  const txt = header + "\n" + global.menutext + "\n" + footer;
+  const txt = header + global.menutext + footer;
   const mention = [m.sender];
 
   try {
     const imageURL = "https://qu.ax/RkiEC.jpg";
-    const imgBuffer = await got(imageURL).buffer(); // ✅ Optimizado
+    const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
       {
         document: imgBuffer,
-        fileName: 'KanekiBot - Menu.pdf',
+        fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
         mimetype: 'application/pdf',
         caption: txt,
         fileLength: 99999999,
@@ -50,8 +49,8 @@ let handler = async (m, { conn }) => {
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: "✨ KanekiBot - Menú",
-            body: "🤖 Diseño único por Bajo Bots",
+            title: "🔥 KanekiBot - Panel de comandos",
+            body: "Menú exclusivo con diseño visual personalizado",
             thumbnail: imgBuffer,
             sourceUrl: "",
             mediaType: 1,
@@ -64,54 +63,30 @@ let handler = async (m, { conn }) => {
   } catch (e) {
     console.error(e);
     conn.reply(m.chat, txt, m, { mentions: mention });
-    conn.reply(m.chat, "❎ Error al mostrar el menú principal: " + e, m);
+    conn.reply(m.chat, "⚠️ Error al enviar el menú: " + e, m);
   }
 };
 
-handler.command = /^menu|help|menú|commands|comandos|\?$/i;
+handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
 // 🕐 Saludo automático
 function ucapan() {
-  const time = moment().tz("America/Los_Angeles").format("HH");
-  if (time >= 18) return "Good night.";
-  if (time >= 15) return "Good afternoon.";
-  if (time >= 10) return "Good afternoon.";
-  if (time >= 4) return "Good morning.";
-  return "Hello.";
+  const hour = moment().tz("America/Los_Angeles").format("HH");
+  if (hour >= 18) return "🌙 Buenas noches";
+  if (hour >= 12) return "🌞 Buenas tardes";
+  return "🌅 Buenos días";
 }
 
-// 🔠 Función de estilo decorativo
-var xStr = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
-var yStr = Object.freeze({
-  1: ['ᴀ','ʙ','ᴄ','ᴅ','ᴇ','ꜰ','ɢ','ʜ','ɪ','ᴊ','ᴋ','ʟ','ᴍ','ɴ','ᴏ','ᴘ','q','ʀ','ꜱ','ᴛ','ᴜ','ᴠ','ᴡ','x','ʏ','ᴢ','1','2','3','4','5','6','7','8','9','0'],
-  2: ['𝑎','𝑏','𝑐','𝑑','𝑒','𝑓','𝑔','ℎ','𝑖','𝑗','𝑘','𝑙','𝑚','𝑛','𝑜','𝑝','𝑞','𝑟','𝑠','𝑡','𝑢','𝑣','𝑤','𝑥','𝑦','𝑧','1','2','3','4','5','6','7','8','9','0'],
-  3: ['𝐀','𝐁','𝐂','𝐃','𝐄','𝐅','𝐆','𝐇','𝐈','𝐉','𝐊','𝐋','𝐌','𝐍','𝐎','𝐏','𝐐','𝐑','𝐒','𝐓','𝐔','𝐕','𝐖','𝐗','𝐘','𝐙','𝟏','𝟐','𝟑','𝟒','𝟓','𝟔','𝟕','𝟖','𝟗','𝟎'],
-  10: ['𝖺','𝖻','𝖼','𝖽','𝖾','𝖿','𝗀','𝗁','𝗂','𝗃','𝗄','𝗅','𝗆','𝗇','𝗈','𝗉','𝗊','𝗋','𝗌','𝗍','𝗎','𝗏','𝗐','𝗑','𝗒','𝗓','1','2','3','4','5','6','7','8','9','0']
-});
-
-global.style = async function style(text, style = 1) {
-  if (!text || typeof text !== 'string') return '';
-  const replacer = xStr.map((v, i) => ({
-    original: v,
-    convert: yStr[style]?.[i] || v,
-  }));
-  return text
-    .toLowerCase()
-    .split("")
-    .map((char) => replacer.find((x) => x.original === char)?.convert || char)
-    .join("");
-};
-
-// 🧰 MENÚ GENERADOR (OPTIMIZADO)
+// 🔠 Menú global
 global.menu = async function getMenu() {
   let text = "";
 
   const help = Object.values(global.plugins)
-    .filter((plugin) => !plugin.disabled)
-    .map((plugin) => ({
-      help: Array.isArray(plugin.help) ? plugin.help.filter(Boolean) : [plugin.help],
-      tags: Array.isArray(plugin.tags) ? plugin.tags.filter(Boolean) : [plugin.tags],
+    .filter(plugin => !plugin.disabled)
+    .map(plugin => ({
+      help: Array.isArray(plugin.help) ? plugin.help.filter(Boolean) : [],
+      tags: Array.isArray(plugin.tags) ? plugin.tags.filter(Boolean) : [],
     }));
 
   const tags = {};
@@ -121,10 +96,18 @@ global.menu = async function getMenu() {
     }
   }
 
-  const categoryIcons = {
-    tools: "🧰", fun: "🎮", game: "🕹️", admin: "🛠️",
-    sticker: "🎨", group: "👥", internet: "🌐",
-    download: "⬇️", anime: "🍥", roleplay: "🎭", default: "📁"
+  const icons = {
+    tools: "🛠",
+    fun: "🎲",
+    game: "🎮",
+    admin: "🛡",
+    sticker: "🎨",
+    group: "👥",
+    internet: "🌐",
+    download: "📥",
+    anime: "🍙",
+    roleplay: "🎭",
+    default: "📂"
   };
 
   for (const category of Object.keys(tags)) {
@@ -134,12 +117,10 @@ global.menu = async function getMenu() {
       .filter(cmd => typeof cmd === "string" && cmd.trim());
 
     if (commands.length) {
-      const icon = categoryIcons[category] || categoryIcons.default;
-      const styledCategory = await style(tags[category], 3);
-      const styledCommands = commands.map(cmd => `   ┆ ⏣ ${cmd}`); // No estilo en comandos = velocidad
-
-      text += `╭━━━〔 ${icon} ${styledCategory} 〕━━⬣\n`;
-      text += styledCommands.join("\n") + `\n╰━━━━━━━━━━━━━━━━━━━━━━⬣\n\n`;
+      const icon = icons[category] || icons.default;
+      text += `╭──〔 ${icon} ${tags[category]} 〕──────⬣\n`;
+      text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
+      text += `\n╰────────────────────────⬣\n\n`;
     }
   }
 
