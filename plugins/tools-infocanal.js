@@ -43,7 +43,7 @@ let handler = async (m, { conn, text }) => {
           mediaType: 1,
           previewType: 0,
           renderLargerThumbnail: true,
-          thumbnail: await (await fetch(data.picture_url || 'https://i.imgur.com/1Nq0v8c.png')).buffer(),
+          thumbnail: await (await fetch(data.picture_url || 'https://qu.ax/ARhkT.jpg')).buffer(),
           sourceUrl: `https://whatsapp.com/channel/${data.invite}`
         }
       }
