@@ -37,6 +37,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 };
 
-handler.command = /^rcanal|$/i;
+handler.command = /^rcanal|;
 
 export default handler;
