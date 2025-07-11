@@ -1,44 +1,21 @@
-let handler = async (m, { conn, text }) => {
+let handler = async (m, { text }) => {
   if (!text) throw '📌 *Ejemplo de uso:*\n.rcanal https://whatsapp.com/channel/123456789012345678';
 
-  // Extraer ID del canal desde el link
-  let channelId;
-  const match = text.match(/channel\/([0-9A-Za-z]{20,})/i);
-  if (match) {
-    channelId = `${match[1]}@broadcast`;
-  } else {
-    throw '❌ Enlace de canal inválido.\n🔗 Usa un enlace como:\nhttps://whatsapp.com/channel/xxxxxxxxxxxxxxxxxxxx';
-  }
+  const match = text.match(/whatsapp\.com\/channel\/([0-9A-Za-z]{20,})/i);
+  if (!match) throw '❌ Enlace inválido. Usa uno como:\nhttps://whatsapp.com/channel/XXXXXXXXXXXXXXX';
 
-  let metadata;
-  try {
-    metadata = await conn.groupMetadata(channelId);
-  } catch (e) {
-    console.log('[ERROR METADATA]', e);
-    throw '❌ No se pudo acceder al canal. Asegúrate de que el bot esté suscrito a él.';
-  }
-
-  // Extraer info
-  const { id, subject, desc, creation, owner } = metadata;
-  const fechaCreacion = new Date(creation * 1000).toLocaleString("es", {
-    timeZone: "America/Bogota"
-  });
-  const creador = owner ? "@" + owner.split("@")[0] : "Desconocido";
+  const rawId = match[1];
+  const channelId = `${rawId}@broadcast`;
 
   const info = `
-╭━━〔 *📣 INFORMACIÓN DEL CANAL* 〕━━⬣
-┃ 📛 *Nombre:* ${subject}
-┃ 🆔 *ID:* ${id}
-┃ 👤 *Creador:* ${creador}
-┃ 🕒 *Creado:* ${fechaCreacion}
-┃ 📝 *Descripción:* ${desc || "Sin descripción"}
+╭━━〔 *📣 ENLACE DE CANAL DETECTADO* 〕━━⬣
+┃ 🔗 *Link:* ${text}
+┃ 🆔 *ID del canal:* ${channelId}
+┃ ⚠️ *Nota:* No se puede obtener más datos porque el bot no está suscrito al canal.
 ╰━━━━━━━━━━━━━━━━━━━━⬣
 `.trim();
 
-  await conn.sendMessage(m.chat, {
-    text: info,
-    mentions: [owner].filter(Boolean)
-  }, { quoted: m });
+  return m.reply(info);
 };
 
 handler.help = ["rcanal <link del canal>"];
