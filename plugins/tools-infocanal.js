@@ -5,15 +5,21 @@ let handler = async (m, { conn, text }) => {
     if (!text) throw '📌 *Ejemplo de uso:*\n.rcanal https://whatsapp.com/channel/XXXXXXXXXXXX';
 
     const match = text.match(/channel\/([0-9A-Za-z]+)/);
-    if (!match) return conn.reply(m.chat, `❌ *Enlace inválido.* Usa:\nhttps://whatsapp.com/channel/XXXXXXXXXXXX`, m);
+    if (!match) {
+      return conn.sendMessage(m.chat, { text: '❌ Enlace inválido. Usa uno como:\nhttps://whatsapp.com/channel/XXXXXXXXXXXX' }, { quoted: m });
+    }
 
     const code = match[1];
     const data = await conn.newsletterMetadata("invite", code);
 
-    const fecha = new Date(data.creation_time * 1000).toLocaleDateString("es", { year: 'numeric', month: 'long', day: 'numeric' });
+    const fecha = new Date(data.creation_time * 1000).toLocaleDateString("es", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
 
     const mensaje = `
-╭━━━〔 *📣 CANAL DETECTADO* 〕━━⬣
+╭━━━━〔 *📣 CANAL DETECTADO* 〕━━━━⬣
 ┃ 🏷️ *Nombre:* ${data.name}
 ┃ 🆔 *ID:* ${data.id}
 ┃ 👥 *Seguidores:* ${data.subscribers}
@@ -24,7 +30,8 @@ let handler = async (m, { conn, text }) => {
 ┃
 ┃ 📝 *Descripción:* 
 ┃ ${data.description || 'Sin descripción'}
-╰━━━━━━━━━━━━━━━━━━━━⬣`.trim();
+╰━━━━━━━━━━━━━━━━━━━━━━⬣
+`.trim();
 
     await conn.sendMessage(m.chat, {
       text: mensaje,
@@ -32,7 +39,7 @@ let handler = async (m, { conn, text }) => {
       contextInfo: {
         externalAdReply: {
           title: data.name,
-          body: `${data.verified ? '✅ Canal verificado' : '❌ No verificado'} • ${data.subscribers} seguidores`,
+          body: `${data.verified ? '✅ Verificado' : '❌ No verificado'} • ${data.subscribers} seguidores`,
           mediaType: 1,
           previewType: 0,
           renderLargerThumbnail: true,
@@ -42,11 +49,14 @@ let handler = async (m, { conn, text }) => {
       }
     }, { quoted: m });
 
+    // Solo reacción ✅ (sin texto adicional)
     await m.react("✅");
 
   } catch (err) {
     console.error('[ERROR R-CANAL]', err);
-    await conn.reply(m.chat, `❌ *Error al procesar el canal:*\n${err.message}`, m);
+    await conn.sendMessage(m.chat, {
+      text: `❌ *Error al procesar el canal:*\n${err.message}`
+    }, { quoted: m });
   }
 };
 
