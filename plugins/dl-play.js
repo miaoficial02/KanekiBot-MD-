@@ -5,8 +5,8 @@ const inquirer = require('inquirer');
 const ytSearch = require('yt-search');
 
 console.clear();
-console.log(chalk.red.bold('\n🎧 KanekiBot-MD — Reproductor YouTube\n'));
-console.log(chalk.gray('=============================================='));
+console.log(chalk.red.bold('\n🎧 KanekiBot-MD — Buscador YouTube\n'));
+console.log(chalk.gray('=========================================\n'));
 
 inquirer.prompt([
   {
@@ -17,32 +17,35 @@ inquirer.prompt([
   {
     type: 'input',
     name: 'filename',
-    message: chalk.magenta('💾 Nombre del archivo MP3 (sin .mp3):')
+    message: chalk.magenta('💾 Nombre para el archivo MP3:')
   }
 ]).then(async ({ query, filename }) => {
   try {
-    const res = await ytSearch(query);
+    console.log(chalk.gray(`⏳ Buscando: ${query}...`));
+    const results = await ytSearch(query);
+    console.log(chalk.gray('✅ Resultado recibido de yt-search'));
 
-    if (!res.videos.length) {
+    if (!results.videos || results.videos.length === 0) {
       console.log(chalk.yellow('⚠️ No se encontraron resultados.'));
       return;
     }
 
-    const video = res.videos[0];
-    const videoUrl = video.url;
+    const video = results.videos[0];
+    console.log(chalk.green(`🎬 Título: ${video.title}`));
+    console.log(chalk.green(`📺 URL: ${video.url}`));
 
-    console.log(chalk.green(`\n🎬 Título: ${video.title}`));
-    console.log(chalk.green(`⏱ Duración: ${video.timestamp}`));
-    console.log(chalk.green(`🌐 URL: ${videoUrl}`));
-    console.log(chalk.blue('\n🚀 Descargando audio...\n'));
+    const output = `${filename}.mp3`;
 
-    ytdl(videoUrl, { filter: 'audioonly' })
-      .pipe(fs.createWriteStream(`${filename}.mp3`))
+    ytdl(video.url, { filter: 'audioonly' })
+      .pipe(fs.createWriteStream(output))
       .on('finish', () => {
-        console.log(chalk.greenBright(`✅ Descarga completa: ${filename}.mp3\n`));
+        console.log(chalk.greenBright(`✅ Descarga completada: ${output}\n`));
+      })
+      .on('error', (err) => {
+        console.error(chalk.red('❌ Error al guardar archivo:'), err);
       });
 
   } catch (err) {
-    console.error(chalk.red('❌ Error al buscar o descargar:'), err.message);
+    console.error(chalk.red('❌ Error en búsqueda o conexión:\n'), err);
   }
 });
