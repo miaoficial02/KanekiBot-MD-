@@ -1,17 +1,21 @@
 let handler = async (m, { text }) => {
-  if (!text) throw '📌 *Ejemplo de uso:*\n.rcanal https://whatsapp.com/channel/123456789012345678';
+  if (!text) throw '📌 *Ejemplo de uso:*\n.rcanal https://whatsapp.com/channel/1234567890ABCDE';
 
   const match = text.match(/whatsapp\.com\/channel\/([0-9A-Za-z]{20,})/i);
-  if (!match) throw '❌ Enlace inválido. Usa uno como:\nhttps://whatsapp.com/channel/XXXXXXXXXXXXXXX';
+  if (!match) throw '❌ Enlace inválido. Asegúrate de usar un link como:\nhttps://whatsapp.com/channel/XXXXXXXXXXXXXXX';
 
   const rawId = match[1];
-  const channelId = `${rawId}@broadcast`;
+  const channelId = `${rawId}@newsletter`;
 
   const info = `
-╭━━〔 *📣 ENLACE DE CANAL DETECTADO* 〕━━⬣
-┃ 🔗 *Link:* ${text}
-┃ 🆔 *ID del canal:* ${channelId}
-┃ ⚠️ *Nota:* No se puede obtener más datos porque el bot no está suscrito al canal.
+╭━━〔 *📣 DETECCIÓN DE CANAL* 〕━━⬣
+┃ 🔗 *Link del canal:*
+┃ ${text}
+┃ 
+┃ 🆔 *ID del canal:*
+┃ ${channelId}
+┃ 
+┃ ⚠️ *Nota:* No se puede obtener más datos (nombre, descripción, etc.) porque el bot no está suscrito.
 ╰━━━━━━━━━━━━━━━━━━━━⬣
 `.trim();
 
