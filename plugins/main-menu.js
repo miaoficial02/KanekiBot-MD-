@@ -35,7 +35,7 @@ let handler = async (m, { conn }) => {
 
   try {
     const imageURL = "https://qu.ax/RkiEC.jpg";
-    const imgBuffer = await got(imageURL).buffer(); // CORREGIDO
+    const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
@@ -71,8 +71,7 @@ let handler = async (m, { conn }) => {
 handler.command = /^menu|help|menú|commands|comandos|\?$/i;
 export default handler;
 
-// -------------------- FUNCIONES GLOBALES ----------------------
-
+// 🕒 Función para saludo dinámico
 function ucapan() {
   const time = moment().tz("America/Los_Angeles").format("HH");
   if (time >= 18) return "Good night.";
@@ -82,8 +81,9 @@ function ucapan() {
   return "Hello.";
 }
 
-var xStr = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
-var yStr = Object.freeze({
+// 🔠 Estilo decorativo para texto
+const xStr = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
+const yStr = Object.freeze({
   1: ['ᴀ','ʙ','ᴄ','ᴅ','ᴇ','ꜰ','ɢ','ʜ','ɪ','ᴊ','ᴋ','ʟ','ᴍ','ɴ','ᴏ','ᴘ','q','ʀ','ꜱ','ᴛ','ᴜ','ᴠ','ᴡ','x','ʏ','ᴢ','1','2','3','4','5','6','7','8','9','0'],
   2: ['𝑎','𝑏','𝑐','𝑑','𝑒','𝑓','𝑔','ℎ','𝑖','𝑗','𝑘','𝑙','𝑚','𝑛','𝑜','𝑝','𝑞','𝑟','𝑠','𝑡','𝑢','𝑣','𝑤','𝑥','𝑦','𝑧','1','2','3','4','5','6','7','8','9','0'],
   3: ['𝐀','𝐁','𝐂','𝐃','𝐄','𝐅','𝐆','𝐇','𝐈','𝐉','𝐊','𝐋','𝐌','𝐍','𝐎','𝐏','𝐐','𝐑','𝐒','𝐓','𝐔','𝐕','𝐖','𝐗','𝐘','𝐙','𝟏','𝟐','𝟑','𝟒','𝟓','𝟔','𝟕','𝟖','𝟗','𝟎'],
@@ -91,10 +91,12 @@ var yStr = Object.freeze({
 });
 
 global.style = async function style(text, style = 1) {
+  if (!text || typeof text !== 'string') return '';
   const replacer = xStr.map((v, i) => ({
     original: v,
     convert: yStr[style]?.[i] || v,
   }));
+
   return text
     .toLowerCase()
     .split("")
@@ -102,6 +104,7 @@ global.style = async function style(text, style = 1) {
     .join("");
 };
 
+// 📜 Generador de menú principal
 global.menu = async function getMenu() {
   let text = "";
 
@@ -139,9 +142,9 @@ global.menu = async function getMenu() {
         .filter((menu) => menu.tags?.includes(category))
         .map(async (menu) => {
           return await Promise.all(
-            menu.help.map(
-              async (cmd) => `   ┆ ⏣ ${await style(cmd, 10)}`
-            )
+            (menu.help || [])
+              .filter(cmd => typeof cmd === 'string' && cmd.trim())
+              .map(async (cmd) => `   ┆ ⏣ ${await style(cmd, 10)}`)
           );
         })
     );
