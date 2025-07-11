@@ -1,54 +1,43 @@
-import yts from 'yt-search';
+// play.js
+const ytdl = require('ytdl-core');
+const fs = require('fs');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const axios = require('axios');
 
-const handler = async (m, { conn, text, usedPrefix, command}) => {
-  if (!text) {
-    return conn.reply(m.chat, `Ingresa un título para buscar en YouTube.*`, );
+const API_KEY = 'https://api.sylphy.xyz/search/youtube'; // ← Reemplaza con tu clave
+
+console.clear();
+console.log(chalk.red.bold('\n🎧 KanekiBot-MD — Descargador por Nombre 🎶\n'));
+console.log(chalk.gray('=============================================='));
+
+inquirer.prompt([
+  {
+    type: 'input',
+    name: 'query',
+    message: chalk.cyan('🔍 Escribe el nombre de la canción:')
+  },
+  {
+    type: 'input',
+    name: 'filename',
+    message: chalk.magenta('💾 Nombre del archivo MP3:')
   }
-
+]).then(async ({ query, filename }) => {
   try {
-    const search = await yts(text);
-    const videoInfo = search.all?.[0];
+    const searchURL = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&key=${API_KEY}&maxResults=1&type=video`;
+    const res = await axios.get(searchURL);
+    const videoId = res.data.items[0].id.videoId;
+    const videoTitle = res.data.items[0].snippet.title;
 
-    if (!videoInfo) {
-      return conn.reply(m.chat, '⚠︎ Ocurrió un error al buscar el video. Inténtalo de nuevo más tarde.', m);
-  }
+    console.log(chalk.green(`\n🎬 Encontrado: ${videoTitle}`));
+    console.log(chalk.green('🚀 Descargando...'));
 
-    const body = `> ✦┉┉❲ 🌹 \`Y\` \`T\` - \`P\` \`L\` \`A\` \`Y\` 🌸 ❳
-> ┋ 🍓 *Título:* ${videoInfo.title}
-> ┋ ⚡ *Duración:* ${videoInfo.timestamp}
-> ┋ 📚 *Vistas:* ${videoInfo.views.toLocaleString()}
-> ┋ 🎨 *Autor:* ${videoInfo.author.name}
-> ┋ 🐉 *Publicado:* ${videoInfo.ago}
-> ┋ 🔩 *Enlace:* ${videoInfo.url}
-        🌴 ʟᴜғғʏ ʙᴏᴛ ᴍᴅ by ⚡
-                      🌹 ᴛʜᴇ ʙʟᴀᴄᴋ.ᴏғᴄ 🌱`;
-
-    await conn.sendMessage(
-      m.chat,
-      {
-        image: { url: videoInfo.thumbnail},
-        caption: body,
-        footer: '✨ ᴱˡⁱᵍᵉ ᵘⁿᵃ ᵒᵖᶜⁱᵒⁿ ᵖᵃʳᵃ ᵈᵉˢᶜᵃʳᵍᵃʳ ⭐',
-        buttons: [
-          { buttonId: `${usedPrefix}yta ${videoInfo.url}`, buttonText: { displayText: '🎧 AUDIO // MP3'}, type: 1},
-          { buttonId: `${usedPrefix}ytv ${videoInfo.url}`, buttonText: { displayText: '📽️ VIDEO // MP4'}, type: 1},
-        ],
-        viewOnce: true,
-        headerType: 4,
-      },
-      { quoted: m}
-    );
-
-    await m.react('✅'); // Reacción de éxito
+    ytdl(`https://www.youtube.com/watch?v=${videoId}`, { filter: 'audioonly' })
+      .pipe(fs.createWriteStream(`${filename}.mp3`))
+      .on('finish', () => {
+        console.log(chalk.greenBright(`\n✅ ¡Descarga completa! Guardado como ${filename}.mp3\n`));
+      });
   } catch (error) {
-    console.error(error);
-    return conn.reply(m.chat, `❗ Ocurrió un error: ${error.message}`, m);
- }
-};
-
-handler.command = ['play'];
-handler.tags = ['descargar'];
-//handler.group = true;
-handler.limit = 6;
-
-export default handler;
+    console.log(chalk.red('❌ Error al buscar o descargar la canción.'));
+  }
+});
