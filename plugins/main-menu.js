@@ -35,7 +35,7 @@ let handler = async (m, { conn }) => {
 
   try {
     const imageURL = "https://qu.ax/RkiEC.jpg";
-    const { body: imgBuffer } = await got(imageURL, { responseType: 'buffer' });
+    const imgBuffer = await got(imageURL).buffer(); // CORREGIDO
 
     await conn.sendMessage(
       m.chat,
@@ -70,6 +70,8 @@ let handler = async (m, { conn }) => {
 
 handler.command = /^menu|help|menú|commands|comandos|\?$/i;
 export default handler;
+
+// -------------------- FUNCIONES GLOBALES ----------------------
 
 function ucapan() {
   const time = moment().tz("America/Los_Angeles").format("HH");
