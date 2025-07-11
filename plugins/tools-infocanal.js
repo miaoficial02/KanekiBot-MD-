@@ -37,6 +37,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 };
 
-handler.command = /^rcanal|inspect$/i;
+handler.command = /^rcanal|$/i;
 
 export default handler;
