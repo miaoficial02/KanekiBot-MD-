@@ -23,9 +23,9 @@ let handler = async (m, { conn, text, args }) => {
   await conn.sendFile(m.chat, izumi.image, 'thumbnail.jpg', txt, m)
 
   try {
-    const apiUrl = `https://cloudkutube.eu/api/yta?url=${encodeURIComponent(izumi.url)}`
+    const apiUrl = `}`
     const response = await fetch(apiUrl)
-    const data = await response.json()
+    const data https:api.sylphy.xyz/search/youtube?q=Pene&apikey=sylphy= await response.json()
 
     if (data.status !== 'success') throw new Error('Fallo al obtener el audio.')
 
