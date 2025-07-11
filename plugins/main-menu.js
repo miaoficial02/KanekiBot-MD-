@@ -70,7 +70,7 @@ let handler = async (m, { conn }) => {
 handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
-// Saludo dinámico
+// 🕐 Saludo automático
 function ucapan() {
   const hour = moment().tz("America/Los_Angeles").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
@@ -78,7 +78,7 @@ function ucapan() {
   return "🌅 Buenos días";
 }
 
-// MENÚ GLOBAL CON CATEGORÍAS DECORADAS
+// 🔠 Menú global
 global.menu = async function getMenu() {
   let text = "";
 
@@ -97,11 +97,11 @@ global.menu = async function getMenu() {
   }
 
   const icons = {
-    tools: "🧰",
-    fun: "🎉",
-    game: "🕹️",
-    admin: "🛡️",
-    sticker: "🖼️",
+    tools: "🛠",
+    fun: "🎲",
+    game: "🎮",
+    admin: "🛡",
+    sticker: "🎨",
     group: "👥",
     internet: "🌐",
     download: "📥",
@@ -118,14 +118,9 @@ global.menu = async function getMenu() {
 
     if (commands.length) {
       const icon = icons[category] || icons.default;
-      const title = `『 ${icon} ${tags[category]} 』`;
-      const border = "═".repeat(title.length);
-
-      text += `╔${border}╗\n`;
-      text += `║ ${title} ║\n`;
-      text += `╚${border}╝\n`;
-      text += commands.map(cmd => `⟢ ${cmd}`).join("\n");
-      text += `\n\n`;
+      text += `╭──〔 ${icon} ${tags[category]} 〕──────⬣\n`;
+      text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
+      text += `\n╰────────────────────────⬣\n\n`;
     }
   }
 
