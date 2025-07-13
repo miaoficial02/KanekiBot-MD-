@@ -27,14 +27,9 @@ let crm3 = "Sinfo-Donar.js";
 let crm4 = " _autoresponder.js info-bot.js";
 let drm1 = "";
 let drm2 = "";
-let img = 'https://qu.ax/WKPZG.jpg y'; // URL de la imagen
+let img = 'https://qu.ax/WKPZG.jpg'; // Imagen desde link
 let rtx = "*¡Bienvenido a la conexión Sub Bot! ✨*\n\n*Para unirte, ¡escanea este código QR con otro dispositivo o PC! 📱💻*\n\n`1` » Toca los *tres puntos* en la esquina superior derecha.\n`2` » Selecciona *'Dispositivos vinculados'*.\n`3` » ¡Escanea este QR y listo para iniciar sesión! 🎉\n\n*⚠️ Este código QR caduca en 45 segundos. ¡Conéctate rápido!*";
-
-// Enviar imagen por link con pie de foto
-await conn.sendMessage(m.chat, {
-  image: { url: img },
-  caption: rtx
-}, { quoted: m });
+let rtx2 = "*¡Conexión Sub Bot por Código! ✨*\n\n*Usa este código único para convertirte en un Sub Bot. ¡Es rápido y seguro! 🚀*\n\n`1` » Toca los *tres puntos* en la esquina superior derecha.\n`2` » Selecciona *'Dispositivos vinculados'*.\n`3` » Elige *'Vincular con el número de teléfono'*.\n`4` » ¡Introduce el *código* que te proporcionaremos a continuación! 👇\n\n*🔒 Este código solo funciona para ti. ¡No lo compartas!*";
 
 if (global.conns instanceof Array) {
 } else {
@@ -271,21 +266,25 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
           subBot.isInit = false;
         }
         if (qr && !isCode) {
-          qrMessage = await user.sendMessage(msg.chat, {
-            image: await qrcode.toBuffer(qr, { scale: 8 }),
-            caption: rtx,
-            contextInfo: {
-              forwardingScore: 999,
-              isForwarded: true,
-              forwardedNewsletterMessageInfo: {
-                newsletterJid: '120363419009027760@newsletter',
-                newsletterName: '𝐊𝐀𝐍𝐄𝐊𝐈 𝐁𝐎𝐓 𝐌𝐃',
-                serverMessageId: -1
-              }
-            }
-          }, { quoted: msg });
-          return;
-        }
+  let response = await fetch(img); // img ya está definida arriba como URL
+  let buffer = await response.buffer();
+
+  qrMessage = await user.sendMessage(msg.chat, {
+    image: buffer,
+    caption: rtx,
+    contextInfo: {
+      forwardingScore: 999,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363419009027760@newsletter',
+        newsletterName: '𝐊𝐀𝐍𝐄𝐊𝐈 𝐁𝐎𝐓 𝐌𝐃',
+        serverMessageId: -1
+      }
+    }
+  }, { quoted: msg });
+  return;
+}
+
         if (qr && isCode) {
           code = await user.sendMessage(msg.chat, {
             text: rtx2,
@@ -463,4 +462,4 @@ function sleep(ms) {
 async function joinChannels(conn) {
   await conn.newsletterFollow("120363419009027760@newsletter")
   conn.newsletterFollow("120363419009027760@newsletter")
-                                                                   }
+  }
