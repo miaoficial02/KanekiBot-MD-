@@ -195,7 +195,7 @@ secret = secret.match(/.{1,4}/g)?.join("-")
 const msg = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
   interactiveMessage: {
     body: { text: rtx2 }, 
-    footer: { text: 'Pikachu Bot by Deylin' },
+    footer: { text: 'Kaneki-Bot By BajoBots' },
     header: {
       hasMediaAttachment: false 
     },
