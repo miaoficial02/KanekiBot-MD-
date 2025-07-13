@@ -285,19 +285,26 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
   return;
 }
 
-        if (qr && isCode) {
-          code = await user.sendMessage(msg.chat, {
-            text: rtx2,
-            contextInfo: {
-              forwardingScore: 999,
-              isForwarded: true,
-              forwardedNewsletterMessageInfo: {
-                newsletterJid: '120363419009027760@newsletter',
-                newsletterName: '𝐊𝐀𝐍𝐄𝐊𝐈 𝐁𝐎𝐓 𝐌𝐃',
-                serverMessageId: -1
-              }
-            }
-          }, { quoted: msg });
+        if (qr && !isCode) {
+  let response = await fetch(img); // img ya está definida arriba como URL
+  let buffer = await response.buffer();
+
+  qrMessage = await user.sendMessage(msg.chat, {
+    image: buffer,
+    caption: rtx,
+    contextInfo: {
+      forwardingScore: 999,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363419009027760@newsletter',
+        newsletterName: '𝐊𝐀𝐍𝐄𝐊𝐈 𝐁𝐎𝐓 𝐌𝐃',
+        serverMessageId: -1
+      }
+    }
+  }, { quoted: msg });
+  return;
+}
+
 
           await sleep(3000);
           pairingCode = await subBot.requestPairingCode(msg.sender.split`@`[0]);
