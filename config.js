@@ -37,11 +37,11 @@ global.link = 'https://chat.whatsapp.com/IVgxD0TWWuSA0lVoexudIS';
 global.logo = 'https://qu.ax/tyxJP.jpg'; 
 global.botname = '☠️ 𝗞𝗮𝗻𝗲𝗸𝗶𝗕𝗼𝘁-𝗠𝗗 ☠️'
 
-global.canalreg = '120363417208139711@newsletter informativo'
+global.canalreg = '120363417208139711@boletin informativo'
 
 global.namecanal = '𝐊𝐀𝐍𝐄𝐊𝐈𝐁𝐎𝐓-𝐌𝐃'
 global.canal = 'https://whatsapp.com/channel/0029Vb63Kf9KwqSQLOQOtk3N'
-global.idcanal = '120363419009027760@newsletter informativo'
+global.idcanal = '120363419009027760@boletin informativo'
 
 global.ch = {
 cap1: '120363419009027760@newsletter',
