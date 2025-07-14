@@ -138,11 +138,11 @@ const tiempoInfo = obtenerTiempoConexion(v);
 const estado = obtenerEstadoConexion(v);
 
 return `*${index + 1}*
-*“± +${numero}*
-*‘¤ Usuario:* ${nombre}
+* +${numero}*
+* Usuario:* ${nombre}
 *° Conectado:* ${tiempoInfo.formateado}
-*”— Estado:* ${estado}
-*“… Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
+*— Estado:* ${estado}
+*… Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
 }).join('\n\n> ________________\n\n');
 
 const replyMessage = message.length === 0 ? `*¦ No hay JadiBots conectados*` : message;
@@ -169,12 +169,12 @@ const responseMessage = `*🔥Lista de JadiBots Conectados🔥*
 
 \`\`\`Para convertirse en JadiBot use: .code\`\`\`
 
-* Estadisticas en tiempo real:*
+*Estadisticas en tiempo real*:
 *– Total activos:* ${totalUsers}
 
 ${replyMessage.trim()}
 
-*’¡ El tiempo se actualiza automaticamente en cada consulta*`.trim();
+*’ El tiempo se actualiza automaticamente en cada consulta*`.trim();
 
 await conn.sendMessage(m.chat, {text: responseMessage, mentions: conn.parseMention(responseMessage)}, {quoted: m})
 break   
