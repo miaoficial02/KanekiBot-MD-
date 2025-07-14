@@ -192,9 +192,30 @@ case 'noprefix':
       throw false
 }
 
-m.reply(`
-✅ *${type.toUpperCase()}* *${isEnable ? `Activado` : `Desactivado`}* ${isAll ? `para este bot` : isUser ? '' : `para este chat`}
-`.trim()) 
+// 🎭 Emoji de estado
+let emojiEstado = isEnable ? '✅' : '❌'
+await conn.sendMessage(m.chat, { react: { text: emojiEstado, key: m.key } })
+
+// 🎨 Mensaje estilizado
+let statusMsg = `
+╭─❍ 〔 *𝗞𝗮𝗻𝗲𝗸𝗶𝗕𝗼𝘁-M𝗗* 〕
+│
+├ 🎛️ *Opción:* ${type.toUpperCase()}
+├ ⚙️ *Estado:* ${isEnable ? '✅ ACTIVADO' : '❌ DESACTIVADO'}
+${isAll ? '├ 🌍 *Ámbito:* Este bot completo' : '├ 💬 *Ámbito:* Solo este chat'}
+│
+╰───────────────╯`.trim()
+
+// 🖼️ Imagen o sticker opcional
+let media = isEnable
+  ? { image: { url: 'https://i.imgur.com/psG7fMo.jpg' }, caption: statusMsg } // imagen decorativa al activar
+  : { sticker: { url: 'https://i.imgur.com/GQbBXjX.webp' } } // sticker decorativo al desactivar
+
+await conn.sendMessage(m.chat, media, { quoted: m })
+
+// 🗨️ Mensaje de texto adicional si se desea
+// await conn.reply(m.chat, statusMsg, m)
+
 
 }
 handler.help = ['en', 'dis'].map(v => v + 'able')
