@@ -23,14 +23,14 @@
   ],
   "homepage": "readme.md",
   "author": {
-    "name": "FzTeis"
+    "name": "BajoBots"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kleiner1-1/KanekiBot-MD-.git"
+    "url": "git+https://github.com/FzTeis/Simple_Bot-Wa.git"
   },
   "bugs": {
-    "url": "https://github.com/kleiner1-1"
+    "url": "https://github.com/FzTeis"
   },
   "license": "MIT",
   "dependencies": {
