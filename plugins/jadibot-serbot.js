@@ -335,22 +335,22 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
           console.log(disconnectCode);
           if (disconnectCode == 405) {
             await fs.unlinkSync("./" + global.jadi + "/" + userName + "/creds.json"); // Changed to global.jadi
-            return await msg.reply("â€ Reenvia nuevamente el comando.");
+            return await msg.reply(" Reenvia nuevamente el comando.");
           }
           if (disconnectCode === DisconnectReason.restartRequired) {
             initSubBot();
-            return console.log("\nðŸŒ¼ Tiempo de conexiÃ³n agotado, reconectando...");
+            return console.log("\n Tiempo de conexion agotado, reconectando...");
           } else if (disconnectCode === DisconnectReason.loggedOut) {
             fs.rmdirSync(`./${global.jadi}/${userName}`, { recursive: true }); // Changed to global.jadi
-            return msg.reply("ðŸŒ¼ *ConexiÃ³n perdida...*");
+            return msg.reply(" *Conexion perdida...*");
           } else if (disconnectCode == 428) {
             await closeConnection(false);
-            return msg.reply("ðŸŒ¼ La conexiÃ³n se ha cerrado de manera inesperada, intentaremos reconectar...");
+            return msg.reply("La conexion se ha cerrado de manera inesperada, intentaremos reconectar...");
           } else if (disconnectCode === DisconnectReason.connectionLost) {
             await initSubBot();
-            return console.log("\nðŸŒ¼ConexiÃ³n perdida con el servidor, reconectando....");
+            return console.log("\nConexion perdida con el servidor, reconectando....");
           } else if (disconnectCode === DisconnectReason.badSession) {
-            return await msg.reply("ðŸŒ¼ La conexiÃ³n se ha cerrado, deberÃ¡ de conectarse manualmente usando el comando *.serbot* y reescanear el nuevo *QR.* Que fuÃ³ enviada la primera vez que se hizo *SubBot*");
+            return await msg.reply(" La conexion se ha cerrado, deberia de conectarse manualmente usando el comando *.serbot* y reescanear el nuevo *QR.* Que fuÃ³ enviada la primera vez que se hizo *SubBot*");
           } else if (disconnectCode === DisconnectReason.timedOut) {
             await closeConnection(false);
             return console.log("\n Tiempo de conecion agotado, reconectando....");
@@ -423,7 +423,7 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
             subBot.chats[chatId].isBanned = false;
           });
         } else {
-          console.log(subBot.chats, "ðŸš© Omitiendo mensajes en espera.", subBot.ev);
+          console.log(subBot.chats, " Omitiendo mensajes en espera.", subBot.ev);
           Object.keys(subBot.chats).forEach(chatId => {
             subBot.chats[chatId].isBanned = true;
           });
