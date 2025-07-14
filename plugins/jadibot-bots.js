@@ -31,24 +31,24 @@ const jadi = global.opts["jadibot"] || "jadibots"
 const path = `./${jadi}/${uniqid}`
 
 if (!await fs.existsSync(path)) {
-await conn.sendMessage(m.chat, { text: `*No tiene una sesiÃ³n activa, cree una utilizando:*\n${usedPrefix + command}\n\n*Si tiene una *(ID)* puede usar para saltarse el paso anterior usando:*\n*${usedPrefix + command}* \`\`\`(ID)\`\`\`` }, { quoted: m })
+await conn.sendMessage(m.chat, { text: `*No tiene una sesion activa, cree una utilizando:*\n${usedPrefix + command}\n\n*Si tiene una *(ID)* puede usar para saltarse el paso anterior usando:*\n*${usedPrefix + command}* \`\`\`(ID)\`\`\`` }, { quoted: m })
 return
 }
-if (global.conn.user.jid !== conn.user.jid) return conn.sendMessage(m.chat, {text: `ðŸŒ¼ *Utilice este comando con el bot principal*.\n\n*https://api.whatsapp.com/send/?phone=${global.conn.user.jid.split`@`[0]}&text=${usedPrefix + command}&type=phone_number&app_absent=0*`}, { quoted: m }) 
+if (global.conn.user.jid !== conn.user.jid) return conn.sendMessage(m.chat, {text: ` *Utilice este comando con el bot principal*.\n\n*https://api.whatsapp.com/send/?phone=${global.conn.user.jid.split`@`[0]}&text=${usedPrefix + command}&type=phone_number&app_absent=0*`}, { quoted: m }) 
 else {
-await conn.sendMessage(m.chat, { text: `*ðŸŒ¼ La sesiÃ³n JadiBot fue eliminada*` }, { quoted: m })}
+await conn.sendMessage(m.chat, { text: `* La sesion JadiBot fue eliminada*` }, { quoted: m })}
 try {
 fs.rmdir(`./${jadi}/` + uniqid, { recursive: true, force: true })
-await conn.sendMessage(m.chat, { text : `*ðŸŒ¼ La sesiÃ³n fue cerrada.*` } , { quoted: m })
+await conn.sendMessage(m.chat, { text : `* La sesion fue cerrada.*` } , { quoted: m })
 } catch (e) {
 reportError(e)
 }  
 break
 
 case isCommand2:
-if (global.conn.user.jid == conn.user.jid) conn.reply(m.chat, `ðŸŒ¼ Si no tiene una sesiÃ³n de JadiBot envÃ­e mensaje al bot principal para convertirse en SUB`, m)
+if (global.conn.user.jid == conn.user.jid) conn.reply(m.chat, `*Si no tiene una sesion de JadiBot envi­e mensaje al bot principal para convertirse en SUB*`, m)
 else {
-await conn.reply(m.chat, `ðŸŒ¼ ${global.botname || 'Bot'} Desactivado.`, m)
+await conn.reply(m.chat, ` ${global.botname || 'Bot'} Desactivado.`, m)
 conn.ws.close()}  
 break
 
@@ -112,14 +112,14 @@ transcurrido: tiempo.total
 }
 
 function obtenerEstadoConexion(subbot) {
-if (!subbot.ws || !subbot.ws.socket) return 'ðŸ”´ Desconectado';
+if (!subbot.ws || !subbot.ws.socket) return '”´ Desconectado';
 
 switch (subbot.ws.socket.readyState) {
-case ws.CONNECTING: return 'ðŸŸ¡ Conectando';
-case ws.OPEN: return 'ðŸŸ¢ Activo';
-case ws.CLOSING: return 'ðŸŸ  Cerrando';
-case ws.CLOSED: return 'ðŸ”´ Cerrado';
-default: return 'âšª Desconocido';
+case ws.CONNECTING: return ' Conectando';
+case ws.OPEN: return ' Activo';
+case ws.CLOSING: return '  Cerrando';
+case ws.CLOSED: return '”´ Cerrado';
+default: return ' Desconocido';
 }
 }
 
@@ -137,15 +137,15 @@ const nombre = v.user.name || 'JadiBot';
 const tiempoInfo = obtenerTiempoConexion(v);
 const estado = obtenerEstadoConexion(v);
 
-return `â€ *${index + 1}*
-*ðŸ“± +${numero}*
-*ðŸ‘¤ Usuario:* ${nombre}
-*â° Conectado:* ${tiempoInfo.formateado}
-*ðŸ”— Estado:* ${estado}
-*ðŸ“… Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
+return `*${index + 1}*
+*“± +${numero}*
+*‘¤ Usuario:* ${nombre}
+*° Conectado:* ${tiempoInfo.formateado}
+*”— Estado:* ${estado}
+*“… Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
 }).join('\n\n> ________________\n\n');
 
-const replyMessage = message.length === 0 ? `*âœ¦ No hay JadiBots conectados*` : message;
+const replyMessage = message.length === 0 ? `*¦ No hay JadiBots conectados*` : message;
 const totalUsers = users.length;
 
 let tiempoTotalMs = 0;
@@ -165,16 +165,16 @@ const tiempoPromedio = users.length > 0 ? tiempoTotalMs / users.length : 0;
 const tiempoPromedioFormateado = formatearTiempo(calcularTiempoTranscurrido(Date.now() - tiempoPromedio));
 const tiempoMasLargoFormateado = formatearTiempo(calcularTiempoTranscurrido(Date.now() - tiempoMasLargo));
 
-const responseMessage = `ðŸŒ¼ *Lista de JadiBots Conectados*
+const responseMessage = `*🔥Lista de JadiBots Conectados🔥*
 
 \`\`\`Para convertirse en JadiBot use: .code\`\`\`
 
-*ðŸ“Š EstadÃ­sticas en tiempo real:*
-*ðŸ¤– Total activos:* ${totalUsers}
+* Estadisticas en tiempo real:*
+*– Total activos:* ${totalUsers}
 
 ${replyMessage.trim()}
 
-*ðŸ’¡ El tiempo se actualiza automÃ¡ticamente en cada consulta*`.trim();
+*’¡ El tiempo se actualiza automaticamente en cada consulta*`.trim();
 
 await conn.sendMessage(m.chat, {text: responseMessage, mentions: conn.parseMention(responseMessage)}, {quoted: m})
 break   
