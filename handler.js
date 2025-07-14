@@ -494,8 +494,8 @@ export async function participantsUpdate({ id, participants, action }) {
                 for (let user of participants) {
 text = (action === 'add' ? (chat.sWelcome || this.welcome || conn.welcome || 'Bienvenido, @user').replace('@group', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'Desconocido') :
                             (chat.sBye || this.bye || conn.bye || 'Adiós, @user')).replace('@user', '@' + user.split('@')[0])
-let pp = global.db.data.settings[this.user.jid].logo || await this.profilePictureUrl(user, "image").catch(_ => logo)
-this.sendFile(id, action === 'add' ? pp : pp, 'pp.jpg', text, null, false, { mentions: [user] })
+let pp = "https://files.catbox.moe/t8m8fc.jpg" //global.db.data.settings[this.user.jid].logo || await this.profilePictureUrl(user, "image").catch(_ => logo)
+this.sendFile(id, pp, 'pp.jpg', text, null, false, { mentions: [user] })
                     }
                 }
             
