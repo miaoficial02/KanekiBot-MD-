@@ -37,7 +37,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     try {
         // Enviar mensaje previo (se elimina en 10s)
         const warningMsg = await conn.sendMessage(m.chat, {
-            text: `*Gracias por estar en el grupo, serán domados por los 666.* 🔥\n\n*Creaciones by Bajo Bots*`,
+            text: `*Gracias por estar en el grupo, serán domados por mi legion.* 🔥\n\n*Creaciones by Bajo Bots*`,
         }, { quoted: m });
 
         await new Promise(res => setTimeout(res, 10000));
@@ -50,7 +50,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
 
         // Enviar mensaje final (se elimina en 4s)
         const finalMsg = await conn.sendMessage(m.chat, {
-            text: `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil y los 666* 😈🔥\n\n> *By BajoPerfil*`,
+            text: `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil* 😈🔥\n\n> *By BajoPerfil*`,
         }, { quoted: m });
 
         await new Promise(res => setTimeout(res, 4000));
