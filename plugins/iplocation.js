@@ -56,6 +56,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 handler.command = /^ip(loc|location)$/i;
 handler.help = ['iplocation <ip>'];
 handler.tags = [''];
-handler.register = true;
+handler.register = false;
 
 export default handler;
