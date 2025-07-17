@@ -1,38 +1,42 @@
+import fetch from 'node-fetch';
+
 let handler = async (m, { conn, text, args, usedPrefix, command }) => {
-  const apiKey = 'TU_API_KEY_AQUI'; // 🔧 Reemplaza con tu API Key real
+  const apiKey = 'TU_API_KEY_AQUI'; // 🔑 Reemplaza con tu API Key real
   const ip = text?.trim();
 
-  if (!ip)
-    return m.reply(`🌍 *Uso del comando:*\n${usedPrefix + command} 8.8.8.8`);
+  if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+    return m.reply(`❌ *IP inválida*\n\n📌 Uso correcto:\n${usedPrefix + command} 8.8.8.8`);
+  }
 
   try {
-    let url = `https://api.ip2location.io/?key=${apiKey}&ip=${ip}`;
-    let res = await fetch(url);
-    let json = await res.json();
+    const res = await fetch(`https://api.ip2location.io/?key=${apiKey}&ip=${ip}`);
+    const data = await res.json();
 
-    if (json.country_name) {
-      let info = `
-📡 *INFORMACIÓN DE LA IP*
-  
-🧠 *IP:* ${json.ip}
-🌎 *País:* ${json.country_name} (${json.country_code})
-🏙️ *Ciudad:* ${json.city_name}
-🌐 *Región:* ${json.region_name}
-📍 *Latitud:* ${json.latitude}
-📍 *Longitud:* ${json.longitude}
-🏣 *Código postal:* ${json.zip_code}
-🕒 *Zona Horaria:* ${json.time_zone}
+    // Validación estricta de la respuesta
+    if (data && data.country_name && !data.error) {
+      const respuesta = `
+🌍 *INFORMACIÓN DE LA IP*
 
-🔗 https://www.google.com/maps?q=${json.latitude},${json.longitude}
+🧠 *IP:* ${data.ip}
+🌎 *País:* ${data.country_name} (${data.country_code})
+📍 *Región:* ${data.region_name}
+🏙️ *Ciudad:* ${data.city_name}
+🧭 *Latitud:* ${data.latitude}
+🧭 *Longitud:* ${data.longitude}
+🏣 *Código Postal:* ${data.zip_code}
+🕐 *Zona Horaria:* ${data.time_zone}
+
+📌 *Ubicación en Mapa:* 
+https://www.google.com/maps?q=${data.latitude},${data.longitude}
       `.trim();
 
-      conn.reply(m.chat, info, m);
+      await conn.reply(m.chat, respuesta, m);
     } else {
-      m.reply('❌ No se pudo obtener la ubicación. Verifica tu IP y API Key.');
+      throw new Error(data?.error?.error_message || 'Respuesta no válida');
     }
-  } catch (err) {
-    console.error(err);
-    m.reply('❌ Error al consultar la API. Asegúrate de que tu IP sea válida y la API Key funcione.');
+  } catch (e) {
+    console.error(e);
+    return m.reply(`❌ No se pudo obtener la ubicación.\n🔧 Verifica:\n• Que tu IP sea válida\n• Que tu API Key funcione\n• Que no haya límites de uso`);
   }
 };
 
