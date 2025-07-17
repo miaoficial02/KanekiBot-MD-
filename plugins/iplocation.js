@@ -1,49 +1,43 @@
-import fetch from 'node-fetch';
-
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const apiKey = 'TU_API_KEY_AQUI'; // ⛔ Reemplaza con tu API KEY válida
-  const ip = text?.trim();
-
-  if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
-    return m.reply(`❌ IP inválida.
-
-📌 Uso correcto:
-${usedPrefix + command} 8.8.8.8`);
+let handler = async (m, { conn, args }) => {
+  if (!args[0]) {
+    return m.reply(`🌎 *Uso del comando:*\n\n.ip 8.8.8.8`);
   }
 
+  const ip = args[0];
+  const fetch = (await import('node-fetch')).default;
+
   try {
-    const res = await fetch(`https://api.ip2location.io/?key=${apiKey}&ip=${ip}`);
-    if (!res.ok) throw new Error(`❌ Error HTTP ${res.status}`);
-    
-    const data = await res.json();
-    if (data.error || !data.country_name) {
-      throw new Error(data.error?.error_message || 'No se pudo obtener información');
+    const res = await fetch(`https://ipwho.is/${ip}`);
+    const json = await res.json();
+
+    if (!json.success) {
+      return m.reply(`❌ No se pudo obtener la ubicación.\n\n🔧 Verifica que la IP sea válida.`);
     }
 
-    const msg = `
-╭━━〔 🌐 *IP INFO* 〕━━⬣
-┃🔍 *IP:* ${data.ip}
-┃🌎 *País:* ${data.country_name} (${data.country_code})
-┃🏙️ *Ciudad:* ${data.city_name}
-┃📍 *Región:* ${data.region_name}
-┃🏣 *Código Postal:* ${data.zip_code}
-┃🕐 *Zona Horaria:* ${data.time_zone}
-┃🧭 *Latitud:* ${data.latitude}
-┃🧭 *Longitud:* ${data.longitude}
-┃🛰️ *ISP:* ${data.isp || 'No disponible'}
-┃🌐 *Dominio:* ${data.domain || 'No disponible'}
-┃🗺️ *Mapa:* https://maps.google.com/?q=${data.latitude},${data.longitude}
-╰━━━━━━━━━━━━━━━━━━⬣`.trim();
+    const info = `
+🌐 *Información de IP*
 
-    await conn.reply(m.chat, msg, m);
-  } catch (err) {
-    console.error('[IP Lookup Error]', err);
-    return m.reply(`❌ No se pudo obtener la ubicación.\n\n🔧 Verifica tu IP o API Key.`);
+🧠 IP: ${json.ip}
+🏙️ Ciudad: ${json.city}
+🌍 Región: ${json.region}
+🇺🇸 País: ${json.country} (${json.country_code})
+🛰️ ISP: ${json.connection?.isp || 'Desconocido'}
+📡 Latitud: ${json.latitude}
+📡 Longitud: ${json.longitude}
+🧭 Zona Horaria: ${json.timezone?.id || 'Desconocida'}
+
+📌 Dirección aproximada: https://www.google.com/maps?q=${json.latitude},${json.longitude}
+    `.trim();
+
+    await m.reply(info);
+  } catch (e) {
+    console.error(e);
+    m.reply('❌ Hubo un error al consultar la IP. Intenta más tarde.');
   }
 };
 
-handler.help = ['ipinfo <ip>'];
-handler.tags = ['tools'];
-handler.command = /^ipinfo|iplocation|localizar$/i;
+handler.command = /^ip|geoip|ipinfo$/i;
+handler.help = ['ip <ip>'];
+handler.tags = [''];
 
 export default handler;
