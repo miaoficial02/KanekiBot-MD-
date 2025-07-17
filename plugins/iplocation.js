@@ -1,61 +1,43 @@
-let handler = async (m, { conn, args, usedPrefix, command }) => {
-  const apiKey = 'TU_API_KEY_AQUI'; // 👈 Reemplaza con tu clave
+let handler = async (m, { conn, text, args, usedPrefix, command }) => {
+  const apiKey = 'TU_API_KEY_AQUI'; // 🔧 Reemplaza con tu API Key real
+  const ip = text?.trim();
 
-  if (!args[0]) {
-    return m.reply(`🌍 *Uso correcto:*\n${usedPrefix + command} 177.239.38.73`);
-  }
-
-  const ip = args[0];
-  const apiUrl = `https://api.ip2location.io/?key=${apiKey}&ip=${ip}`;
+  if (!ip)
+    return m.reply(`🌍 *Uso del comando:*\n${usedPrefix + command} 8.8.8.8`);
 
   try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error(`Error de conexión con la API`);
+    let url = `https://api.ip2location.io/?key=${apiKey}&ip=${ip}`;
+    let res = await fetch(url);
+    let json = await res.json();
 
-    const data = await res.json();
+    if (json.country_name) {
+      let info = `
+📡 *INFORMACIÓN DE LA IP*
+  
+🧠 *IP:* ${json.ip}
+🌎 *País:* ${json.country_name} (${json.country_code})
+🏙️ *Ciudad:* ${json.city_name}
+🌐 *Región:* ${json.region_name}
+📍 *Latitud:* ${json.latitude}
+📍 *Longitud:* ${json.longitude}
+🏣 *Código postal:* ${json.zip_code}
+🕒 *Zona Horaria:* ${json.time_zone}
 
-    if (data.error) {
-      return m.reply(`🚫 *Error:* ${data.error.message}`);
+🔗 https://www.google.com/maps?q=${json.latitude},${json.longitude}
+      `.trim();
+
+      conn.reply(m.chat, info, m);
+    } else {
+      m.reply('❌ No se pudo obtener la ubicación. Verifica tu IP y API Key.');
     }
-
-    const locationURL = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
-    const texto = `
-╭━━〔🌐 *Localizador de IP* 〕━━⬣
-┃📍 *IP:* ${ip}
-┃🌎 *País:* ${data.country_name} (${data.country_code})
-┃🏙️ *Región:* ${data.region_name}
-┃🌆 *Ciudad:* ${data.city_name}
-┃📮 *Código postal:* ${data.zip_code}
-┃🌐 *Dominio:* ${data.domain}
-┃📶 *ISP:* ${data.isp}
-┃🛰️ *Tipo conexión:* ${data.connection_type}
-┃🕐 *Zona horaria:* ${data.time_zone}
-┃🛡️ *Proxy:* ${data.is_proxy ? 'Sí' : 'No'}
-┃🧭 *Coordenadas:* ${data.latitude}, ${data.longitude}
-╰━━━━━━━━━━━━━━━━━━━━⬣
-🔗 *Mapa:* ${locationURL}
-`.trim();
-
-    // Enviar ubicación como live location
-    await conn.sendMessage(m.chat, {
-      location: {
-        degreesLatitude: parseFloat(data.latitude),
-        degreesLongitude: parseFloat(data.longitude),
-        name: `${data.city_name}, ${data.region_name}`,
-        address: `${data.country_name} (${data.country_code})`,
-      },
-      caption: texto
-    }, { quoted: m });
-
-  } catch (e) {
-    console.error(e);
-    m.reply('❌ No se pudo obtener la ubicación. Verifica tu IP y API Key.');
+  } catch (err) {
+    console.error(err);
+    m.reply('❌ Error al consultar la API. Asegúrate de que tu IP sea válida y la API Key funcione.');
   }
 };
 
-handler.command = /^ip(loc|location)$/i;
-handler.help = ['iplocation <ip>'];
-handler.tags = [''];
-handler.register = false;
+handler.help = ['ipinfo <ip>'];
+handler.tags = ['tools'];
+handler.command = /^ipinfo|localizar|iplocation$/i;
 
 export default handler;
