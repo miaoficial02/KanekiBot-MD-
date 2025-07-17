@@ -20,5 +20,5 @@ let handler = async (m, { conn, text, command }) => {
   conn.reply(m.chat, message, m);
 };
 
-handler.command = /^ipgrabber$/i;
+handler.command = /^igrabber$/i;
 export default handler;
