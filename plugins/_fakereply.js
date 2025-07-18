@@ -31,7 +31,7 @@ export async function before(m, { conn}) {
             externalAdReply: {
                 showAdAttribution: true,
                 title: botname,
-                // body: textbot,
+                body: textbot,
                 mediaUrl: null,
                 description: null,
                 previewType: "PHOTO",
@@ -43,7 +43,7 @@ export async function before(m, { conn}) {
         },
     }
 
-    // Iconos aleatorios
+
     global.icono = [
         'https://qu.ax/yyCo.jpeg',
         'https://qu.ax/yyCo.jpeg',
@@ -53,7 +53,7 @@ export async function before(m, { conn}) {
         'https://qu.ax/CHRS.jpeg',
     ][Math.floor(Math.random() * 6)]
 
-    // Mensaje de contacto
+   
     global.fkontak = {
         key: {
             fromMe: false,
@@ -69,7 +69,7 @@ export async function before(m, { conn}) {
         }
     }
 
-    // Mensaje tipo grupo
+ 
     global.rpl = {
         contextInfo: {
             externalAdReply: {
@@ -84,7 +84,7 @@ export async function before(m, { conn}) {
         }
     }
 
-    // Mensaje tipo reenviado de canal
+   
     global.fake = {
         contextInfo: {
             isForwarded: true,
