@@ -5,7 +5,7 @@ export async function before(m, { conn}) {
     
     let name = `ᥴһᥲᥒᥒᥱᥣ-sᥲsᥙkᥱ ᑲ᥆𝗍 mძ 🌀`
     let botname = `Sasuke Bot`
-    let textbot = `¡Hola! Soy Sasuke Bot, tu asistente personal.`
+  //  let textbot = `¡Hola! Soy Sasuke Bot, tu asistente personal.`
 
     let imagenes = [
         "https://files.catbox.moe/6dewf4.jpg",
