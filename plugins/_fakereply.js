@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 const BOT_NAME = 'Naruto Bot';
 const CHANNEL_NAME = 'Canal del Sabio 🦊';
-const BOT_TEXT = '¡Hola! Soy Naruto Bot, listo para ayudarte con todo.';
+//const BOT_TEXT = '¡Hola! Soy Naruto Bot, listo para ayudarte con todo.';
 
 const IMAGE_ASSETS = [
     "https://files.catbox.moe/example1.jpg", 
@@ -20,8 +20,7 @@ const GROUP_INVITE_IMAGE = 'https://files.catbox.moe/group_invite.jpg';
 
 const CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb64jLV7j6gAPLTUyD3v'; 
 const GROUP_URL = 'https://chat.whatsapp.com/IhdD6VeQbna9lgnkV7nU3e'; 
-
-export async function before(m, { conn }) {
+//export async function before(m, { conn }) {
 
     const getRandomImage = (images) => images[Math.floor(Math.random() * images.length)];
 
@@ -39,7 +38,7 @@ export async function before(m, { conn }) {
             externalAdReply: {
                 showAdAttribution: true,
                 title: BOT_NAME,
-                body: BOT_TEXT,
+                //body: BOT_TEXT,
                 mediaUrl: null, 
                 description: null,
                 previewType: "PHOTO",
