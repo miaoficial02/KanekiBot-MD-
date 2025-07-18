@@ -1,98 +1,95 @@
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
-export async function before(m, { conn}) {
+const BOT_NAME = 'Naruto Bot';
+const CHANNEL_NAME = 'Canal del Sabio 🦊';
+const BOT_TEXT = '¡Hola! Soy Naruto Bot, listo para ayudarte con todo.';
 
-    let name = `ᥴһᥲᥒᥒᥱᥣ-sᥲsᥙkᥱ ᑲ᥆𝗍 mძ 🌀`
-    let botname = `Sasuke Bot`
-    let textbot = `¡Hola! Soy Sasuke Bot, tu asistente personal.`
+const IMAGE_ASSETS = [
+    "https://files.catbox.moe/example1.jpg", 
+    "https://files.catbox.moe/example2.jpg",
+    "https://files.catbox.moe/example3.jpg",
+];
 
-    let imagenes = [
-        "https://files.catbox.moe/6dewf4.jpg",
-        "https://files.catbox.moe/6dewf4.jpg",
-        "https://files.catbox.moe/6dewf4.jpg",
-        "https://files.catbox.moe/6dewf4.jpg",
-    ]
-    let icono = imagenes[Math.floor(Math.random() * imagenes.length)]
+const THUMBNAIL_ASSETS = [
+    'https://qu.ax/thumb1.jpeg', 
+    'https://qu.ax/thumb2.jpeg',
+    'https://qu.ax/thumb3.jpeg',
+];
 
-    let canal = 'https://whatsapp.com/channel/0029Vb64jLV7j6gAPLTUyD3v'
-    let group = 'https://chat.whatsapp.com/IhdD6VeQbna9lgnkV7nU3e?mode=r_t'
-    let packname = 'Bajo'
-    let imagen2 = 'https://files.catbox.moe/c2lp78.jpg'
+const GROUP_INVITE_IMAGE = 'https://files.catbox.moe/group_invite.jpg'; 
 
+const CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb64jLV7j6gAPLTUyD3v'; 
+const GROUP_URL = 'https://chat.whatsapp.com/IhdD6VeQbna9lgnkV7nU3e'; 
+
+export async function before(m, { conn }) {
+
+    const getRandomImage = (images) => images[Math.floor(Math.random() * images.length)];
+
+    const randomIcon = getRandomImage(IMAGE_ASSETS);
+    const randomThumbnail = getRandomImage(THUMBNAIL_ASSETS);
 
     global.rcanal = {
         contextInfo: {
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
                 newsletterJid: "120363419364337473@newsletter",
-                serverMessageId: 100,
-                newsletterName: name,
+                serverMessageId: 100, 
+                newsletterName: CHANNEL_NAME,
             },
             externalAdReply: {
                 showAdAttribution: true,
-                title: botname,
-                body: textbot,
-                mediaUrl: null,
+                title: BOT_NAME,
+                body: BOT_TEXT,
+                mediaUrl: null, 
                 description: null,
                 previewType: "PHOTO",
-                thumbnailUrl: icono,
-                sourceUrl: canal,
-                mediaType: 1,
+                thumbnailUrl: randomIcon,
+                sourceUrl: CHANNEL_URL,
+                mediaType: 1, 
                 renderLargerThumbnail: false
             },
         },
-    }
+    };
 
+    global.icono = randomThumbnail;
 
-    global.icono = [
-        'https://qu.ax/yyCo.jpeg',
-        'https://qu.ax/yyCo.jpeg',
-        'https://qu.ax/qJch.jpeg',
-        'https://qu.ax/qJch.jpeg',
-        'https://qu.ax/CHRS.jpeg',
-        'https://qu.ax/CHRS.jpeg',
-    ][Math.floor(Math.random() * 6)]
-
-   
     global.fkontak = {
         key: {
             fromMe: false,
-            participant: `0@s.whatsapp.net`,
-            ...(m.chat? { remoteJid: `status@broadcast`}: {})
+            participant: `0@s.whatsapp.net`, 
+            ...(m.chat ? { remoteJid: `status@broadcast` } : {})
         },
         message: {
             contactMessage: {
-                displayName: botname,
-                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${botname},;;;\nFN:${botname},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`,
+                displayName: BOT_NAME,
+                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${BOT_NAME},;;;\nFN:${BOT_NAME},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`,
                 sendEphemeral: true
             }
         }
-    }
+    };
 
- 
     global.rpl = {
         contextInfo: {
             externalAdReply: {
-                mediaUrl: group,
-                mediaType: 'VIDEO',
-                description: 'support group',
-                title: packname,
-                body: 'grupo de soporte',
-                thumbnailUrl: imagen2,
-                sourceUrl: group,
+                mediaUrl: GROUP_URL,
+                mediaType: 'VIDEO', 
+                description: 'Grupo de Soporte Oficial',
+                title: 'Únete a nuestro Grupo de Soporte',
+                body: 'Resolviendo dudas y ayudando a la comunidad.',
+                thumbnailUrl: GROUP_INVITE_IMAGE,
+                sourceUrl: GROUP_URL,
             }
         }
-    }
+    };
 
-   
     global.fake = {
         contextInfo: {
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
                 newsletterJid: "120363419364337473@newsletter",
                 serverMessageId: 100,
-                newsletterName: name,
+                newsletterName: CHANNEL_NAME,
             },
         },
-    }
+    };
 }
