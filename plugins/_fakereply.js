@@ -32,7 +32,7 @@ export async function before(m, { conn}) {
             externalAdReply: {
                 showAdAttribution: true,
                 title: botname,
-                body: textbot,
+              //  body: textbot,
                 mediaUrl: null,
                 description: null,
                 previewType: "PHOTO",
