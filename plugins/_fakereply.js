@@ -96,10 +96,3 @@ export async function before(m, { conn}) {
 },
 },
 }
-}
-```
-
-🔧 *Recomendación final:*
-Cambia los valores de las variables `canal`, `group`, `packname` e `imagen2` con URLs o textos reales. Si alguno de ellos está vacío o mal definido, el código puede seguir fallando.
-
-¿Quieres que te ayude a armar un paquete completo para tu bot con comandos y respuestas personalizadas? 🛠️
