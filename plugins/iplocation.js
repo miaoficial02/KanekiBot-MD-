@@ -1,4 +1,8 @@
-let handler = async (m, { conn, args }) => {
+let handler = async (m, { conn, args, isOwner }) => {
+  if (!isOwner) {
+    return m.reply(`🚫 *Este comando es solo para el owner del bot.*`);
+  }
+
   if (!args[0]) {
     return m.reply(`🌎 *Uso del comando:*\n\n.ip 8.8.8.8`);
   }
