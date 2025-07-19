@@ -9,8 +9,8 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
     const emojiSuccess = '✅';
     const isOwner = global.owner.map(o => typeof o === 'string' ? o : o[0]).includes(m.sender);
 
-    if (!isOwner) {
-        return conn.reply(m.chat, `${emoji2} *Este comando solo puede ser usado por el owner del bot.*`, m);
+    if (!isAdmin && !isOwner) {
+        return conn.reply(m.chat, `${emoji2} *Solo los administradores pueden usar este comando.*`, m);
     }
 
     if (!isBotAdmin) {
@@ -70,6 +70,5 @@ handler.command = ['kickall', 'eliminaratodos', 'sacaratodos'];
 handler.group = true;
 handler.botAdmin = true;
 handler.register = false;
-handler.owner = true; // 🔒 Solo el owner puede usarlo
 
 export default handler;
