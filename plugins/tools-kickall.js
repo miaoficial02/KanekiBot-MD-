@@ -67,7 +67,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
 handler.help = ['kickall'];
 handler.tags = ['group'];
 handler.command = ['kickall', 'eliminaratodos', 'sacaratodos'];
-handler.grupo = true;
+handler.group = true;
 handler.botAdmin = true;
 handler.register = false;
 
