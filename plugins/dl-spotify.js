@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const thumbnailCard = 'https://qu.ax/ARhkT.jpg';
+  const thumbnailCard = 'https://files.catbox.moe/he2fri.jpg';
 
   if (!text) {
     return conn.sendMessage(m.chat, {
@@ -51,7 +51,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     // Diseño con marco
     const caption = `
-╭━━━━〔 *SPOTIFY TRACK 🎧* 〕━━━━
+╭━━━━〔 *SPOTIFY KANEKIBOT NO ME 🎧* 〕━━━━
 ┃🎵 *Título:* ${track.title}
 ┃👤 *Artista:* ${track.artists}
 ┃💽 *Tipo:* ${track.type}
