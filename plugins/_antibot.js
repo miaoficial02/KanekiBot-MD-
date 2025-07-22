@@ -7,11 +7,11 @@ var handler = async (m, { conn, participants, isBotAdmin }) => {
   const emojiSuccess = '✅';
 
   const isOwner = global.owner.map(o => typeof o === 'string' ? o : o[0]).includes(m.sender);
-  if (!isOwner) return conn.reply(m.chat, `${emoji2} *Solo el Owner del bot puede usar este comando.*`, m);
+ // if (!isOwner) return conn.reply(m.chat, `${emoji2} *Solo el Owner del bot puede usar este comando.*`, m);
   if (!isBotAdmin) return conn.reply(m.chat, `${emoji2} *Necesito permisos de administrador para eliminar bots.*`, m);
 
   const groupInfo = await conn.groupMetadata(m.chat);
-  const ownerGroup = groupInfo.owner || m.chat.split`-`[0] + '@s.whatsapp.net';
+ // const ownerGroup = groupInfo.owner || m.chat.split`-`[0] + '@s.whatsapp.net';
   const globalOwners = global.owner.map(o => typeof o === 'string' ? o : o[0] + '@s.whatsapp.net');
 
   let toKick = participants.filter(p => {
@@ -22,7 +22,7 @@ var handler = async (m, { conn, participants, isBotAdmin }) => {
       !p.admin &&                                     // No es administrador
       id !== conn.user.jid &&                         // No es el bot mismo
       id !== ownerGroup &&                            // No es el owner del grupo
-      !globalOwners.includes(id)                      // No es owner del bot
+  //    !globalOwners.includes(id)                      // No es owner del bot
     );
   }).map(p => p.id);
 
