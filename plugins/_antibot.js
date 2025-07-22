@@ -5,9 +5,7 @@ let handler = async (m, { conn, participants, isBotAdmin, args, command }) => {
   const emoji = '🤖';
   const emoji2 = '⚠️';
   const emojiSuccess = '✅';
-  const isOwner = global.owner.map(o => typeof o === 'string' ? o : o[0]).includes(m.sender);
 
-  if (!isOwner) return conn.reply(m.chat, `${emoji2} *Solo el Owner del bot puede usar este comando.*`, m);
   if (!isBotAdmin) return conn.reply(m.chat, `${emoji2} *Necesito permisos de administrador para eliminar bots.*`, m);
 
   // Manejo de encendido/apagado
