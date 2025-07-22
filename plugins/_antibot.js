@@ -58,6 +58,5 @@ handler.tags = ['group'];
 handler.command = ['antibots', 'eliminarbots', 'kickbots'];
 handler.group = true;
 handler.botAdmin = true;
-handler.owner = false;
 
 export default handler;
