@@ -20,12 +20,25 @@ let handler = async (m, { conn, command }) => {
     const imageUrl = await up(img)
     const api = `https://fastrestapis.fasturl.cloud/aiimage/upscale?imageUrl=${encodeURIComponent(imageUrl)}&resize=4`
     const res = await fetch(api)
+
+    if (!res.ok) throw '❌ Error al mejorar la imagen.'
+
     const buffer = await res.buffer()
-    await conn.sendFile(m.chat, buffer, 'hd.jpg', '✅ Imagen mejorada con KanekiBot-MD', m)
-  } catch {
+    const type = res.headers.get('content-type') || 'image/jpeg'
+
+    if (!type.startsWith('image/')) throw '❌ El archivo recibido no es una imagen.'
+
+    await conn.sendMessage(m.chat, {
+      image: buffer,
+      caption: '✅ *Imagen mejorada con KanekiBot-MD*',
+      mimetype: type
+    }, { quoted: m })
+
+  } catch (e) {
     error = true
+    console.error(e)
+    m.reply(typeof e === 'string' ? e : '❌ Ocurrió un error al procesar la imagen.')
   } finally {
-    if (error) m.reply('❌ Ocurrió un error al procesar la imagen.')
     delete conn.hdr[m.sender]
   }
 }
