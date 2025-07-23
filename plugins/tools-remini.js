@@ -1,49 +1,33 @@
 import fetch from 'node-fetch'
-import FormData from 'form-data'
 
 let handler = async (m, { conn }) => {
   conn.hdr = conn.hdr || {}
-  if (m.sender in conn.hdr) throw '⚠️ Aún hay un proceso pendiente. Por favor, espera.'
+  if (m.sender in conn.hdr) throw '⚠️ Ya estás procesando una imagen. Espera a que termine.'
 
   let q = m.quoted || m
   let mime = (q.msg || q).mimetype || ''
   if (!mime || !/image\/(jpe?g|png)/.test(mime)) {
-    throw '📸 *Responde a una imagen JPG o PNG con el comando para mejorarla*'
+    throw '📸 Responde a una imagen JPG o PNG con el comando `.hd` o `.remini`.'
   }
 
   conn.hdr[m.sender] = true
-  await conn.sendMessage(m.chat, { react: { text: '🎨', key: m.key } })
-
-  let img = await q.download?.()
-  let error
+  await m.reply('🛠️ Procesando imagen en HD...')
 
   try {
-    const form = new FormData()
-    form.append('image_file', img, 'image.jpg')
-
-    // Nueva API sin necesidad de URL externa
-    const res = await fetch('https://api.itsrose.life/image/upscale?resize=4&apikey=itsrose', {
+    const imgBuffer = await q.download()
+    const res = await fetch('https://image-upscaler.vercel.app/api/upscale', {
       method: 'POST',
-      body: form
+      headers: { 'Content-Type': 'application/octet-stream' },
+      body: imgBuffer
     })
 
-    if (!res.ok) throw '❌ La API no pudo procesar la imagen.'
+    if (!res.ok) throw '❌ No se pudo procesar la imagen. Intenta con otra.'
 
-    const buffer = await res.buffer()
-    const type = res.headers.get('content-type') || 'image/jpeg'
-
-    if (!type.startsWith('image/')) throw '❌ No se recibió una imagen válida.'
-
-    await conn.sendMessage(m.chat, {
-      image: buffer,
-      mimetype: type,
-      caption: `✅ *Imagen mejorada 4x con KanekiBot-MD*\n🌟 Calidad mejorada automáticamente.`,
-    }, { quoted: m })
-
+    const resultBuffer = await res.buffer()
+    await conn.sendFile(m.chat, resultBuffer, 'imagen-hd.jpg', '✅ Imagen mejorada con KanekiBot-MD', m)
   } catch (e) {
-    error = true
     console.error(e)
-    m.reply(typeof e === 'string' ? e : '❌ No se pudo procesar la imagen.')
+    m.reply('❌ Error al mejorar la imagen. Intenta con otra diferente.')
   } finally {
     delete conn.hdr[m.sender]
   }
