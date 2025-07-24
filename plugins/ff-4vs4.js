@@ -1,75 +1,50 @@
-const inscritos = {}
+let handler = async (m, { conn }) => {
+  if (!m.isGroup) return m.reply('❗ *Este comando solo se puede usar en grupos.*')
 
-let handler = async (m, { conn, command }) => {
-  const chatId = m.chat
+  const texto = `
+🧨 *TORNEO 4 VS 4* ⚔️
+──────────────────────────
 
-  // Inicializar lista si no existe
-  if (!inscritos[chatId]) inscritos[chatId] = []
+🕓 *HORARIOS DISPONIBLES*
+🇲🇽 México: --
+🇨🇴 Colombia: --
 
-  const jugadores = inscritos[chatId]
-  const yaInscrito = jugadores.includes(m.sender)
+🎮 *MODALIDAD:* Clásico / PvP
 
-  if (yaInscrito) {
-    return m.reply('⚠️ Ya estás registrado en esta sala 4vs4.')
-  }
+🎯 *JUGADORES TITULARES*
+👑 —
+🥷 —
+🥷 —
+🥷 —
 
-  if (jugadores.length >= 8) {
-    return m.reply('❌ La sala ya tiene 8 jugadores inscritos.')
-  }
+💤 *SUPLENTES*
+🔁 —
+🔁 —
 
-  jugadores.push(m.sender)
-
-  // Construir lista visual
-  let lista = jugadores.map((jid, i) => {
-    let tag = '@' + jid.split('@')[0]
-    return `👤 *Jugador ${i + 1}:* ${tag}`
-  }).join('\n')
-
-  let total = jugadores.length
-  let faltan = 8 - total
-
-  let texto = `
-🎮 *PARTIDA 4 VS 4 - FREE FIRE* 🔥
-
-📋 *Jugadores inscritos:* ${total}/8
-${lista}
-
-📝 *¿Quieres unirte?*
-Solo escribe *4vs4* y te añadimos.
-
-${faltan > 0 ? `⏳ *Faltan ${faltan} jugadores.*` : `✅ *Equipos listos, dividiendo...*`}
-
-${faltan === 0 ? equipos(jugadores) : ''}
+──────────────────────────
+📝 Reacciona con 👍 para jugar
+📝 Reacciona con ❤️ para ser suplente
 `.trim()
 
-  await conn.sendMessage(m.chat, {
-    text: texto,
-    mentions: jugadores
-  }, { quoted: m })
+  const msg = await conn.sendMessage(m.chat, { text: texto }, { quoted: m })
 
-  // Limpiar lista cuando ya están los 8
-  if (jugadores.length === 8) {
-    delete inscritos[chatId]
+  // Agrega reacciones visibles
+  await conn.sendMessage(m.chat, { react: { text: '👍', key: msg.key } })
+  await conn.sendMessage(m.chat, { react: { text: '❤️', key: msg.key } })
+
+  // Guardamos los datos
+  conn.torneos = conn.torneos || {}
+  conn.torneos[msg.key.id] = {
+    titulares: [],
+    suplentes: [],
+    msg,
+    chat: m.chat
   }
 }
 
-handler.help = ['4vs4']
-handler.tags = ['freefire']
 handler.command = /^4vs4$/i
+handler.group = true
+handler.tags = ['freefire']
+handler.help = ['4vs4']
 
 export default handler
-
-function equipos(lista) {
-  let A = lista.slice(0, 4).map(j => '@' + j.split('@')[0]).join('\n')
-  let B = lista.slice(4).map(j => '@' + j.split('@')[0]).join('\n')
-  return `
-╭───〔 🅴🆀🆄🅸🅿🅾 🅰 〕
-${A}
-╰───────────────╯
-
-╭───〔 🅴🆀🆄🅸🅿🅾 🅱 〕
-${B}
-╰───────────────╯
-`.trim()
-                 }
-      
