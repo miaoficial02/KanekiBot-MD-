@@ -1,40 +1,68 @@
 import fetch from 'node-fetch'
+import FormData from 'form-data'
 
-let handler = async (m, { conn }) => {
-  conn.hdr = conn.hdr || {}
-  if (m.sender in conn.hdr) throw '⚠️ Ya estás procesando una imagen. Espera a que termine.'
+let handler = async (m, { conn, usedPrefix, command }) => {
+  const quoted = m.quoted ? m.quoted : m
+  const mime = quoted.mimetype || quoted.msg?.mimetype || ''
 
-  let q = m.quoted || m
-  let mime = (q.msg || q).mimetype || ''
-  if (!mime || !/image\/(jpe?g|png)/.test(mime)) {
-    throw '📸 Responde a una imagen JPG o PNG con el comando `.hd` o `.remini`.'
+  // Validar si el archivo es una imagen JPG o PNG
+  if (!/image\/(jpe?g|png)/i.test(mime)) {
+    await conn.sendMessage(m.chat, { react: { text: '❗', key: m.key } })
+    return m.reply(`Envía o *responde a una imagen* con el comando:\n*${usedPrefix + command}*`)
   }
 
-  conn.hdr[m.sender] = true
-  await m.reply('🛠️ Procesando imagen en HD...')
-
   try {
-    const imgBuffer = await q.download()
-    const res = await fetch('https://image-upscaler.vercel.app/api/upscale', {
+    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
+
+    const media = await quoted.download()
+    const ext = mime.split('/')[1]
+    const filename = `mejorada_${Date.now()}.${ext}`
+
+    const form = new FormData()
+    form.append('image', media, { filename, contentType: mime })
+    form.append('scale', '2')
+
+    const headers = {
+      ...form.getHeaders(),
+      'accept': 'application/json',
+      'x-client-version': 'web',
+      'x-locale': 'es'
+    }
+
+    const res = await fetch('https://api2.pixelcut.app/image/upscale/v1', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/octet-stream' },
-      body: imgBuffer
+      headers,
+      body: form
     })
 
-    if (!res.ok) throw '❌ No se pudo procesar la imagen. Intenta con otra.'
+    const json = await res.json()
 
-    const resultBuffer = await res.buffer()
-    await conn.sendFile(m.chat, resultBuffer, 'imagen-hd.jpg', '✅ Imagen mejorada con KanekiBot-MD', m)
-  } catch (e) {
-    console.error(e)
-    m.reply('❌ Error al mejorar la imagen. Intenta con otra diferente.')
-  } finally {
-    delete conn.hdr[m.sender]
+    if (!json?.result_url || !json.result_url.startsWith('http')) {
+      throw new Error('No se pudo obtener la imagen mejorada desde Pixelcut.')
+    }
+
+    const resultBuffer = await (await fetch(json.result_url)).buffer()
+
+    await conn.sendMessage(m.chat, {
+      image: resultBuffer,
+      caption: `
+✨ Tu imagen ha sido mejorada al doble de resolución.
+
+📈 Mayor nitidez y más detalles.
+
+🔧 _Usa esta función cuando necesites mejorar una imagen borrosa._
+`.trim()
+    }, { quoted: m })
+
+    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+  } catch (err) {
+    await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
+    m.reply(`❌ Falló la mejora de imagen:\n${err.message || err}`)
   }
 }
 
-handler.help = ['hd', 'remini']
-handler.tags = ['tools']
-handler.command = /^(hd|remini)$/i
+handler.help = ['hd']
+handler.tags = ['tools', 'imagen']
+handler.command = /^hd$/i
 
 export default handler
