@@ -30,7 +30,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   let menu = `${menuHeader}\n┏━━━━━━━━━━━━━━━━━━\n${commands}┗━━━━━━━━━━━━━━━━━━\n\n🎮 *Bot por @kleiner1-1*`
 
   await conn.sendMessage(m.chat, {
-    video: { url: 'https://files.catbox.moe/mlp65k.mp4' },
+    video: { url: 'https://files.catbox.moe/b4e43n.jpg' },
     caption: menu.trim(),
     gifPlayback: true,
     contextInfo: {
