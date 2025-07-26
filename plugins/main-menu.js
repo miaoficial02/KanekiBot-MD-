@@ -2,7 +2,7 @@ import got from "got";
 import moment from "moment-timezone";
 
 let handler = async (m, { conn }) => {
-  m.react("📜");
+  m.react("🌐");
 
   const senderId = m.sender;
   const userNumber = senderId.split("@")[0];
@@ -14,51 +14,50 @@ let handler = async (m, { conn }) => {
 
   if (!global.menutext) await global.menu();
 
-  const menuTexto = `
-╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 - 𝗠𝗘𝗡𝗨 〕━━⬣
-┃ ✦ 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
-┃ ✦ 𝗡𝘂́𝗺𝗲𝗿𝗼: +${userNumber}
-┃ ✦ 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
-┃ ✦ 𝗛𝗼𝗿𝗮: ${formattedTime}
-┃ ✦ 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
-╰━━━━━━━━━━━━━━━━━━⬣
+  const header = `
+╭═══〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 𝗠𝗘𝗡𝗨 〕═══⬣
+┃ 🧑‍💻 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
+┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
+┃ 📆 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
+┃ ⏰ 𝗛𝗼𝗿𝗮: ${formattedTime}
+┃ 💬 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
+╰════════════════════⬣\n`;
 
-${global.menutext.trim()}
+  const footer = `
+╭───〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕────⬣
+┃ 🐙 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
+┃ 🌎 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽: wa.me/573162402768
+╰────────────────────⬣`;
 
-╭━━〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕━━⬣
-┃ ✦ 𝗕𝗼𝘁: *KanekiBot*
-┃ ✦ 𝗖𝗿𝗲𝗮𝗱𝗼𝗿: *Bajo Bots*
-┃ ✦ 🌐 wa.me/573162402768
-╰━━━━━━━━━━━━━━━━⬣`;
-
+  const txt = header + global.menutext + footer;
   const mention = [m.sender];
-  const imageURL = "https://qu.ax/RkiEC.jpg";
 
   try {
+    const imageURL = "https://qu.ax/RkiEC.jpg"; // Imagen de fondo decorada
     const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(m.chat, {
       image: imgBuffer,
-      caption: menuTexto,
+      caption: txt,
       mentions: mention,
       contextInfo: {
         forwardingScore: 999,
         isForwarded: true,
-        mentionedJid: mention,
         externalAdReply: {
-          title: "🔥 KanekiBot - Menú de comandos",
-          body: "Explora todo lo que puedo hacer por ti",
+          title: "KanekiBot - Menú Oficial",
+          body: "Explora todos los comandos disponibles",
           thumbnail: imgBuffer,
           mediaType: 1,
           renderLargerThumbnail: true,
-          sourceUrl: ""
+          sourceUrl: 'https://github.com/KanekiBot' // o tu canal
         }
       }
     }, { quoted: m });
 
   } catch (e) {
-    console.error("[❌ Error al mostrar el menú]:", e);
-    conn.reply(m.chat, menuTexto, m, { mentions: mention });
+    console.error(e);
+    conn.reply(m.chat, txt, m, { mentions: mention });
+    conn.reply(m.chat, "⚠️ Error al enviar el menú: " + e, m);
   }
 };
 
@@ -66,7 +65,7 @@ handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
 function ucapan() {
-  const hour = moment().tz("America/Mexico_City").format("HH");
+  const hour = moment().tz("America/Los_Angeles").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
   if (hour >= 12) return "🌞 Buenas tardes";
   return "🌅 Buenos días";
@@ -74,22 +73,40 @@ function ucapan() {
 
 global.menu = async function getMenu() {
   let text = "";
-  const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
-    help: Array.isArray(p.help) ? p.help.filter(Boolean) : [],
-    tags: Array.isArray(p.tags) ? p.tags.filter(Boolean) : [],
-  }));
+
+  const help = Object.values(global.plugins)
+    .filter(plugin => !plugin.disabled)
+    .map(plugin => ({
+      help: Array.isArray(plugin.help) ? plugin.help.filter(Boolean) : [],
+      tags: Array.isArray(plugin.tags) ? plugin.tags.filter(Boolean) : [],
+    }));
 
   const tags = {};
   for (const plugin of help) {
-    for (const tag of plugin.tags) {
+    for (const tag of plugin.tags || []) {
       if (tag) tags[tag] = tag.toUpperCase();
     }
   }
 
   const icons = {
-    tools: "🛠", fun: "🎲", game: "🎮", admin: "🛡",
-    sticker: "🎨", group: "👥", internet: "🌐",
-    download: "📥", anime: "🍙", roleplay: "🎭", default: "📂"
+    tools: "🛠", fun: "🎲", game: "🎮", admin: "🛡", sticker: "🎨",
+    group: "👥", internet: "🌐", download: "📥", anime: "🍙",
+    roleplay: "🎭", default: "📂"
   };
 
-  for (const category of Object
+  for (const category of Object.keys(tags)) {
+    const commands = help
+      .filter(menu => menu.tags?.includes(category))
+      .flatMap(menu => menu.help)
+      .filter(cmd => typeof cmd === "string" && cmd.trim());
+
+    if (commands.length) {
+      const icon = icons[category] || icons.default;
+      text += `╭──〔 ${icon} ${tags[category]} 〕──────⬣\n`;
+      text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
+      text += `\n╰────────────────────────⬣\n\n`;
+    }
+  }
+
+  global.menutext = text;
+};
