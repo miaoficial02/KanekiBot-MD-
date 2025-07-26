@@ -2,7 +2,7 @@ import got from "got";
 import moment from "moment-timezone";
 
 let handler = async (m, { conn }) => {
-  m.react("🌐");
+  m.react("📜");
 
   const senderId = m.sender;
   const userNumber = senderId.split("@")[0];
@@ -12,62 +12,59 @@ let handler = async (m, { conn }) => {
   const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
-  // Generar el menú si aún no está
-  await global.menu();
+  if (!global.menutext) await global.menu();
 
-  const header = `
-╭━━🎌 *K A N E K I B O T  -  M E N Ú* 🎌━━⬣
-┃👤 *Usuario:* ${userName}
-┃📱 *Número:* +${userNumber}
-┃📆 *Fecha:* ${formattedDate}
-┃⏰ *Hora:* ${formattedTime}
-┃💬 *Saludo:* ${saludo}
-╰━━━━━━━━━━━━━━━━━━━━━━━━⬣\n`;
+  const menuTexto = `
+╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 - 𝗠𝗘𝗡𝗨 〕━━⬣
+┃ ✦ 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
+┃ ✦ 𝗡𝘂́𝗺𝗲𝗿𝗼: +${userNumber}
+┃ ✦ 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
+┃ ✦ 𝗛𝗼𝗿𝗮: ${formattedTime}
+┃ ✦ 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
+╰━━━━━━━━━━━━━━━━━━⬣
 
-  const footer = `
-╭══🎌 *C R E A D O R* 🎌══⬣
-┃👾 *Nombre:* Bajo Bots
-┃🌐 *WhatsApp:* wa.me/573162402768
-╰━━━━━━━━━━━━━━━━━━━━━━⬣`;
+${global.menutext.trim()}
 
-  const txt = header + global.menutext + footer;
+╭━━〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕━━⬣
+┃ ✦ 𝗕𝗼𝘁: *KanekiBot*
+┃ ✦ 𝗖𝗿𝗲𝗮𝗱𝗼𝗿: *Bajo Bots*
+┃ ✦ 🌐 wa.me/573162402768
+╰━━━━━━━━━━━━━━━━⬣`;
+
   const mention = [m.sender];
+  const imageURL = "https://qu.ax/RkiEC.jpg";
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg"; // Fondo personalizado
     const imgBuffer = await got(imageURL).buffer();
 
-    await conn.sendMessage(
-      m.chat,
-      {
-        image: imgBuffer,
-        caption: txt.trim(),
-        contextInfo: {
-          mentionedJid: mention,
-          isForwarded: true,
-          forwardingScore: 999,
-          externalAdReply: {
-            title: "🔥 KanekiBot - Menú Oficial",
-            body: "Pulsa para ver comandos disponibles",
-            thumbnail: imgBuffer,
-            sourceUrl: "https://whatsapp.com/channel/kaneki-channel-id", // Opcional
-            mediaType: 1,
-            renderLargerThumbnail: true
-          }
+    await conn.sendMessage(m.chat, {
+      image: imgBuffer,
+      caption: menuTexto,
+      mentions: mention,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+        mentionedJid: mention,
+        externalAdReply: {
+          title: "🔥 KanekiBot - Menú de comandos",
+          body: "Explora todo lo que puedo hacer por ti",
+          thumbnail: imgBuffer,
+          mediaType: 1,
+          renderLargerThumbnail: true,
+          sourceUrl: ""
         }
-      },
-      { quoted: m }
-    );
+      }
+    }, { quoted: m });
+
   } catch (e) {
-    console.error("Error al enviar menú:", e);
-    conn.reply(m.chat, txt.trim(), m, { mentions: mention });
+    console.error("[❌ Error al mostrar el menú]:", e);
+    conn.reply(m.chat, menuTexto, m, { mentions: mention });
   }
 };
 
 handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
-// 🎯 Saludo automático
 function ucapan() {
   const hour = moment().tz("America/Mexico_City").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
@@ -75,43 +72,24 @@ function ucapan() {
   return "🌅 Buenos días";
 }
 
-// 📂 Generador del menú por categorías
 global.menu = async function getMenu() {
   let text = "";
-
-  const help = Object.values(global.plugins)
-    .filter(plugin => !plugin.disabled)
-    .map(plugin => ({
-      help: Array.isArray(plugin.help) ? plugin.help.filter(Boolean) : [],
-      tags: Array.isArray(plugin.tags) ? plugin.tags.filter(Boolean) : [],
-    }));
+  const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
+    help: Array.isArray(p.help) ? p.help.filter(Boolean) : [],
+    tags: Array.isArray(p.tags) ? p.tags.filter(Boolean) : [],
+  }));
 
   const tags = {};
   for (const plugin of help) {
-    for (const tag of plugin.tags || []) {
+    for (const tag of plugin.tags) {
       if (tag) tags[tag] = tag.toUpperCase();
     }
   }
 
   const icons = {
-    tools: "🛠",
-    fun: "🎲",
-    game: "🎮",
-    admin: "🛡",
-    sticker: "🎨",
-    group: "👥",
-    internet: "🌐",
-    download: "📥",
-    anime: "🍙",
-    roleplay: "🎭",
-    premium: "💎",
-    economy: "💰",
-    search: "🔎",
-    default: "📂"
+    tools: "🛠", fun: "🎲", game: "🎮", admin: "🛡",
+    sticker: "🎨", group: "👥", internet: "🌐",
+    download: "📥", anime: "🍙", roleplay: "🎭", default: "📂"
   };
 
-  for (const category of Object.keys(tags)) {
-    const commands = help
-      .filter(menu => menu.tags?.includes(category))
-      .flatMap(menu => menu.help)
-      .filter(cmd => typeof cmd === "string" && cmd.trim());
+  for (const category of Object
