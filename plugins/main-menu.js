@@ -15,46 +15,44 @@ let handler = async (m, { conn }) => {
   if (!global.menutext) await global.menu();
 
   const header = `
-╭═══〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 𝗠𝗘𝗡𝗨 〕═══⬣
-┃ 🧑‍💻 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
-┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
-┃ 📆 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
-┃ ⏰ 𝗛𝗼𝗿𝗮: ${formattedTime}
-┃ 💬 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
-╰════════════════════⬣\n`;
+╭━━🎌 *K A N E K I B O T  -  M E N Ú* 🎌━━⬣
+┃👤 *Usuario:* ${userName}
+┃📱 *Número:* +${userNumber}
+┃📆 *Fecha:* ${formattedDate}
+┃⏰ *Hora:* ${formattedTime}
+┃💬 *Saludo:* ${saludo}
+╰━━━━━━━━━━━━━━━━━━━━━━━━⬣\n`;
 
   const footer = `
-╭───〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕────⬣
-┃ 🐙 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
-┃ 🌎 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽: wa.me/573162402768
-╰────────────────────⬣`;
+╭══🎌 *C R E A D O R* 🎌══⬣
+┃👾 *Nombre:* Bajo Bots
+┃🌐 *WhatsApp:* wa.me/573162402768
+╰━━━━━━━━━━━━━━━━━━━━━━⬣`;
 
   const txt = header + global.menutext + footer;
   const mention = [m.sender];
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg";
+    const imageURL = "https://qu.ax/RkiEC.jpg"; // Puedes usar tu propia imagen
     const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
       {
-        document: imgBuffer,
-        fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
-        mimetype: 'application/pdf',
+        image: imgBuffer,
         caption: txt,
-        fileLength: 99999999,
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: "🔥 KanekiBot - Panel de comandos",
-            body: "Menú exclusivo con diseño visual personalizado",
+            title: "🔥 KanekiBot - Menú Oficial",
+            body: "Pulsa para acceder a nuestro canal",
             thumbnail: imgBuffer,
-            sourceUrl: "",
+            sourceUrl: "https://whatsapp.com/channel/kaneki-channel-id", // Cambia esto
             mediaType: 1,
-            renderLargerThumbnail: true
+            renderLargerThumbnail: true,
+            showAdAttribution: true
           }
         }
       },
@@ -70,7 +68,7 @@ let handler = async (m, { conn }) => {
 handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
-// 🕐 Saludo automático
+// 🎯 Saludo automático según hora
 function ucapan() {
   const hour = moment().tz("America/Los_Angeles").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
@@ -78,7 +76,7 @@ function ucapan() {
   return "🌅 Buenos días";
 }
 
-// 🔠 Menú global
+// 📂 Construcción del menú
 global.menu = async function getMenu() {
   let text = "";
 
@@ -107,6 +105,9 @@ global.menu = async function getMenu() {
     download: "📥",
     anime: "🍙",
     roleplay: "🎭",
+    premium: "💎",
+    economy: "💰",
+    search: "🔎",
     default: "📂"
   };
 
@@ -118,11 +119,11 @@ global.menu = async function getMenu() {
 
     if (commands.length) {
       const icon = icons[category] || icons.default;
-      text += `╭──〔 ${icon} ${tags[category]} 〕──────⬣\n`;
+      text += `╭──〔 ${icon} ${tags[category]} 〕──⬣\n`;
       text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
       text += `\n╰────────────────────────⬣\n\n`;
     }
   }
 
-  global.menutext = text;
+  global.menutext = text.trim();
 };
