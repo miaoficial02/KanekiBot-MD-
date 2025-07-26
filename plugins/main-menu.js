@@ -39,9 +39,9 @@ let handler = async (m, { conn }) => {
     await conn.sendMessage(
       m.chat,
       {
-     //   document: imgBuffer,
+        document: imgBuffer,
        // fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
-        mimetype: 'application/pdf',
+        //mimetype: 'application/pdf',
         caption: txt,
         fileLength: 99999999,
         contextInfo: {
