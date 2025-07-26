@@ -15,32 +15,32 @@ let handler = async (m, { conn }) => {
   if (!global.menutext) await global.menu();
 
   const header = `
-╭═══〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 𝗠𝗘𝗡𝗨 〕═══⬣
+╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 - 𝗠𝗘𝗡𝗨 〕━━⬣
 ┃ 🧑‍💻 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
 ┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
 ┃ 📆 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
 ┃ ⏰ 𝗛𝗼𝗿𝗮: ${formattedTime}
 ┃ 💬 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
-╰════════════════════⬣\n`;
+╰━━━━━━━━━━━━━━━━━━⬣\n`;
 
   const footer = `
-╭───〔 🧠 𝗔𝗨𝗧𝗢𝗥 〕────⬣
-┃ 🐙 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
+╭══〔 👑 𝗖𝗥𝗘𝗔𝗗𝗢𝗥 〕══⬣
+┃ 🧠 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
 ┃ 🌎 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽: wa.me/573162402768
-╰────────────────────⬣`;
+╰══════════════════⬣`;
 
   const txt = header + global.menutext + footer;
   const mention = [m.sender];
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg";
+    const imageURL = "https://qu.ax/RkiEC.jpg"; // tu imagen de fondo
     const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
       {
         document: imgBuffer,
-        fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
+       // fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
         mimetype: 'application/pdf',
         caption: txt,
         fileLength: 99999999,
@@ -50,7 +50,7 @@ let handler = async (m, { conn }) => {
           forwardingScore: 999,
           externalAdReply: {
             title: "🔥 KanekiBot - Panel de comandos",
-            body: "Menú exclusivo con diseño visual personalizado",
+            body: "Explora todas las funciones del bot desde este menú",
             thumbnail: imgBuffer,
             sourceUrl: "",
             mediaType: 1,
@@ -97,11 +97,11 @@ global.menu = async function getMenu() {
   }
 
   const icons = {
-    tools: "🛠",
+    tools: "🛠️",
     fun: "🎲",
     game: "🎮",
-    admin: "🛡",
-    sticker: "🎨",
+    admin: "🛡️",
+    sticker: "🖼️",
     group: "👥",
     internet: "🌐",
     download: "📥",
@@ -118,8 +118,8 @@ global.menu = async function getMenu() {
 
     if (commands.length) {
       const icon = icons[category] || icons.default;
-      text += `╭──〔 ${icon} ${tags[category]} 〕──────⬣\n`;
-      text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
+      text += `╭──〔 ${icon} 𝙈𝙊𝘿𝙐𝙇𝙊: ${tags[category]} 〕──⬣\n`;
+      text += commands.map(cmd => `┃ ✦ 〉 *${cmd}*`).join("\n");
       text += `\n╰────────────────────────⬣\n\n`;
     }
   }
