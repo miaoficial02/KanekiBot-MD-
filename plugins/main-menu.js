@@ -12,7 +12,8 @@ let handler = async (m, { conn }) => {
   const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
-  if (!global.menutext) await global.menu();
+  // Generar el menú si aún no está
+  await global.menu();
 
   const header = `
 ╭━━🎌 *K A N E K I B O T  -  M E N Ú* 🎌━━⬣
@@ -33,50 +34,48 @@ let handler = async (m, { conn }) => {
   const mention = [m.sender];
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg"; // Puedes usar tu propia imagen
+    const imageURL = "https://qu.ax/RkiEC.jpg"; // Fondo personalizado
     const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
       {
         image: imgBuffer,
-        caption: txt,
+        caption: txt.trim(),
         contextInfo: {
           mentionedJid: mention,
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
             title: "🔥 KanekiBot - Menú Oficial",
-            body: "Pulsa para acceder a nuestro canal",
+            body: "Pulsa para ver comandos disponibles",
             thumbnail: imgBuffer,
-            sourceUrl: "https://whatsapp.com/channel/kaneki-channel-id", // Cambia esto
+            sourceUrl: "https://whatsapp.com/channel/kaneki-channel-id", // Opcional
             mediaType: 1,
-            renderLargerThumbnail: true,
-            showAdAttribution: true
+            renderLargerThumbnail: true
           }
         }
       },
       { quoted: m }
     );
   } catch (e) {
-    console.error(e);
-    conn.reply(m.chat, txt, m, { mentions: mention });
-    conn.reply(m.chat, "⚠️ Error al enviar el menú: " + e, m);
+    console.error("Error al enviar menú:", e);
+    conn.reply(m.chat, txt.trim(), m, { mentions: mention });
   }
 };
 
 handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
-// 🎯 Saludo automático según hora
+// 🎯 Saludo automático
 function ucapan() {
-  const hour = moment().tz("America/Los_Angeles").format("HH");
+  const hour = moment().tz("America/Mexico_City").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
   if (hour >= 12) return "🌞 Buenas tardes";
   return "🌅 Buenos días";
 }
 
-// 📂 Construcción del menú
+// 📂 Generador del menú por categorías
 global.menu = async function getMenu() {
   let text = "";
 
@@ -116,14 +115,3 @@ global.menu = async function getMenu() {
       .filter(menu => menu.tags?.includes(category))
       .flatMap(menu => menu.help)
       .filter(cmd => typeof cmd === "string" && cmd.trim());
-
-    if (commands.length) {
-      const icon = icons[category] || icons.default;
-      text += `╭──〔 ${icon} ${tags[category]} 〕──⬣\n`;
-      text += commands.map(cmd => `┃ ⤷ ${cmd}`).join("\n");
-      text += `\n╰────────────────────────⬣\n\n`;
-    }
-  }
-
-  global.menutext = text.trim();
-};
