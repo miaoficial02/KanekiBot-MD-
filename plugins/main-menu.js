@@ -33,27 +33,33 @@ let handler = async (m, { conn }) => {
   const mention = [m.sender];
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg"; // Imagen de fondo decorada
+    const imageURL = "https://qu.ax/RkiEC.jpg";
     const imgBuffer = await got(imageURL).buffer();
 
-    await conn.sendMessage(m.chat, {
-      image: imgBuffer,
-      caption: txt,
-      mentions: mention,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-        externalAdReply: {
-          title: "KanekiBot - Menú Oficial",
-          body: "Explora todos los comandos disponibles",
-          thumbnail: imgBuffer,
-          mediaType: 1,
-          renderLargerThumbnail: true,
-          sourceUrl: 'https://github.com/KanekiBot' // o tu canal
+    await conn.sendMessage(
+      m.chat,
+      {
+        document: imgBuffer,
+        fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
+        mimetype: 'application/pdf',
+        caption: txt,
+        fileLength: 99999999,
+        contextInfo: {
+          mentionedJid: mention,
+          isForwarded: true,
+          forwardingScore: 999,
+          externalAdReply: {
+            title: "🔥 KanekiBot - Panel de comandos",
+            body: "Menú exclusivo con diseño visual personalizado",
+            thumbnail: imgBuffer,
+            sourceUrl: "",
+            mediaType: 1,
+            renderLargerThumbnail: true
+          }
         }
-      }
-    }, { quoted: m });
-
+      },
+      { quoted: m }
+    );
   } catch (e) {
     console.error(e);
     conn.reply(m.chat, txt, m, { mentions: mention });
@@ -64,6 +70,7 @@ let handler = async (m, { conn }) => {
 handler.command = /^menu|menú|help|comandos|commands|\?$/i;
 export default handler;
 
+// 🕐 Saludo automático
 function ucapan() {
   const hour = moment().tz("America/Los_Angeles").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
@@ -71,6 +78,7 @@ function ucapan() {
   return "🌅 Buenos días";
 }
 
+// 🔠 Menú global
 global.menu = async function getMenu() {
   let text = "";
 
@@ -89,9 +97,17 @@ global.menu = async function getMenu() {
   }
 
   const icons = {
-    tools: "🛠", fun: "🎲", game: "🎮", admin: "🛡", sticker: "🎨",
-    group: "👥", internet: "🌐", download: "📥", anime: "🍙",
-    roleplay: "🎭", default: "📂"
+    tools: "🛠",
+    fun: "🎲",
+    game: "🎮",
+    admin: "🛡",
+    sticker: "🎨",
+    group: "👥",
+    internet: "🌐",
+    download: "📥",
+    anime: "🍙",
+    roleplay: "🎭",
+    default: "📂"
   };
 
   for (const category of Object.keys(tags)) {
