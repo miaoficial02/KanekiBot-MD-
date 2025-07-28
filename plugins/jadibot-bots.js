@@ -165,16 +165,19 @@ const tiempoPromedio = users.length > 0 ? tiempoTotalMs / users.length : 0;
 const tiempoPromedioFormateado = formatearTiempo(calcularTiempoTranscurrido(Date.now() - tiempoPromedio));
 const tiempoMasLargoFormateado = formatearTiempo(calcularTiempoTranscurrido(Date.now() - tiempoMasLargo));
 
-const responseMessage = `*🔥Lista de JadiBots Conectados🔥*
-
-\`\`\`Para convertirse en JadiBot use: .code\`\`\`
-
-*Estadisticas en tiempo real*:
-*– Total activos:* ${totalUsers}
-
+const responseMessage = `
+╭══🎯『 *JadiBots Conectados* 』══⬣
+┃
+┃ 🧠 *Total activos:* ${totalUsers}
+┃ 📊 *Estadísticas en tiempo real*
+┃
+┃ 💻 *Para convertirte en JadiBot:*
+┃ ⤷ \`\`\`.code\`\`\`
+┃
 ${replyMessage.trim()}
+┃
+╰──🕒 *El tiempo se actualiza automáticamente en cada consulta*`.trim();
 
-*’ El tiempo se actualiza automaticamente en cada consulta*`.trim();
 
 await conn.sendMessage(m.chat, {text: responseMessage, mentions: conn.parseMention(responseMessage)}, {quoted: m})
 break   
