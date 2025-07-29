@@ -192,7 +192,14 @@ ${usedPrefix + command} -c -blur Texto | Autor
     if (stiker) {
       conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
     } else {
-      message: {
+      const fkontak = {
+    key: {
+      participants: "0@s.whatsapp.net",
+      remoteJid: "status@broadcast",
+      fromMe: false,
+      id: "Halo"
+    },
+    message: {
       locationMessage: {
         name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
         jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
