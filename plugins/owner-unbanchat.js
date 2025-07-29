@@ -1,5 +1,5 @@
 let handler = async (m, { conn }) => {
-m.reply("🤤🤤🤤🤤")
+m.reply("que rico lo hiciste barboza 🤤🤤🤤🤤")
 global.db.data.chats[m.chat].isBanned = false
 m.react("🔥")
 }
