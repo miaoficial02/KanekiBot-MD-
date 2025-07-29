@@ -37,7 +37,20 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   // 📸 Validar que sea imagen JPG o PNG
   if (!/image\/(jpe?g|png)/i.test(mime)) {
     await conn.sendMessage(m.chat, {
-      text: `⚠️ *Formato inválido:*\n\nEnvía o responde a una imagen con:\n*${usedPrefix + command}*`,
+      text: 
+╭─── ⛔ *FORMATO NO SOPORTADO*
+│ 
+│ 📷 Solo se aceptan imágenes en:
+│     • JPG
+│     • PNG
+│
+│ 💡 Usa el comando así:
+│     ${usedPrefix + command}
+│     (respondiendo a una imagen)
+│
+╰─🧠 Consejo: imágenes borrosas mejoran más.
+`.trim();
+:\n*${usedPrefix + command}*`,
       mentions: conn.parseMention(`${usedPrefix + command}`)
     }, { quoted: fkontak })
     return
