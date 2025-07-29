@@ -1,53 +1,18 @@
-let handler = async (m, { conn, args, command }) => {
-  const isOwner = global.owner.some(([v]) => v === m.sender)
+export async function before(m, { conn, isAdmin, isBotAdmin, isOwner, isROwner }) {
 
-  // --- Modo detección privada ---
-  if (!m.isGroup && !isOwner && m.from !== undefined) {
-    global.opts = global.opts || {}
-    if (global.opts.antiprivado) {
-      const texto = `
-╭━〔 *🚫 ACCESO DENEGADO* 〕━⬣
-┃
-┃ ✦ Hola, *${conn.getName(m.sender)}* 👋🏻
-┃
-┃ ❌ Los comandos por privado están
-┃     *desactivados actualmente.*
-┃
-┃ 🛡️ Por seguridad, el bot no responde
-┃     mensajes fuera de los grupos.
-┃
-┃ ✅ Usa el bot en un grupo o espera
-┃     ser autorizado por el Owner.
-┃
-╰━〔 *KanekiBot - Protección Activa* 〕━⬣
-`.trim()
+if (m.isBaileys && m.fromMe) return !0
+if (m.isGroup) return !1
+if (!m.message) return !0
+if (m.text.includes('PIEDRA') || m.text.includes('PAPEL') || m.text.includes('TIJERA') || m.text.includes('estado') || m.text.includes('verificar') || m.text.includes('owner') ||  m.text.includes('creador') || m.text.includes('grupos') || m.text.includes('pas5') || m.text.includes('registroC') || m.text.includes('deletesesion') || m.text.includes('registroR') || m.text.includes('uptime')) return !0
 
-      await m.reply(texto)
-      await new Promise(r => setTimeout(r, 1200))
-      await conn.updateBlockStatus(m.sender, 'block')
-    }
-    return
-  }
+let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
+let chat = global.db.data.chats[m.chat]
+let user = global.db.data.users[m.sender]
+let bot = global.db.data.settings[this.user.jid] || {}
 
-  // --- Modo comando para Owner ---
-  if (!m.isGroup && isOwner && /^antiprv|antiprivado$/i.test(command)) {
-    const option = args[0]?.toLowerCase()
-    if (!['on', 'off'].includes(option)) {
-      return m.reply(`⚙️ *Uso correcto:*\n\n.antiprv on  → Activar\n.antiprv off → Desactivar`)
-    }
+if (bot.antiPrivate && !isOwner && !isROwner) {
+// await m.reply(`☁️ *Hola* @${who.replace(/@.+/, '')}, *no puede usar este bot en chat privado*\n\nUnete al Grupo oficial para poder usar el bot\nhttps://chat.whatsapp.com/GqKwwoV2JJaJDP2SL7SddX`, false, { mentions: [who] })
+await conn.groupParticipantsUpdate(m.chat, [m.sender], 'banchat')
 
-    global.opts = global.opts || {}
-    global.opts.antiprivado = option === 'on'
-
-    return m.reply(`✅ *AntiPrivado ${option === 'on' ? 'activado' : 'desactivado'} correctamente.*`)
-  }
-}
-
-handler.command = /^antiprv|antiprivado$/i
-handler.private = true
-handler.all = true
-handler.tags = ['owner']
-handler.help = ['antiprv on/off']
-handler.rowner = true
-
-export default handler
+return !1
+}}
