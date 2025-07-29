@@ -3,6 +3,34 @@ const fs = { ...fsPromises, existsSync };
 import path, { join } from 'path' 
 import ws from 'ws';
 
+const fkontak = {
+    key: {
+      participants: "0@s.whatsapp.net",
+      remoteJid: "status@broadcast",
+      fromMe: false,
+      id: "Halo"
+    },
+    message: {
+      locationMessage: {
+        name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
+        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        vcard:
+          "BEGIN:VCARD\n" +
+          "VERSION:3.0\n" +
+          "N:;Unlimited;;;\n" +
+          "FN:Unlimited\n" +
+          "ORG:Unlimited\n" +
+          "TITLE:\n" +
+          "item1.TEL;waid=19709001746:+1 (970) 900-1746\n" +
+          "item1.X-ABLabel:Unlimited\n" +
+          "X-WA-BIZ-DESCRIPTION:ofc\n" +
+          "X-WA-BIZ-NAME:Unlimited\n" +
+          "END:VCARD"
+      }
+    },
+    participant: "0@s.whatsapp.net"
+  };
+
 let handler = async (m, { conn, command, usedPrefix, args, text, isOwner}) => {
 const isCommand1 = /^(deletesesion|deletebot|deletesession|deletesesaion)$/i.test(command)  
 const isCommand2 = /^(stop|pausarai|pausarbot)$/i.test(command)  
@@ -179,7 +207,7 @@ ${replyMessage.trim()}
 ╰──🕒 *El tiempo se actualiza automáticamente en cada consulta*`.trim();
 
 
-await conn.sendMessage(m.chat, {text: responseMessage, mentions: conn.parseMention(responseMessage)}, {quoted: m})
+await conn.sendMessage(m.chat, { text: responseMessage, mentions: conn.parseMention(responseMessage) }, { quoted: fkontak });
 break   
 }}
 
