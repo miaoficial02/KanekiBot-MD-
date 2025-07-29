@@ -36,7 +36,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   
   // Validar si el archivo es una imagen JPG o PNG
   if (!/image\/(jpe?g|png)/i.test(mime)) {
-    await conn.sendMessage(m.chat, { react: { text: '❗', key: m.key } })
+    await conn.sendMessage(m.chat, { text: responseMessage, mentions: conn.parseMention(responseMessage) }, { quoted: fkontak });
     return m.reply(`Envía o *responde a una imagen* con el comando:\n*${usedPrefix + command}*`)
   }
 
