@@ -32,9 +32,9 @@ const handler = async (m, { isOwner, isAdmin, conn, text, participants, args }) 
   for (const mem of participants) {
     teks += `${emoji} ${getCountryFlag(mem.id)} @${mem.id.split('@')[0]}\n`
   }
-  teks += `└───────⭓\n\n𝘚𝘶𝘱𝘦𝘳 _𝐬𝐮𝐩𝐞𝐫 Kaneki Bot👾`
+  teks += `└───────⭓\n\n𝐌𝐞𝐧𝐜𝐢𝐨𝐧 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐚 𝐊𝐚𝐧𝐞𝐤𝐢 𝐁𝐨𝐭 💯🔥`
 
-  // 🧩 fkontak integrado aquí
+
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
