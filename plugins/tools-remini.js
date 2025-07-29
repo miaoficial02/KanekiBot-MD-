@@ -5,7 +5,6 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   const quoted = m.quoted ? m.quoted : m
   const mime = quoted.mimetype || quoted.msg?.mimetype || ''
 
-  
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
@@ -15,7 +14,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     },
     message: {
       locationMessage: {
-        name: "MEJORA DE CALIDAD 🥷🔥",
+        name: "MEJORA CALIDAD 🔥🥷",
         jpegThumbnail: await (await fetch('https://files.catbox.moe/zzdz89.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
@@ -32,27 +31,27 @@ let handler = async (m, { conn, usedPrefix, command }) => {
       }
     },
     participant: "0@s.whatsapp.net"
-  };
+  }
 
-  // 📸 Validar que sea imagen JPG o PNG
+  // 📸 Validar imagen
   if (!/image\/(jpe?g|png)/i.test(mime)) {
+    const mensajeError = `
+🔴 *Formato no soportado*
+
+Este comando solo funciona con imágenes en formato *JPG* o *PNG*.
+
+📌 *Instrucciones:*
+1. Envía una imagen o responde a una.
+2. Escribe el comando: *${usedPrefix + command}*
+
+💡 Consejo: mejora imágenes borrosas o pixeladas.
+`.trim()
+
     await conn.sendMessage(m.chat, {
-      text: 
-╭─── ⛔ *FORMATO NO SOPORTADO*
-│ 
-│ 📷 Solo se aceptan imágenes en:
-│     • JPG
-│     • PNG
-│
-│ 💡 Usa el comando así:
-│     ${usedPrefix + command}
-│     (respondiendo a una imagen)
-│
-╰─🧠 Consejo: imágenes borrosas mejoran más.
-`.trim();
-:\n*${usedPrefix + command}*`,
-      mentions: conn.parseMention(`${usedPrefix + command}`)
+      text: mensajeError,
+      mentions: conn.parseMention(mensajeError)
     }, { quoted: fkontak })
+
     return
   }
 
@@ -88,21 +87,24 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
     const resultBuffer = await (await fetch(json.result_url)).buffer()
 
+    const mensajeFinal = `
+✨ *Imagen mejorada exitosamente*
+
+📈 Resolución duplicada con mayor nitidez.
+
+🔍 Ideal para mejorar calidad en fotos borrosas o pixeladas.
+`.trim()
+
     await conn.sendMessage(m.chat, {
       image: resultBuffer,
-      caption: `
-✨ *Tu imagen ha sido mejorada al doble de resolución*
-
-📈 *Mayor nitidez y más detalles*
-
-🔧 _Usa esta función cuando necesites mejorar una imagen borrosa._
-`.trim()
+      caption: mensajeFinal
     }, { quoted: m })
 
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+
   } catch (err) {
     await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-    m.reply(`❌ *Falló la mejora de imagen:*\n${err.message || err}`)
+    m.reply(`❌ *Error al mejorar la imagen:*\n${err.message || err}`)
   }
 }
 
