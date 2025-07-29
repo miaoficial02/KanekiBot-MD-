@@ -15,7 +15,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     },
     message: {
       locationMessage: {
-        name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
+        name: "MEJORA DE CALIDAD 🥷🔥",
         jpegThumbnail: await (await fetch('https://files.catbox.moe/zzdz89.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
