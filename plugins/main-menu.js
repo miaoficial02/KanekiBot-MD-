@@ -97,7 +97,7 @@ const fkontak = {
   }
 };
 
-handler.command = ['menuhtg'];
+handler.command = ['menu'];
 export default handler;
 
 function ucapan() {
