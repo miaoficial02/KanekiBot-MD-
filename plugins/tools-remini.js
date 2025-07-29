@@ -16,7 +16,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     message: {
       locationMessage: {
         name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
-        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        jpegThumbnail: await (await fetch('https://files.catbox.moe/zzdz89.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
           "VERSION:3.0\n" +
