@@ -1,7 +1,12 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 
-const fkontak = {
+let handler = async (m, { conn, usedPrefix, command }) => {
+  const quoted = m.quoted ? m.quoted : m
+  const mime = quoted.mimetype || quoted.msg?.mimetype || ''
+
+  
+  const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
       remoteJid: "status@broadcast",
@@ -29,15 +34,13 @@ const fkontak = {
     participant: "0@s.whatsapp.net"
   };
 
-let handler = async (m, { conn, usedPrefix, command }) => {
-  const quoted = m.quoted ? m.quoted : m
-  const mime = quoted.mimetype || quoted.msg?.mimetype || ''
-
-  
-  // Validar si el archivo es una imagen JPG o PNG
+  // 📸 Validar que sea imagen JPG o PNG
   if (!/image\/(jpe?g|png)/i.test(mime)) {
-    await conn.sendMessage(m.chat, { text: responseMessage, mentions: conn.parseMention(responseMessage) }, { quoted: fkontak });
-    return m.reply(`Envía o *responde a una imagen* con el comando:\n*${usedPrefix + command}*`)
+    await conn.sendMessage(m.chat, {
+      text: `⚠️ *Formato inválido:*\n\nEnvía o responde a una imagen con:\n*${usedPrefix + command}*`,
+      mentions: conn.parseMention(`${usedPrefix + command}`)
+    }, { quoted: fkontak })
+    return
   }
 
   try {
@@ -75,9 +78,9 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     await conn.sendMessage(m.chat, {
       image: resultBuffer,
       caption: `
-✨ Tu imagen ha sido mejorada al doble de resolución.
+✨ *Tu imagen ha sido mejorada al doble de resolución*
 
-📈 Mayor nitidez y más detalles.
+📈 *Mayor nitidez y más detalles*
 
 🔧 _Usa esta función cuando necesites mejorar una imagen borrosa._
 `.trim()
@@ -86,12 +89,12 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
   } catch (err) {
     await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-    m.reply(`❌ Falló la mejora de imagen:\n${err.message || err}`)
+    m.reply(`❌ *Falló la mejora de imagen:*\n${err.message || err}`)
   }
 }
 
 handler.help = ['hd']
-handler.tags = ['tools', 'imagen']
+handler.tags = ['tools']
 handler.command = /^hd$/i
 
 export default handler
