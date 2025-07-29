@@ -112,6 +112,7 @@ if (typeof user !== 'object') {
             if (typeof settings !== 'object') global.db.data.settings[this.user.jid] = {}
             if (settings) {
                 if (!('self' in settings)) settings.self = false
+                if (!('antiPrivate' in settings)) settings.antiPrivate = true
                 if (!('autoread' in settings)) settings.autoread = false
                 if (!('restrict' in settings)) settings.restrict = false
                 if (!('actives' in settings)) settings.actives = []
@@ -120,6 +121,7 @@ if (typeof user !== 'object') {
                 if (!('logo' in settings)) settings.logo = null
             } else global.db.data.settings[this.user.jid] = {
                 self: false,
+                antiPrivate: true,
                 autoread: false,
                 restrict: false, 
                 actives: [],
