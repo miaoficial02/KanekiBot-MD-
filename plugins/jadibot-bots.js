@@ -12,7 +12,7 @@ const fkontak = {
     },
     message: {
       locationMessage: {
-        name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
+        name: "BOTS CONECTADOS 🥷🔥",
         jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
