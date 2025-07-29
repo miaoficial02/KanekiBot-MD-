@@ -1,47 +1,77 @@
 import got from "got";
 import moment from "moment-timezone";
+import fetch from "node-fetch";
 
-let handler = async (m, { conn }) => {
+let handler = async (m, { conn, args }) => {
   m.react("🌐");
+
+const fkontak = {
+    key: {
+      participants: "0@s.whatsapp.net",
+      remoteJid: "status@broadcast",
+      fromMe: false,
+      id: "Halo"
+    },
+    message: {
+      locationMessage: {
+        name: "𝖬𝖤𝖭𝖴 𝖢𝖮𝖬𝖯𝖫𝖤𝖳𝖮 👾",
+        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        vcard:
+          "BEGIN:VCARD\n" +
+          "VERSION:3.0\n" +
+          "N:;Unlimited;;;\n" +
+          "FN:Unlimited\n" +
+          "ORG:Unlimited\n" +
+          "TITLE:\n" +
+          "item1.TEL;waid=19709001746:+1 (970) 900-1746\n" +
+          "item1.X-ABLabel:Unlimited\n" +
+          "X-WA-BIZ-DESCRIPTION:ofc\n" +
+          "X-WA-BIZ-NAME:Unlimited\n" +
+          "END:VCARD"
+      }
+    },
+    participant: "0@s.whatsapp.net"
+  };
+  const targetUser = m.sender;
+  const creatorNumber = '573162402768';
+  const creatorMention = '@' + creatorNumber;
+  const userMention = '@' + targetUser.split('@')[0];
+  const mentionText = args[0] ? '@' + args[0] : userMention;
 
   const senderId = m.sender;
   const userNumber = senderId.split("@")[0];
   const userName = await conn.getName(senderId);
-  const time = moment().tz("America/Mexico_City");
-  const formattedDate = time.format("dddd, D [de] MMMM YYYY");
+
+  const time = moment().tz("America/Mexico_City").locale("es");
+  const formattedDate = time.format("D [de] MMMM");
   const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
   if (!global.menutext) await global.menu();
 
   const header = `
-╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 - 𝗠𝗘𝗡𝗨 〕━━⬣
-┃ 🧑‍💻 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${userName}
+╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 〕━━⬣
+┃ 👤 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${mentionText}
+┃ 🤖 𝗖𝗿𝗲𝗮𝗱𝗼𝗿: ${creatorMention}
 ┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
 ┃ 📆 𝗙𝗲𝗰𝗵𝗮: ${formattedDate}
 ┃ ⏰ 𝗛𝗼𝗿𝗮: ${formattedTime}
 ┃ 💬 𝗦𝗮𝗹𝘂𝗱𝗼: ${saludo}
-╰━━━━━━━━━━━━━━━━━━⬣\n`;
+╰━━━━━━━━━━━━━━━━━━⬣\n\n`;
 
-  const footer = `
-╭══〔 👑 𝗖𝗥𝗘𝗔𝗗𝗢𝗥 〕══⬣
-┃ 🧠 𝗡𝗼𝗺𝗯𝗿𝗲: *Bajo Bots*
-┃ 🌎 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽: wa.me/573162402768
-╰══════════════════⬣`;
-
+  const footer = `Power By Bajo Bots`;
   const txt = header + global.menutext + footer;
-  const mention = [m.sender];
+
+  const mention = [m.sender, creatorNumber + '@s.whatsapp.net'];
 
   try {
-    const imageURL = "https://qu.ax/RkiEC.jpg"; // tu imagen de fondo
+    const imageURL = "https://qu.ax/RkiEC.jpg";
     const imgBuffer = await got(imageURL).buffer();
 
     await conn.sendMessage(
       m.chat,
       {
         document: imgBuffer,
-       // fileName: '⚡ KanekiBot - Menú Oficial ⚡.pdf',
-        //mimetype: 'application/pdf',
         caption: txt,
         fileLength: 99999999,
         contextInfo: {
@@ -58,7 +88,7 @@ let handler = async (m, { conn }) => {
           }
         }
       },
-      { quoted: m }
+      { quoted: fkontak }
     );
   } catch (e) {
     console.error(e);
@@ -67,10 +97,9 @@ let handler = async (m, { conn }) => {
   }
 };
 
-handler.command = /^menu|menú|help|comandos|commands|\?$/i;
+handler.command = ['menuhtg'];
 export default handler;
 
-// 🕐 Saludo automático
 function ucapan() {
   const hour = moment().tz("America/Los_Angeles").format("HH");
   if (hour >= 18) return "🌙 Buenas noches";
@@ -78,7 +107,6 @@ function ucapan() {
   return "🌅 Buenos días";
 }
 
-// 🔠 Menú global
 global.menu = async function getMenu() {
   let text = "";
 
@@ -118,9 +146,9 @@ global.menu = async function getMenu() {
 
     if (commands.length) {
       const icon = icons[category] || icons.default;
-      text += `╭──〔 ${icon} : ${tags[category]} 〕──⬣\n`;
-      text += commands.map(cmd => `┃ ✦ 〉 *${cmd}*`).join("\n");
-      text += `\n╰────────────────────────⬣\n\n`;
+      text += `╭──〔 ${icon} ${tags[category]} 〕──⬣\n`;
+      text += commands.map(cmd => `┃ ✦ 〉 _${cmd}_`).join("\n");
+      text += `\n╰──────────────────⬣\n\n`;
     }
   }
 
