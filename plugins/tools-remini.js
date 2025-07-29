@@ -33,7 +33,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     participant: "0@s.whatsapp.net"
   }
 
-  // 📸 Validar imagen
+  
   if (!/image\/(jpe?g|png)/i.test(mime)) {
     const mensajeError = `
 🔴 *Formato no soportado*
