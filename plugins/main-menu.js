@@ -118,7 +118,7 @@ global.menu = async function getMenu() {
 
     if (commands.length) {
       const icon = icons[category] || icons.default;
-      text += `╭──〔 ${icon} 𝙈𝙊𝘿𝙐𝙇𝙊: ${tags[category]} 〕──⬣\n`;
+      text += `╭──〔 ${icon} : ${tags[category]} 〕──⬣\n`;
       text += commands.map(cmd => `┃ ✦ 〉 *${cmd}*`).join("\n");
       text += `\n╰────────────────────────⬣\n\n`;
     }
