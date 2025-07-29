@@ -1,5 +1,5 @@
-import axios from 'axios'
-import fetch from 'node-fetch'
+import axios from 'axios';
+import fetch from 'node-fetch';
 
 let handler = async (m, { conn, usedPrefix, command }) => {
 
@@ -36,4 +36,4 @@ handler.admin = true
 handler.group = true
 handler.botAdmin = true
 
-module.exports = handler
+export default handler
