@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 let handler = async (m, { conn, args }) => {
   m.react("🌐");
 
-const fkontak = {
+  const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
       remoteJid: "status@broadcast",
@@ -32,6 +32,7 @@ const fkontak = {
     },
     participant: "0@s.whatsapp.net"
   };
+
   const targetUser = m.sender;
   const creatorNumber = '573162402768';
   const creatorMention = '@' + creatorNumber;
@@ -47,10 +48,13 @@ const fkontak = {
   const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
+  // Obtener nombre personalizado del menú
+  let botname = global.db.data.settings[m.sender]?.menuBotName || 'KanekiBot';
+
   if (!global.menutext) await global.menu();
 
   const header = `
-╭━━〔 👾 𝗞𝗔𝗡𝗘𝗞𝗜𝗕𝗢𝗧 〕━━⬣
+╭━━〔 👾 ${botname.toUpperCase()} 〕━━⬣
 ┃ 👤 𝗨𝘀𝘂𝗮𝗿𝗶𝗼: ${mentionText}
 ┃ 🤖 𝗖𝗿𝗲𝗮𝗱𝗼𝗿: ${creatorMention}
 ┃ 📱 𝗡𝘂𝗺𝗲𝗿𝗼: +${userNumber}
@@ -61,7 +65,6 @@ const fkontak = {
 
   const footer = `Power By Bajo Bots`;
   const txt = header + global.menutext + footer;
-
   const mention = [m.sender, creatorNumber + '@s.whatsapp.net'];
 
   try {
@@ -79,7 +82,7 @@ const fkontak = {
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: "🔥 KanekiBot - Panel de comandos",
+            title: `🔥 ${botname} - Panel de comandos`,
             body: "Explora todas las funciones del bot desde este menú",
             thumbnail: imgBuffer,
             sourceUrl: "",
@@ -97,7 +100,7 @@ const fkontak = {
   }
 };
 
-handler.command = /^(allmenu|menu|help|menú)$/i
+handler.command = /^(allmenu|menu|help|menú)$/i;
 export default handler;
 
 function ucapan() {
