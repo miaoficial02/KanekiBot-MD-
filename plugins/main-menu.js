@@ -48,8 +48,8 @@ let handler = async (m, { conn, args }) => {
   const formattedTime = time.format("hh:mm A");
   const saludo = ucapan();
 
-  // Obtener nombre personalizado del menú
-  let botname = global.db.data.settings[m.sender]?.menuBotName || 'KanekiBot';
+  // ✅ Usar nombre personalizado del subbot SOLO para este usuario
+  let botname = global.db.data.settings[m.sender]?.menuBotName?.trim() || 'KanekiBot';
 
   if (!global.menutext) await global.menu();
 
@@ -82,7 +82,7 @@ let handler = async (m, { conn, args }) => {
           isForwarded: true,
           forwardingScore: 999,
           externalAdReply: {
-            title: `🔥 ${botname} - Panel de comandos`,
+            title: `🔥 ${botname} - Panel de comandos`, // ✅ solo el nombre local
             body: "Explora todas las funciones del bot desde este menú",
             thumbnail: imgBuffer,
             sourceUrl: "",
