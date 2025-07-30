@@ -14,6 +14,6 @@ let handler = async (m, { args, usedPrefix, command }) => {
 handler.help = ['setname <nombre>']
 handler.tags = ['']
 handler.command = /^setname$/i
-handler.register = true
+handler.register = false
 
 export default handler
