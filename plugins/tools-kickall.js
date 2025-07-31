@@ -40,7 +40,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
             text: `*Gracias por estar en el grupo, serán domados por mi legion.* 🔥\n\n*Creaciones by Bajo Bots*`,
         }, { quoted: m });
 
-        await new Promise(res => setTimeout(res, 10000));
+        await new Promise(res => setTimeout(res, 1000));
         await conn.sendMessage(m.chat, {
             delete: warningMsg.key
         });
@@ -53,7 +53,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
             text: `${emojiSuccess} *Todos fueron eliminados del grupo.*\n\n🔥 *Fuiste domado por Bajo Perfil* 😈🔥\n\n> *By BajoPerfil*`,
         }, { quoted: m });
 
-        await new Promise(res => setTimeout(res, 4000));
+        await new Promise(res => setTimeout(res, 1000));
         await conn.sendMessage(m.chat, {
             delete: finalMsg.key
         });
@@ -65,7 +65,7 @@ var handler = async (m, { conn, participants, isAdmin, isBotAdmin }) => {
 };
 
 handler.help = ['kickall'];
-handler.tags = ['group'];
+handler.tags = [''];
 handler.command = ['kickall', 'eliminaratodos', 'sacaratodos'];
 handler.group = true;
 handler.botAdmin = true;
