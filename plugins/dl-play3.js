@@ -69,7 +69,7 @@ const handler = async (m, { conn, args, command, usedPrefix }) => {
   }
 };
 
-handler.command = /^play2$/i;
+handler.command = /^play3$/i;
 handler.tags = ['descargar'];
 handler.help = [''];
 export default handler;
