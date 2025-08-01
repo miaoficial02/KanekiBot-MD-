@@ -39,7 +39,7 @@ let fkontak = {
     message: {
       locationMessage: {
         name: "𝖲𝖴𝖡𝖡𝖮𝖳 𝖮𝖭𝖫𝖨𝖭𝖤 ✅",
-        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        jpegThumbnail: await (await fetch('https://iili.io/FrJFA8P.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
           "VERSION:3.0\n" +
