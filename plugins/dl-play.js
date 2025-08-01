@@ -1,55 +1,76 @@
-import yts from "yt-search";
-const limit = 100;
-const handler = async (m, { conn, text, command }) => {
-  if (!text) return m.reply("🤦 Ingresa el nombre de un video o una URL de YouTube.");
-    m.react("🥷")
-    let res = await yts(text);
-    if (!res || !res.all || res.all.length === 0) {
-      return m.reply("No se encontraron resultados para tu búsqueda.");
-    }
+import yt from 'yt-search';
+import fetch from 'node-fetch';
+import axios from 'axios';
 
-    let video = res.all[0];
-    let total = Number(video.duration.seconds) || 0;
+const limit = 50 * 1024 * 1024; // 50 MB
 
-    const cap = `
-⚠️═══════「 𝐘𝐎𝐔𝐓𝐔𝐁𝐄 𝐏𝐋𝐀𝐘 」═══════⚠️
+export const command = ['play', 'play2'];
+export const help = ['play', 'play2'];
+export const description = '🌿 Buscar y descargar música o video desde YouTube.';
 
-📺  *Título:* ${video.title}
-🎙️  *Autor:* ${video.author.name}
-⏳  *Duración:* ${video.duration.timestamp}
-👁️  *Vistas:* ${video.views}
-🔗  *URL:* ${video.url}
-
-👀═══════「 𝐁𝐎𝐓 𝐌𝐔𝐒𝐈𝐂 」═══════👀
-`;
-    await conn.sendFile(m.chat, await (await fetch(video.thumbnail)).buffer(), "image.jpg", cap, m);
-
-    if (command === "play1") {
-      try {
-    const api = await (await fetch(`https://api.sylphy.xyz/download/ytmp3?url=${video.url}&apikey=Sylphiette's`)).json()
- await conn.sendFile(m.chat, api.res.url, video.title, "", m);
-            await m.react("✔️");
-        } catch (error) {
-          return error.message
-        }
-    } else if (command === "play3" || command === "playvid") {
-    try {
-      const api = await (await fetch(`https://api.sylphy.xyz/download/ytmp4?url=${video.url}&apikey=Sylphiette's`)).json()
-      let dl = api.res.url
-      const res = await fetch(dl);
-      const cont = res.headers.get('Content-Length');
-      const bytes = parseInt(cont, 10);
-      const sizemb = bytes / (1024 * 1024);
-      const doc = sizemb >= limit;
- await conn.sendFile(m.chat, dl, video.title, "", m, null, { asDocument: doc, mimetype: "video/mp4" });
-            await m.react("✔️");
-        } catch (error) {
-          return error.message
-        }
-    }
+export async function run(ms, { sylph, command, prefix, text}) {
+  if (!text) {
+    return ms.reply(`╭━━〔 *⛩️ USO INCORRECTO* 〕━━⬣\n┃ ✦ Ejemplo: *${prefix + command} Tokyo Ghoul Opening*\n╰━━━━━━━━━━━━━━━━━━⬣`);
 }
 
-handler.help = ["play1", "play2"];
-handler.tags = ["download"];
-handler.command = ["play1", "play2", "playvid"];
-export default handler;
+  const search = await yt.search(text);
+  if (!search.videos.length) {
+    return ms.reply('❌ No se encontró ningún video con ese nombre. Intenta con otro título.');
+}
+
+  const video = search.videos[0];
+
+  const info = `
+╭━━〔 *🎧 KANEKI PLAY* 〕━━⬣
+┃ 🧿 *Título:* ${video.title}
+┃ 🐙 *Autor:* ${video.author.name}
+┃ ⏱️ *Duración:* ${video.timestamp}
+┃ 🔥 *Vistas:* ${video.views.toLocaleString()}
+┃ 🗓️ *Publicado:* ${video.ago}
+┃ 🌐 *Enlace:* ${video.url}
+╰━━━━━━━━━━━━━━━━━━⬣`;
+
+  await ms.media(info.trim(), video.thumbnail);
+
+  try {
+    let url, title;
+
+    if (command === 'play2') {
+      const res = await fetch(`https://api.sylphy.xyz/download/ytmp4?url=${encodeURIComponent(video.url)}&apikey=sylphy`);
+      const json = await res.json();
+
+      if (!json.status ||!json.res?.url) {
+        return ms.reply('⚠️ No se pudo obtener el video. Intenta con otro enlace.');
+}
+
+      url = json.res.url;
+      title = json.res.title;
+} else {
+      const result = await (await fetch(`https://api.sylphy.xyz/download/ytmp3?url=${video.url}&apikey=sylphy`)).json();
+      if (!result.res.url) {
+        return ms.reply('⚠️ No se pudo obtener el audio. Intenta más tarde.');
+}
+
+      url = result.res.url;
+      title = result.res.title;
+}
+
+    const fileRes = await fetch(url);
+    const buffer = await fileRes.arrayBuffer();
+
+    if (command === 'play2') {
+      if (buffer.byteLength> limit) {
+        await ms.sendDoc(title, title, url);
+} else {
+        await ms.sendVideo(title, url);
+}
+} else {
+      await ms.sendAudio(title, url);
+}
+
+} catch (err) {
+    console.error(`❌ Error al descargar ${command}:`, err);
+    ms.reply(`❌ *Error al descargar el ${command === 'play2'? 'video': 'audio'}.*\n🔧 Detalles: ${err.message}`);
+}
+}
+```
