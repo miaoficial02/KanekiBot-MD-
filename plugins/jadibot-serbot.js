@@ -285,7 +285,7 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
         if (qr && isCode) {
           code = await user.sendMessage(msg.chat, {
             image: { url: imgcode },
-            text: rtx2,
+            caption: rtx2,
             contextInfo: {
               forwardingScore: 999,
               isForwarded: true,
