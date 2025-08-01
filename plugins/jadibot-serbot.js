@@ -7,6 +7,7 @@ const {
 import qrcode from "qrcode";
 import nodeCache from "node-cache";
 import fs from "fs";
+import fetch from "node-fetch";
 import path from "path";
 import pino from "pino";
 import util from "util";
