@@ -13,9 +13,11 @@ const handler = async (m, { conn, participants, isAdmin, isOwner, text }) => {
 ╰──────────────⬣
 
 ${participants.map(p => `👤 @${p.id.split('@')[0]}`).join('\n')}
-`.trim();
 
-  
+╭───────────────•
+│ 『 ᴋ ᴀ ɴ ᴇ ᴋ ɪ ʙ ᴏ ᴛ 』
+╰───────────────•`.trim();
+
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
