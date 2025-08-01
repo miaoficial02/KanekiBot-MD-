@@ -8,14 +8,14 @@ const handler = async (m, { conn, participants, isAdmin, isOwner, text }) => {
 
   const texto = `
 ╭─❖ 「 📢 *MENCIÓN GLOBAL* 」 ❖─
-│ 🧩 *Mensaje:* ${mensaje}
+│ 👀 *Mensaje:* ${mensaje}
 │ 👥 *Miembros:* ${participants.length}
 ╰──────────────⬣
 
 ${participants.map(p => `👤 @${p.id.split('@')[0]}`).join('\n')}
 `.trim();
 
-  // fkontak decorado
+  
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
