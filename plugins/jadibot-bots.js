@@ -166,11 +166,11 @@ const tiempoInfo = obtenerTiempoConexion(v);
 const estado = obtenerEstadoConexion(v);
 
 return `*${index + 1}*
-* +*${numero}*
-* *Usuario:* ${nombre}
-*° *Conectado:* ${tiempoInfo.formateado}
-*— *Estado:* ${estado}
-*… *Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
+*${numero}*
+*Usuario:* ${nombre}
+ *Conectado:* ${tiempoInfo.formateado}
+*Estado:* ${estado}
+ *Desde:* ${new Date(tiempoInfo.timestamp).toLocaleString('es-ES')}`;
 }).join('\n\n> ________________\n\n');
 
 const replyMessage = message.length === 0 ? `*¦ No hay JadiBots conectados*` : message;
