@@ -202,7 +202,7 @@ const responseMessage = `
 ┃ 💻 *Para convertirte en JadiBot:*
 ┃ ⤷ \`\`\`.code\`\`\`
 ┃
-${replyMessage.trim()}
+┃  ${replyMessage.trim()}
 ┃
 ╰──🕒 *El tiempo se actualiza automáticamente en cada consulta*`.trim();
 
