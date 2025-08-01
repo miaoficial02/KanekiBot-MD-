@@ -33,7 +33,7 @@ const fkontak = {
     participant: "0@s.whatsapp.net"
   };
   const targetUser = m.sender;
-  const creatorNumber = '573162402768';
+  const creatorNumber = '573113406369';
   const creatorMention = '@' + creatorNumber;
   const userMention = '@' + targetUser.split('@')[0];
   const mentionText = args[0] ? '@' + args[0] : userMention;
