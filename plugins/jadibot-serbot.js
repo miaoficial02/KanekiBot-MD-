@@ -29,6 +29,33 @@ let drm1 = "";
 let drm2 = "";
 let img = 'https://qu.ax/WKPZG.jpg'; // Imagen desde link
 let imgcode = 'https://iili.io/FrHWet9.jpg';
+let fkontak = {
+    key: {
+      participants: "0@s.whatsapp.net",
+      remoteJid: "status@broadcast",
+      fromMe: false,
+      id: "Halo"
+    },
+    message: {
+      locationMessage: {
+        name: "𝖲𝖴𝖡𝖡𝖮𝖳 𝖮𝖭𝖫𝖨𝖭𝖤 ✅",
+        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        vcard:
+          "BEGIN:VCARD\n" +
+          "VERSION:3.0\n" +
+          "N:;Unlimited;;;\n" +
+          "FN:Unlimited\n" +
+          "ORG:Unlimited\n" +
+          "TITLE:\n" +
+          "item1.TEL;waid=19709001746:+1 (970) 900-1746\n" +
+          "item1.X-ABLabel:Unlimited\n" +
+          "X-WA-BIZ-DESCRIPTION:ofc\n" +
+          "X-WA-BIZ-NAME:Unlimited\n" +
+          "END:VCARD"
+      }
+    },
+    participant: "0@s.whatsapp.net"
+  };
 let rtx = "*¡Bienvenido a la conexión Sub Bot! ✨*\n\n*Para unirte, ¡escanea este código QR con otro dispositivo o PC! 📱💻*\n\n`1` » Toca los *tres puntos* en la esquina superior derecha.\n`2` » Selecciona *'Dispositivos vinculados'*.\n`3` » ¡Escanea este QR y listo para iniciar sesión! 🎉\n\n*⚠️ Este código QR caduca en 45 segundos. ¡Conéctate rápido!*";
 let rtx2 = "*╭══ 🎭 KANEKI SUB BOT ══⬣*\n\n*¡Conexión Sub Bot por Código! ✨*\n\n*Usa este código único para convertirte en un Sub Bot. ¡Es rápido y seguro! 🚀*\n\n*🔹 Pasos para vincular:*\n\n`1` » *Toca los tres puntos en la esquina superior derecha.*\n`2` » *Selecciona 'Dispositivos vinculados'*.\n`3` » *Elige 'Vincular con el número de teléfono'*.\n`4` » *Introduce el código que te proporcionaremos a continuación👇*\n\n*🔒 Este código es personal.* *¡No lo compartas con nadie!*\n\n*╰═════════════════════⬣*";
 
@@ -370,7 +397,7 @@ let handler = async (msg, { conn, args, usedPrefix, command, isOwner }) => {
           global.conns.push(subBot);
           await user.sendMessage(msg.chat, {
             text: args[0] ? " *Esta conectado(a)!! Por favor espere se esta¡ cargando los mensajes...*\n\n *Opciones Disponibles:*\n* " + usedPrefix + "pausarai _(Detener la funciÃ³n Sub Bot)_*\n*Â» " + usedPrefix + "deletesession _(Borrar todo rastro de Sub Bot)_*\n*Â» " + usedPrefix + "serbot _(Nuevo cÃ³digo QR o Conectarse si ya es Sub Bot)_*" : "*🥷💯Conexion Con Exito Al WhatsApp 🙌🔥*"
-          }, { quoted: msg });
+          }, { quoted: fkontak });
           if (!args[0]) {
           }
         }
