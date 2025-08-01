@@ -25,7 +25,7 @@ async function handler(m, { conn }) {
 ╰════════════════════════⬣
 
 📌 *¿Necesitas un bot, soporte o desarrollo personalizado?*
-✉️ ¡Escríbele directamente desde el botón de abajo!
+✉️ Escríbele directamente al número del creador.
 `.trim();
 
   const fkontak = {
@@ -37,7 +37,7 @@ async function handler(m, { conn }) {
     },
     message: {
       locationMessage: {
-        name: "OWNER 🙈",
+        name: "CREADOR 👾",
         jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
         vcard:
           "BEGIN:VCARD\n" +
@@ -61,15 +61,6 @@ async function handler(m, { conn }) {
     {
       image: { url: imagen },
       caption,
-      footer: '👑 Bajo Bots',
-      buttons: [
-        {
-          buttonId: `https://wa.me/${numcreador}`,
-          buttonText: { displayText: '📲 Contactar al Creador' },
-          type: 1
-        }
-      ],
-      headerType: 4,
     },
     { quoted: fkontak }
   );
