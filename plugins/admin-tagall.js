@@ -1,40 +1,21 @@
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 
-const handler = async (m, { isOwner, isAdmin, conn, text, participants, args }) => {
-  let chat = global.db.data.chats[m.chat],
-      emoji = chat.emojiTag || '👹'
-  
-  if (!(isAdmin || isOwner)) {
-    global.dfail('admin', m, conn)
-    throw false
-  }
+const handler = async (m, { conn, participants, isAdmin, isOwner, text }) => {
+  if (!m.isGroup) return m.reply('❌ Este comando solo funciona en grupos.');
+  if (!(isAdmin || isOwner)) return m.reply('👮 Solo *admins* pueden usar este comando.');
 
-  const pesan = args.join` `
-  const groupMetadata = await conn.groupMetadata(m.chat)
-  const groupName = groupMetadata.subject
+  const mensaje = text || '*🌐 MENSAJE GENERAL DEL GRUPO:*';
 
-  const countryFlags = {
-    '52': '🇲🇽', '57': '🇨🇴', '54': '🇦🇷', '34': '🇪🇸', '55': '🇧🇷',
-    '1': '🇺🇸', '44': '🇬🇧', '91': '🇮🇳', '502': '🇬🇹', '56': '🇨🇱',
-    '51': '🇵🇪', '58': '🇻🇪', '505': '🇳🇮', '593': '🇪🇨', '504': '🇭🇳',
-    '591': '🇧🇴', '53': '🇨🇺', '503': '🇸🇻', '507': '🇵🇦', '595': '🇵🇾'
-  }
+  const texto = `
+╭─❖ 「 📢 *MENCIÓN GLOBAL* 」 ❖─
+│ 🧩 *Mensaje:* ${mensaje}
+│ 👥 *Miembros:* ${participants.length}
+╰──────────────⬣
 
-  const getCountryFlag = (id) => {
-    const phoneNumber = id.split('@')[0]
-    let phonePrefix = phoneNumber.slice(0, 3)
-    if (phoneNumber.startsWith('1')) return '🇺🇸'
-    if (!countryFlags[phonePrefix]) phonePrefix = phoneNumber.slice(0, 2)
-    return countryFlags[phonePrefix] || '🏳️‍🌈'
-  }
+${participants.map(p => `👤 @${p.id.split('@')[0]}`).join('\n')}
+`.trim();
 
-  let teks = `*${groupName}*\n\n*Integrantes : ${participants.length}*\n${pesan}\n┌──⭓ *Despierten*\n`
-  for (const mem of participants) {
-    teks += `${emoji} ${getCountryFlag(mem.id)} @${mem.id.split('@')[0]}\n`
-  }
-  teks += `└───────⭓\n\n𝐌𝐞𝐧𝐜𝐢𝐨𝐧 𝐜𝐨𝐦𝐩𝐥𝐞𝐭𝐚 𝐊𝐚𝐧𝐞𝐤𝐢 𝐁𝐨𝐭 💯🔥`
-
-
+  // fkontak decorado
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",
@@ -61,18 +42,19 @@ const handler = async (m, { isOwner, isAdmin, conn, text, participants, args }) 
       }
     },
     participant: "0@s.whatsapp.net"
-  }
+  };
 
   await conn.sendMessage(m.chat, {
-    text: teks,
-    mentions: participants.map((a) => a.id)
-  }, { quoted: fkontak })
-}
+    text: texto,
+    mentions: participants.map(p => p.id)
+  }, { quoted: fkontak });
+};
 
-handler.help = ['todos']
-handler.tags = ['group']
-handler.command = /^(tagall|invocar|marcar|todos|invocación)$/i
-handler.admin = true
-handler.group = true
+handler.help = ['tagall [texto]'];
+handler.tags = ['group'];
+handler.command = ['tagall', 'todos', 'etiquetartodos'];
 
-export default handler
+handler.group = true;
+handler.admin = true;
+
+export default handler;
