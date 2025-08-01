@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import PhoneNumber from 'awesome-phonenumber';
 
 async function handler(m, { conn }) {
@@ -9,30 +10,68 @@ async function handler(m, { conn }) {
     (await conn.fetchStatus(ownerJid).catch(() => {}))?.status ||
     'Creador de bots de WhatsApp y del Bot Meliodas MD';
   const empresa = 'Bajo Bots - Servicios Tecnológicos';
-  const imagen = 'https://qu.ax/VGCPX.jpg'; // Puedes cambiar esta imagen
+  const imagen = 'https://qu.ax/VGCPX.jpg';
   const correo = 'kleinergalindo4@gmail.com';
   const instagram = 'https://instagram.com/kleinercg';
 
   const caption = `
-╭━━━〔 👤 *Información del Dueño* 〕━━⬣
-┃ 🧑‍💼 *Nombre:* ${name}
-┃ 📞 *Número:* wa.me/${numcreador}
+╭══ 🎭 *KANEKI BOT OWNER* ══⬣
+┃ 👤 *Nombre:* ${name}
+┃ 📱 *Número:* wa.me/${numcreador}
 ┃ 📝 *Estado:* ${about}
 ┃ 🏢 *Empresa:* ${empresa}
 ┃ 📧 *Correo:* ${correo}
 ┃ 🌐 *Instagram:* ${instagram}
-╰━━━━━━━━━━━━━━━━━━━━⬣
+╰════════════════════════⬣
 
-🤖 Si deseas adquirir un bot o soporte, no dudes en contactar.
-`;
+📌 *¿Necesitas un bot, soporte o desarrollo personalizado?*
+✉️ ¡Escríbele directamente desde el botón de abajo!
+`.trim();
+
+  const fkontak = {
+    key: {
+      participants: "0@s.whatsapp.net",
+      remoteJid: "status@broadcast",
+      fromMe: false,
+      id: "Halo"
+    },
+    message: {
+      locationMessage: {
+        name: "OWNER 🙈",
+        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+        vcard:
+          "BEGIN:VCARD\n" +
+          "VERSION:3.0\n" +
+          "N:;Unlimited;;;\n" +
+          "FN:Unlimited\n" +
+          "ORG:Unlimited\n" +
+          "TITLE:\n" +
+          "item1.TEL;waid=19709001746:+1 (970) 900-1746\n" +
+          "item1.X-ABLabel:Unlimited\n" +
+          "X-WA-BIZ-DESCRIPTION:ofc\n" +
+          "X-WA-BIZ-NAME:Unlimited\n" +
+          "END:VCARD"
+      }
+    },
+    participant: "0@s.whatsapp.net"
+  };
 
   await conn.sendMessage(
     m.chat,
     {
       image: { url: imagen },
       caption,
+      footer: '👑 Bajo Bots',
+      buttons: [
+        {
+          buttonId: `https://wa.me/${numcreador}`,
+          buttonText: { displayText: '📲 Contactar al Creador' },
+          type: 1
+        }
+      ],
+      headerType: 4,
     },
-    { quoted: m }
+    { quoted: fkontak }
   );
 }
 
