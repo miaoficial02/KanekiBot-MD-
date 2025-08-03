@@ -4,7 +4,7 @@
 ---
 
 <p align="center">
-  <img src="https://tmpfiles.org/dl/7986295/1753761205668.jpg" alt="Kaneki Bot MD Logo">
+  <img src="" alt="Kaneki Bot MD Logo">
 </p>
 
 ---
