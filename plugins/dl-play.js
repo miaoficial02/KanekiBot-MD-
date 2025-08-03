@@ -1,76 +1,58 @@
-import yt from 'yt-search';
-import fetch from 'node-fetch';
-import axios from 'axios';
+// 🌿 Plugin: Play Audio por texto (YouTube).
+// 🌿 Función: Descarga y reproduce música.
+// 🌱 Autores: Izumi.xyz. BajoBots 
+// ⚠️ No eliminar ni modificar créditos, respeta al creador del código.
+import fetch from 'node-fetch'
+import yts from 'yt-search'
 
-const limit = 50 * 1024 * 1024; // 50 MB
-
-export const command = ['play', 'play2'];
-export const help = ['play', 'play2'];
-export const description = '🌿 Buscar y descargar música o video desde YouTube.';
-
-export async function run(ms, { sylph, command, prefix, text}) {
+let handler = async (m, { conn, text, args }) => {
   if (!text) {
-    return ms.reply(`╭━━〔 *⛩️ USO INCORRECTO* 〕━━⬣\n┃ ✦ Ejemplo: *${prefix + command} Tokyo Ghoul Opening*\n╰━━━━━━━━━━━━━━━━━━⬣`);
-}
+    return m.reply("🍃 Ingresa el texto de lo que quieres buscar")
+  }
 
-  const search = await yt.search(text);
-  if (!search.videos.length) {
-    return ms.reply('❌ No se encontró ningún video con ese nombre. Intenta con otro título.');
-}
+  let ytres = await search(args.join(" "))
+  if (!ytres.length) {
+    return m.reply("🍃 No se encontraron resultados para tu búsqueda.")
+  }
 
-  const video = search.videos[0];
-
-  const info = `
-╭━━〔 *🎧 KANEKI PLAY* 〕━━⬣
-┃ 🧿 *Título:* ${video.title}
-┃ 🐙 *Autor:* ${video.author.name}
-┃ ⏱️ *Duración:* ${video.timestamp}
-┃ 🔥 *Vistas:* ${video.views.toLocaleString()}
-┃ 🗓️ *Publicado:* ${video.ago}
-┃ 🌐 *Enlace:* ${video.url}
-╰━━━━━━━━━━━━━━━━━━⬣`;
-
-  await ms.media(info.trim(), video.thumbnail);
+  let izumi = ytres[0]
+  let txt = `🎬 *Título*: ${izumi.title}
+⏱️ *Duración*: ${izumi.timestamp}
+📅 *Publicado*: ${izumi.ago}
+📺 *Canal*: ${izumi.author.name || 'Desconocido'}
+🔗 *Url*: ${izumi.url}`
+  await conn.sendFile(m.chat, izumi.image, 'thumbnail.jpg', txt, m)
 
   try {
-    let url, title;
+    const apiUrl = `https://orbit-oficial.vercel.app/api/download/YTMP3?key=OrbitPlus&url=${encodeURIComponent(izumi.url)}`
+    const response = await fetch(apiUrl)
+    const data = await response.json()
 
-    if (command === 'play2') {
-      const res = await fetch(`https://api.sylphy.xyz/download/ytmp4?url=${encodeURIComponent(video.url)}&apikey=sylphy`);
-      const json = await res.json();
+    if (data.status !== true || !data.download) {
+      throw new Error('Fallo al obtener el audio. JSON inesperado')
+    }
 
-      if (!json.status ||!json.res?.url) {
-        return ms.reply('⚠️ No se pudo obtener el video. Intenta con otro enlace.');
+    const { title, download } = data
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        audio: { url: download },
+        mimetype: 'audio/mpeg',
+        fileName: `${title}.mp3`
+      },
+      { quoted: m }
+    )
+  } catch (error) {
+    console.error(error)
+    m.reply(`❌ Lo siento, no pude descargar el audio.\n${error.message}`)
+  }
 }
 
-      url = json.res.url;
-      title = json.res.title;
-} else {
-      const result = await (await fetch(`https://api.sylphy.xyz/download/ytmp3?url=${video.url}&apikey=sylphy`)).json();
-      if (!result.res.url) {
-        return ms.reply('⚠️ No se pudo obtener el audio. Intenta más tarde.');
-}
+handler.command = /^(play)$/i
+export default handler
 
-      url = result.res.url;
-      title = result.res.title;
+async function search(query, options = {}) {
+  let result = await yts.search({ query, hl: "es", gl: "ES", ...options })
+  return result.videos || []
 }
-
-    const fileRes = await fetch(url);
-    const buffer = await fileRes.arrayBuffer();
-
-    if (command === 'play2') {
-      if (buffer.byteLength> limit) {
-        await ms.sendDoc(title, title, url);
-} else {
-        await ms.sendVideo(title, url);
-}
-} else {
-      await ms.sendAudio(title, url);
-}
-
-} catch (err) {
-    console.error(`❌ Error al descargar ${command}:`, err);
-    ms.reply(`❌ *Error al descargar el ${command === 'play2'? 'video': 'audio'}.*\n🔧 Detalles: ${err.message}`);
-}
-}
-```
