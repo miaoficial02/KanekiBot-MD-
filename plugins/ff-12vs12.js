@@ -1,77 +1,109 @@
-const jugadores = []
-const suplentes = []
-const MAX_JUGADORES = 12
-const MAX_SUPLENTES = 5
+let partida = {
+  jugadores: [],
+  suplentes: [],
+  enCurso: false,
+};
 
-const reglas = `
-🔥 *PARTIDA 12v12 FREE FIRE* 🔥
-📍 *MAPA:* Abierto (Bermuda o Kalahari)
-🕘 *Hora:* 8:00 PM
-🎮 *Modo:* Personalizado
-🛑 *Prohibido:* Lanzapapas, airdrops, emuladores
-✅ *Permitido:* Todo lo demás
-`
+const handler = async (m, { conn, args, command, usedPrefix }) => {
+  const user = m.sender;
+  const nombre = conn.getName(user);
+  const id = `${user}`;
 
-function obtenerLista() {
-  let texto = "🎮 *Lista de Participantes (12v12)* 🎮\n\n"
-  jugadores.forEach((nombre, i) => {
-    texto += `${i + 1}. ${nombre}\n`
-  })
-  if (suplentes.length > 0) {
-    texto += `\n⏳ *Suplentes:*\n`
-    suplentes.forEach((nombre, i) => {
-      texto += `${i + 1}. ${nombre}\n`
-    })
+  // Reacciona al comando
+  await m.react("🎮");
+
+  if (command === "12vs12") {
+    if (partida.enCurso) return m.reply("⚠️ Ya hay una partida en curso. Usa *.reset12* para reiniciar.");
+
+    partida.enCurso = true;
+    partida.jugadores = [];
+    partida.suplentes = [];
+
+    return conn.sendMessage(m.chat, {
+      text: `🎮 *PARTIDA FREE FIRE - 12 VS 12* 🎮
+
+🗺️ *MAPA:* Abierto
+👥 *Jugadores necesarios:* 12
+📦 *Suplentes disponibles:* 6
+📌 *Reglas:*
+- No armas de zona
+- No habilidades prohibidas
+- No emuladores
+
+💬 Usa:
+• *${usedPrefix}anotarse* - Para unirte
+• *${usedPrefix}suplente* - Si quieres ser suplente
+• *${usedPrefix}estado12* - Ver jugadores actuales
+• *${usedPrefix}reset12* - Reiniciar partida
+
+🔔 ¡Empieza a anotarte ahora!
+`,
+    }, { quoted: m });
   }
-  texto += "\n📲 Usa *.anotarme* para entrar o *.reglas* para ver las reglas."
-  return texto
-}
 
-const handler = async (m, { command, conn }) => {
-  const nombre = await conn.getName(m.sender)
+  if (command === "anotarse") {
+    if (!partida.enCurso) return m.reply("⚠️ No hay partida activa. Usa *.12vs12* para crear una.");
 
-  switch (command) {
-    case 'startff':
-      m.reply(`${reglas}\n\n📲 Usa *.anotarme* para entrar o *.lista* para ver los jugadores.`)
-      break
+    if (partida.jugadores.includes(id) || partida.suplentes.includes(id))
+      return m.reply("✅ Ya estás anotado.");
 
-    case 'anotarme':
-      if (jugadores.includes(nombre) || suplentes.includes(nombre)) {
-        m.reply('⚠️ Ya estás anotado.')
-      } else if (jugadores.length < MAX_JUGADORES) {
-        jugadores.push(nombre)
-        m.reply(`✅ ${nombre} anotado como jugador #${jugadores.length}.`)
-      } else if (suplentes.length < MAX_SUPLENTES) {
-        suplentes.push(nombre)
-        m.reply(`🟡 ${nombre} anotado como *suplente* #${suplentes.length}.`)
-      } else {
-        m.reply('🚫 Lista llena. Ya no hay cupo.')
-      }
-      break
-
-    case 'lista':
-      m.reply(obtenerLista())
-      break
-
-    case 'reglas':
-      m.reply(reglas)
-      break
-
-    case 'resetff':
-      if (!global.owner.includes(m.sender)) return m.reply('❌ Solo el owner puede resetear la lista.')
-      jugadores.length = 0
-      suplentes.length = 0
-      m.reply('✅ Lista de Free Fire reiniciada.')
-      break
-
-    default:
-      m.reply('🤖 Comando no reconocido.')
+    if (partida.jugadores.length < 12) {
+      partida.jugadores.push(id);
+      return m.reply(`✅ ${nombre} se ha unido como *Titular* (${partida.jugadores.length}/12)`);
+    } else if (partida.suplentes.length < 6) {
+      partida.suplentes.push(id);
+      return m.reply(`📥 ${nombre} se ha unido como *Suplente* (${partida.suplentes.length}/6)`);
+    } else {
+      return m.reply("❌ Cupos llenos para titulares y suplentes.");
+    }
   }
-}
 
-handler.command = ['12vs12']
-handler.tags = ['freefire']
-handler.help = ['12vs12', 'anotarme', 'lista', 'reglas', 'resetff']
-handler.group = true
+  if (command === "suplente") {
+    if (!partida.enCurso) return m.reply("⚠️ No hay partida activa. Usa *.12vs12* para crear una.");
 
-export default handler
+    if (partida.jugadores.includes(id) || partida.suplentes.includes(id))
+      return m.reply("✅ Ya estás anotado.");
+
+    if (partida.suplentes.length < 6) {
+      partida.suplentes.push(id);
+      return m.reply(`📥 ${nombre} se ha unido como *Suplente* (${partida.suplentes.length}/6)`);
+    } else {
+      return m.reply("❌ Cupos de suplentes llenos.");
+    }
+  }
+
+  if (command === "estado12") {
+    if (!partida.enCurso) return m.reply("⚠️ No hay partida activa.");
+
+    let txt = `🎮 *Estado actual de la partida:*\n\n`;
+
+    txt += `👤 *Titulares* (${partida.jugadores.length}/12):\n`;
+    partida.jugadores.forEach((u, i) => {
+      txt += `${i + 1}. @${u.split("@")[0]}\n`;
+    });
+
+    txt += `\n🧍‍♂️ *Suplentes* (${partida.suplentes.length}/6):\n`;
+    partida.suplentes.forEach((u, i) => {
+      txt += `${i + 1}. @${u.split("@")[0]}\n`;
+    });
+
+    return conn.sendMessage(m.chat, {
+      text: txt.trim(),
+      mentions: [...partida.jugadores, ...partida.suplentes]
+    }, { quoted: m });
+  }
+
+  if (command === "reset12") {
+    partida.enCurso = false;
+    partida.jugadores = [];
+    partida.suplentes = [];
+    return m.reply("✅ Partida reiniciada con éxito.");
+  }
+};
+
+handler.command = ["12vs12", "anotarse", "suplente", "estado12", "reset12"];
+handler.tags = ["freefire"];
+handler.help = ["12vs12", "anotarse", "suplente", "estado12", "reset12"];
+handler.group = true;
+
+export default handler;
