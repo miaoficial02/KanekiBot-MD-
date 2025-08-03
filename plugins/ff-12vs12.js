@@ -1,3 +1,7 @@
+//2025 ©Bajobots
+//Desarrollado por BajoBots 
+//No borrar 🔥🔥
+
 let partida = {
   jugadores: [],
   suplentes: [],
@@ -107,3 +111,7 @@ handler.help = ["12vs12", "anotarse", "suplente", "estado12", "reset12"];
 handler.group = true;
 
 export default handler;
+
+//2025 ©Bajobots
+//Desarrollado por BajoBots 
+//No borrar 🔥🔥
