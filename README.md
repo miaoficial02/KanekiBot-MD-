@@ -1,13 +1,4 @@
-<h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=40&pause=500&color=00F7FF&center=true&vCenter=true&width=500&lines=+¡Hola+Soy+Kaneki-Bot!+" alt="Typing SVG">ñ
-</h1>
----
 
-<p align="center">
-  <img src="" alt="Kaneki Bot MD Logo">
-</p>
-
----
 
 # *Acerca de Kaneki Bot MD*
 
