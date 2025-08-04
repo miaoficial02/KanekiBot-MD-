@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) return conn.reply(m.chat, `⚠️ *Uso:* ${usedPrefix + command} <texto para el video>`, m);
 
-  const apiKey = 'bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:_0KDLlKZ61V_6JqqTrWrf'; 
+  const apiKey = 'bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:o8RUNwol2AqZOw4bcqOmT'; 
   const imageUrl = 'https://files.catbox.moe/ehj6np.jpg'; 
 
   try {
