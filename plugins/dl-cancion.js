@@ -1,62 +1,89 @@
-import yts from 'yt-search'
-import axios from 'axios'
-
-const handler = async (m, { conn, args, command }) => {
-  const text = args.join(' ').trim()
-  if (!text) {
-    return await conn.sendMessage(m.chat, {
-      text: `┏━━━꒷꒦『 *🎧 DESCARGA MP3* 』꒷꒦━━━┓
-┃ 📝 *Ejemplo:* .${command} mon amour
-┗━━━━━━━━━━━━━━━━━┛`,
-    }, { quoted: m })
-  }
-
-  await conn.sendMessage(m.chat, { text: '🎶 *Buscando tu canción...*' }, { quoted: m })
-
-  try {
-    const search = await yts(text)
-    const video = search.videos[0]
-
-    if (!video) {
-      return conn.sendMessage(m.chat, { text: '❌ No se encontró ninguna canción con ese nombre.' }, { quoted: m })
+let search = require('yt-search');
+let fetch = require('node-fetch');
+ 
+let handler = async (m, { conn, text, usedPrefix }) => {
+    if (!text) throw 'Enter Title / Link From YouTube!';
+    try {
+        await m.reply(wait)
+        const look = await search(text);
+        const convert = look.videos[0];
+        if (!convert) throw 'Video/Audio Tidak Ditemukan';
+        if (convert.seconds >= 3600) {
+            return conn.reply(m.chat, 'Video is longer than 1 hour!', m);
+        } else {
+            let audioUrl;
+            try {
+                const res = await fetch(`https://api.botcahx.eu.org/api/dowloader/yt?url=${convert.url}&apikey=${btc}`);
+                try {
+                    audioUrl = await res.json();
+                } catch (e) {
+                    conn.reply(m.chat, eror, m)
+                }
+                
+            } catch (e) {
+                conn.reply(m.chat, eror, m)
+                return;
+            }
+ 
+            let caption = '';
+            caption += `∘ Title : ${convert.title}\n`;
+            caption += `∘ Ext : Search\n`;
+            caption += `∘ ID : ${convert.videoId}\n`;
+            caption += `∘ Duration : ${convert.timestamp}\n`;
+            caption += `∘ Viewers : ${convert.views}\n`;
+            caption += `∘ Upload At : ${convert.ago}\n`;
+            caption += `∘ Author : ${convert.author.name}\n`;
+            caption += `∘ Channel : ${convert.author.url}\n`;
+            caption += `∘ Url : ${convert.url}\n`;
+            caption += `∘ Description : ${convert.description}\n`;
+            caption += `∘ Thumbnail : ${convert.image}`;
+ 
+            await conn.relayMessage(m.chat, {
+                extendedTextMessage: {
+                    text: caption,
+                    contextInfo: {
+                        externalAdReply: {
+                            title: convert.title,
+                            mediaType: 1,
+                            previewType: 0,
+                            renderLargerThumbnail: true,
+                            thumbnailUrl: convert.image,
+                            sourceUrl: convert.url
+                        }
+                    },
+                    mentions: [m.sender]
+                }
+            }, {});
+ 
+            await conn.sendMessage(m.chat, {
+                audio: {
+                    url: audioUrl.result.mp3
+                },
+                mimetype: 'audio/mpeg',
+                contextInfo: {
+                    externalAdReply: {
+                        title: convert.title,
+                        body: "",
+                        thumbnailUrl: convert.image,
+                        sourceUrl: convert.url,
+                        mediaType: 1,
+                        showAdAttribution: false,
+                        renderLargerThumbnail: true
+                    }
+                }
+            }, {
+                quoted: m
+            });
+        }
+    } catch (e) {
+        conn.reply(m.chat, eror, m)
     }
-
-    if (video.seconds > 600) {
-      return conn.sendMessage(m.chat, {
-        text: `⚠️ La duración es muy larga.
-🎵 *Título:* ${video.title}
-⏱️ *Duración:* ${video.timestamp}
-❗ Máximo permitido: 10 minutos.`,
-      }, { quoted: m })
-    }
-
-    const api = await axios.get(`https://apis-keith.vercel.app/download/dlmp3?url=${video.url}`)
-    const res = api.data
-
-    if (!res.status || !res.result?.downloadUrl) {
-      return conn.sendMessage(m.chat, { text: '⚠️ No se pudo obtener el audio. Intenta nuevamente más tarde.' }, { quoted: m })
-    }
-
-    const caption = `
-┏━━━꒷꒦『 *📥 MP3 DESCARGADO* 』꒷꒦━━━┓
-┃ 🎵 *Título:* ${res.result.title}
-┃ ⏱️ *Duración:* ${video.timestamp}
-┃ 📎 *Tamaño:* ${res.result.size}
-┃ 🌐 *Link:* ${video.url}
-┗━━━━━━━━━━━━━━━━━┛`
-
-    await conn.sendMessage(m.chat, {
-      audio: { url: res.result.downloadUrl },
-      mimetype: 'audio/mpeg',
-      fileName: `${res.result.title}.mp3`,
-      caption
-    }, { quoted: m })
-
-  } catch (e) {
-    console.error(e)
-    conn.sendMessage(m.chat, { text: '❌ *Error inesperado.* Intenta más tarde o usa otro comando.' }, { quoted: m })
-  }
-}
-
-handler.command = [ 'cancion']
-export default handler
+};
+ 
+handler.command = handler.help = [no'song', 'ds'];
+handler.tags = ['downloader'];
+handler.exp = 0;
+handler.limit = true;
+handler.premium = false;
+ 
+module.exports = handler;
