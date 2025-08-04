@@ -1,21 +1,21 @@
 import fetch from 'node-fetch';
 
-const handler = async (m, { conn }) => {
-  
-};
+let handler = async (m, { conn }) => {}
 
 handler.groupUpdate = async (conn, { id, subject, actor }) => {
   try {
+    const pp = await conn.profilePictureUrl(id, 'image').catch(() => 'https://iili.io/F8Y2bS9.jpg');
     const groupMetadata = await conn.groupMetadata(id);
-    const pp = await conn.profilePictureUrl(id, 'image').catch(_ => 'https://iili.io/F8Y2bS9.jpg');
-    const nombreActor = await conn.getName(actor);
+    const participants = groupMetadata.participants || [];
+    const memberCount = participants.length || 0;
+    const name = await conn.getName(actor);
 
-    const mensaje = `
-╭━━〔 *🌐 NOMBRE DEL GRUPO CAMBIADO* 〕━━⬣
-┃ 📢 *Nuevo nombre:* ${subject}
-┃ 🧑‍💼 *Modificado por:* @${actor.split('@')[0]} (${nombreActor})
-┃ 👥 *Miembros:* ${groupMetadata.participants.length}
-┃ 🕰️ *Hora:* ${new Date().toLocaleTimeString()}
+    const text = `
+╭━━〔 *🌐 CAMBIO DE NOMBRE DETECTADO* 〕━━⬣
+┃ 📛 *Nuevo nombre:* ${subject}
+┃ 🧑‍💼 *Cambiado por:* @${actor.split('@')[0]} (${name})
+┃ 👥 *Miembros:* ${memberCount}
+┃ ⏱️ *Hora:* ${new Date().toLocaleTimeString()}
 ╰━━━━━━━━━━━━━━━━━━━━⬣`.trim();
 
     const fkontak = {
@@ -27,8 +27,8 @@ handler.groupUpdate = async (conn, { id, subject, actor }) => {
       },
       message: {
         locationMessage: {
-          name: "*Kaneki Bot* 👾",
-        //  jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
+          name: "*Kaneki Bot*👾",
+          jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
           vcard:
             "BEGIN:VCARD\n" +
             "VERSION:3.0\n" +
@@ -48,12 +48,12 @@ handler.groupUpdate = async (conn, { id, subject, actor }) => {
 
     await conn.sendMessage(id, {
       image: { url: pp },
-      caption: mensaje,
+      caption: text,
       mentions: [actor]
     }, { quoted: fkontak });
 
   } catch (e) {
-    console.error('❌ Error al detectar cambio de nombre:', e);
+    console.error('[❌ Error al enviar notificación de nombre]', e);
   }
 };
 
