@@ -1,22 +1,15 @@
-import fetch from 'node-fetch';
+conn.ev.on('groups.update', async (updates) => {
+  for (const update of updates) {
+    const id = update.id;
+    const newSubject = update.subject;
+    const actor = update.subjectOwner;
 
-let handler = async (m, { conn }) => {}
+    if (!newSubject || !actor) return; 
 
-handler.groupUpdate = async (conn, { id, subject, actor }) => {
-  try {
     const pp = await conn.profilePictureUrl(id, 'image').catch(() => 'https://iili.io/F8Y2bS9.jpg');
     const groupMetadata = await conn.groupMetadata(id);
-    const participants = groupMetadata.participants || [];
-    const memberCount = participants.length || 0;
+    const memberCount = groupMetadata.participants.length;
     const name = await conn.getName(actor);
-
-    const text = `
-╭━━〔 *🌐 CAMBIO DE NOMBRE DETECTADO* 〕━━⬣
-┃ 📛 *Nuevo nombre:* ${subject}
-┃ 🧑‍💼 *Cambiado por:* @${actor.split('@')[0]} (${name})
-┃ 👥 *Miembros:* ${memberCount}
-┃ ⏱️ *Hora:* ${new Date().toLocaleTimeString()}
-╰━━━━━━━━━━━━━━━━━━━━⬣`.trim();
 
     const fkontak = {
       key: {
@@ -27,7 +20,7 @@ handler.groupUpdate = async (conn, { id, subject, actor }) => {
       },
       message: {
         locationMessage: {
-          name: "*Kaneki Bot*👾",
+          name: "*Kaneki Bot* 👾",
           jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer(),
           vcard:
             "BEGIN:VCARD\n" +
@@ -46,15 +39,17 @@ handler.groupUpdate = async (conn, { id, subject, actor }) => {
       participant: "0@s.whatsapp.net"
     };
 
+    const caption = `
+╭━━〔 *🌐 NOMBRE DEL GRUPO CAMBIADO* 〕━━⬣
+┃ 📛 *Nuevo nombre:* ${newSubject}
+┃ 🧑‍💼 *Por:* @${actor.split('@')[0]} (${name})
+┃ 👥 *Miembros:* ${memberCount}
+╰━━━━━━━━━━━━━━━━━━━━⬣`.trim();
+
     await conn.sendMessage(id, {
       image: { url: pp },
-      caption: text,
+      caption,
       mentions: [actor]
     }, { quoted: fkontak });
-
-  } catch (e) {
-    console.error('[❌ Error al enviar notificación de nombre]', e);
   }
-};
-
-export default handler;
+});
