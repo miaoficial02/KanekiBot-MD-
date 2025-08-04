@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 const handler = async (m, { conn }) => {
-  const videoUrl = 'https://files.catbox.moe/vx01o1.mp4'; 
+  const videoUrl = 'https://files.catbox.moe/vx01o1.jpg'; 
   const thumb = await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer();
 
   const caption = `
