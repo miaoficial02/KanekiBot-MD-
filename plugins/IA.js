@@ -1,62 +1,44 @@
 import fetch from 'node-fetch';
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return conn.reply(m.chat, `⚠️ *Uso:* ${usedPrefix + command} <texto>`, m);
+  if (!text) {
+    return m.reply(`🔊 *Uso:* ${usedPrefix + command} <texto para hablar>`, m);
+  }
 
-  const apiKey = 'bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:o8RUNwol2AqZOw4bcqOmT'; // 🔁 Reemplaza esto
-  const imageUrl = 'https://cdn.d-id.com/assets/images/demo_female.jpg'; // ✅ Imagen segura
+  const wait = await conn.sendMessage(m.chat, {
+    text: '🎬 *Generando video IA, espera unos segundos...*'
+  }, { quoted: m });
 
   try {
-    const headers = apiKey.startsWith('did:') ? {
-      'Authorization': `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-      'Content-Type': 'application/json'
-    } : {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
+    const payload = {
+      text: text,
+      voice: 'en-US-JennyNeural',
+      avatar_url: 'https://cdn.d-id.com/assets/images/demo_female.jpg' // Puedes usar otro link aquí
     };
 
-    const res = await fetch('https://api.d-id.com/talks', {
+    const res = await fetch('https://vidtalks.xyz/api/generate', {
       method: 'POST',
-      headers,
-      body: JSON.stringify({
-        source_url: imageUrl,
-        script: {
-          type: 'text',
-          input: text,
-          provider: { type: 'microsoft', voice_id: 'en-US-AriaNeural' },
-          ssml: false
-        }
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
-    if (!data.id) throw new Error('No se pudo generar el video');
+    const json = await res.json();
 
-    let videoUrl;
-    for (let i = 0; i < 15; i++) {
-      const poll = await fetch(`https://api.d-id.com/talks/${data.id}`, { headers });
-      const pollRes = await poll.json();
-      if (pollRes.result_url) {
-        videoUrl = pollRes.result_url;
-        break;
-      }
-      await new Promise(res => setTimeout(res, 2000));
-    }
-
-    if (!videoUrl) throw new Error('El video tardó demasiado en generarse.');
+    if (!json || !json.video_url) throw new Error('La API no devolvió el video.');
 
     await conn.sendMessage(m.chat, {
-      video: { url: videoUrl },
-      caption: `🎥 *Video generado con IA (D-ID)*\n\n🗣️ _${text}_`
+      video: { url: json.video_url },
+      caption: `🎤 *Video generado con IA:*\n🗣️ _${text}_`
     }, { quoted: m });
 
+    await conn.sendMessage(m.chat, { delete: wait.key });
   } catch (e) {
     console.error(e);
-    return conn.reply(m.chat, `❌ *Error:* ${e.message}`, m);
+    conn.reply(m.chat, `❌ *Error generando el video IA:*\n${e.message}`, m);
   }
 };
 
-handler.command = ['iavideo', 'talkai'];
+handler.command = ['iavideo', 'talkai', 'videoia'];
 handler.tags = ['ia'];
 handler.help = ['iavideo <texto>'];
 
