@@ -1,66 +1,64 @@
 import fetch from 'node-fetch';
+import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`⚠️ *Uso:* ${usedPrefix + command} <texto del video>`);
+  if (!text) return m.reply(`⚠️ *Uso:* ${usedPrefix + command} <texto para generar video IA>`);
 
-  const apiKey = global.bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:bWDLrdafrLv48LG6eWS0Q;
-  if (!apiKey) return m.reply('❌ No se encontró la API KEY de D-ID. Agrégala como global.DID_API_KEY');
-
-  const faceImage = 'https://iili.io/F8Y2bS9.jpg'; // Imagen frontal que "hablará"
-  const voiceStyle = 'en-US'; // Puedes cambiar el idioma o estilo
+  const id = Date.now();
+  const audioPath = path.join(__dirname, `${id}.mp3`);
+  const imgUrl = 'https://iili.io/F8Y2bS9.jpg'; // Imagen fondo (puedes cambiarla)
+  const imgPath = path.join(__dirname, `${id}.jpg`);
+  const videoPath = path.join(__dirname, `${id}.mp4`);
 
   try {
-    const createRes = await fetch('https://api.d-id.com/talks', {
+    m.react('🎙️');
+
+    // Generar TTS con voz en español
+    const ttsRes = await fetch(`https://api.ttsmp3.com/v1/tts`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        script: {
-          type: 'text',
-          input: text,
-          provider: { type: 'microsoft', voice_id: 'en-US-JennyNeural' }, // Puedes usar otras voces
-          ssml: false
-        },
-        source_url: faceImage,
-        config: { fluent: true, pad_audio: 0.2 }
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ msg: text, lang: 'Conchita' }) // Voz española
+    });
+    const ttsJson = await ttsRes.json();
+
+    if (!ttsJson.URL) throw '⚠️ Error generando audio';
+
+    // Descargar audio y fondo
+    const audioBuffer = await fetch(ttsJson.URL).then(res => res.buffer());
+    const imgBuffer = await fetch(imgUrl).then(res => res.buffer());
+    fs.writeFileSync(audioPath, audioBuffer);
+    fs.writeFileSync(imgPath, imgBuffer);
+
+    // Crear video con ffmpeg
+    await new Promise((resolve, reject) => {
+      exec(`ffmpeg -loop 1 -i "${imgPath}" -i "${audioPath}" -c:v libx264 -c:a aac -b:a 192k -shortest -pix_fmt yuv420p "${videoPath}"`, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
     });
 
-    const createJson = await createRes.json();
-    if (!createJson.id) throw new Error('No se pudo crear el video. Verifica tu API Key y datos.');
-
-    // Esperar que se genere el video
-    let videoUrl;
-    for (let i = 0; i < 20; i++) {
-      await new Promise(res => setTimeout(res, 3000));
-      const statusRes = await fetch(`https://api.d-id.com/talks/${createJson.id}`, {
-        headers: { Authorization: `Bearer ${apiKey}` }
-      });
-      const statusJson = await statusRes.json();
-      if (statusJson.result_url) {
-        videoUrl = statusJson.result_url;
-        break;
-      }
-    }
-
-    if (!videoUrl) throw new Error('⏱️ El video tardó demasiado o falló.');
-
+    // Enviar video
     await conn.sendMessage(m.chat, {
-      video: { url: videoUrl },
-      caption: `🎬 *Video generado por IA*\n🗣️ ${text}`,
-      gifPlayback: false
+      video: fs.readFileSync(videoPath),
+      caption: `🎬 *Video generado IA*\n🗣️ Texto: _${text}_`,
     }, { quoted: m });
 
   } catch (err) {
     console.error(err);
-    m.reply(`❌ *Error generando el video IA:*\n${err.message}`);
+    m.reply('❌ *Ocurrió un error generando el video*');
+  } finally {
+    // Limpiar archivos
+    [audioPath, imgPath, videoPath].forEach(f => fs.existsSync(f) && fs.unlinkSync(f));
   }
 };
 
-handler.help = ['aivideo'];
+handler.command = ['aivideo'];
+handler.help = ['aivideo <texto>'];
 handler.tags = ['ia'];
-handler.command = ['aivideo', 'videoia', 'iavideo'];
 
 export default handler;
