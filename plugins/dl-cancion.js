@@ -80,7 +80,7 @@ let handler = async (m, { conn, text, usedPrefix }) => {
     }
 };
  
-handler.command = handler.help = ['song', 'ds'];
+handler.command = ['song', 'ds'];
 handler.tags = ['downloader'];
 handler.exp = 0;
 handler.limit = false;
