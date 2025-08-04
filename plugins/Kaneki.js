@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 
 const handler = async (m, { conn }) => {
-  const videoUrl = 'https://files.catbox.moe/vx01o1.jpg';
+  const videoUrl = 'https://files.catbox.moe/vx01o1.mp4'; 
+  const thumb = await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer();
 
   const caption = `
 🎥 *KANEKI INFERNAL* 👁‍🗨
@@ -21,7 +22,7 @@ const handler = async (m, { conn }) => {
     message: {
       locationMessage: {
         name: "Video especial: Kaneki 👾",
-        jpegThumbnail: await (await fetch('https://iili.io/F8Y2bS9.jpg')).buffer()
+        jpegThumbnail: thumb
       }
     }
   };
@@ -33,8 +34,7 @@ const handler = async (m, { conn }) => {
   }, { quoted: fkontak });
 };
 
-
-handler.customPrefix = /^kaneki$/i;
+handler.customPrefix = /^kaneki$/i; 
 handler.command = new RegExp(); 
 handler.before = true;
 
