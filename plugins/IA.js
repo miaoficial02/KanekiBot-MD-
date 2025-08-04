@@ -1,18 +1,23 @@
 import fetch from 'node-fetch';
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return conn.reply(m.chat, `⚠️ *Uso:* ${usedPrefix + command} <texto para el video>`, m);
+  if (!text) return conn.reply(m.chat, `⚠️ *Uso:* ${usedPrefix + command} <texto>`, m);
 
-  const apiKey = 'bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:o8RUNwol2AqZOw4bcqOmT'; 
-  const imageUrl = 'https://files.catbox.moe/ehj6np.jpg'; 
+  const apiKey = 'bWF5dWxpcGFsbWEyMzRAZ21haWwuY29t:o8RUNwol2AqZOw4bcqOmT'; // 🔁 Reemplaza esto
+  const imageUrl = 'https://cdn.d-id.com/assets/images/demo_female.jpg'; // ✅ Imagen segura
 
   try {
+    const headers = apiKey.startsWith('did:') ? {
+      'Authorization': `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
+      'Content-Type': 'application/json'
+    } : {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    };
+
     const res = await fetch('https://api.d-id.com/talks', {
       method: 'POST',
-      headers: {
-        'Authorization': `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify({
         source_url: imageUrl,
         script: {
@@ -25,14 +30,11 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     });
 
     const data = await res.json();
-
     if (!data.id) throw new Error('No se pudo generar el video');
 
     let videoUrl;
-    for (let i = 0; i < 10; i++) {
-      const poll = await fetch(`https://api.d-id.com/talks/${data.id}`, {
-        headers: { 'Authorization': `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}` }
-      });
+    for (let i = 0; i < 15; i++) {
+      const poll = await fetch(`https://api.d-id.com/talks/${data.id}`, { headers });
       const pollRes = await poll.json();
       if (pollRes.result_url) {
         videoUrl = pollRes.result_url;
@@ -54,8 +56,8 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 };
 
-handler.command = ['talkai', 'didaudio', 'iavideo'];
-handler.help = ['iavideo <texto>'];
+handler.command = ['iavideo', 'talkai'];
 handler.tags = ['ia'];
+handler.help = ['iavideo <texto>'];
 
 export default handler;
