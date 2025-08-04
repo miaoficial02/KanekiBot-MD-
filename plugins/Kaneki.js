@@ -20,7 +20,7 @@ const handler = async (m, { conn }) => {
     },
     message: {
       locationMessage: {
-        name: 'KANEKI DIOS',
+        name: '𝒦𝒶𝓃𝑒𝓀𝒾 𝒟𝒾𝑜𝓈 🥷🔥',
         vcard:
           'BEGIN:VCARD\n' +
           'VERSION:3.0\n' +
