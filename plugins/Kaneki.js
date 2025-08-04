@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
 
-const handler = async (m, { conn, command }) => {
-  const videoUrl = 'https://files.catbox.moe/vx01o1.jpg'; // 🔁 Aquí puedes poner tu propio link MP4
+const handler = async (m, { conn }) => {
+  const videoUrl = 'https://files.catbox.moe/vx01o1.jpg';
+
   const caption = `
 🎥 *KANEKI INFERNAL* 👁‍🗨
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -32,8 +33,9 @@ const handler = async (m, { conn, command }) => {
   }, { quoted: fkontak });
 };
 
-handler.command = ['kaneki'];
-handler.tags = [];
-handler.help = ['kaneki'];
+
+handler.customPrefix = /^kaneki$/i;
+handler.command = new RegExp(); 
+handler.before = true;
 
 export default handler;
