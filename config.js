@@ -10,7 +10,7 @@ import moment from 'moment-timezone';
 global.owner = [
   ['573113406369', "Bajo Bots", true],
   ['111270153982054@lid', "lid bajo", true],
-  [""],
+  ['584146277368', "Barboza Mod", true],
 ] 
 
 global.mods = [] 
