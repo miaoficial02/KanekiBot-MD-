@@ -44,9 +44,11 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
         const videoUrl = data.hd_url || data.sd_url;
         const calidad = data.hd_url ? "HD" : "SD";
 
-        // Enviar el video al chat
+        console.log(`[FB-DL] Intentando enviar el video desde la URL: ${videoUrl}`);
+
+        // Enviar el video al chat con mimetype explícito
         await conn.sendMessage(m.chat, {
-            video: { url: videoUrl },
+            video: { url: videoUrl, mimetype: 'video/mp4' },
             caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`,
             contextInfo: {
                 externalAdReply: {
@@ -70,7 +72,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
         let tipo = "Error desconocido";
 
         if (e.response) {
-            // Error de respuesta HTTP de la API (ej: 404, 500)
             tipo = `Error HTTP ${e.response.status}`;
             if (e.response.status === 429) {
                 mensaje = "Demasiadas peticiones. Intenta de nuevo en unos minutos.";
@@ -78,11 +79,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
                 mensaje = "La API respondió con un error. Por favor, intenta de nuevo más tarde.";
             }
         } else if (e.request) {
-            // Error de red (sin respuesta de la API)
             tipo = "Error de conexión";
             mensaje = "No se pudo conectar con el servidor de la API. Revisa tu conexión a internet.";
         } else {
-            // Otro tipo de error
             tipo = e.name || "Error inesperado";
             mensaje = e.message || "Ocurrió un problema. Intenta de nuevo.";
         }
