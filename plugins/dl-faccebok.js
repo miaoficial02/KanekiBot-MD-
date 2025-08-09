@@ -1,69 +1,57 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
-// 🖼️ URL de la imagen de error proporcionada por el usuario.
+// 🖼️ URL para la imagen miniatura (thumbnail) de las respuestas.
 const THUMBNAIL_URL = 'https://h.uguu.se/PetltKyl.jpg';
 
-// 🛡️ Función auxiliar para respuestas rituales de error (SIN IMAGEN en el cuerpo)
-function responderError(conn, m, tipo, mensaje, url) {
-    return conn.sendMessage(m.chat, {
-        caption: `💥 ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
+// 🛡️ Función para enviar respuestas de error de forma consistente.
+const responderError = async (conn, m, tipo, mensaje, url) => {
+    await conn.sendMessage(m.chat, {
+        caption: `💥 Error en el proceso: ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
         contextInfo: {
             externalAdReply: {
                 title: "Facebook Downloader",
                 body: tipo,
                 thumbnailUrl: THUMBNAIL_URL,
                 sourceUrl: url || 'https://facebook.com',
-                mediaType: 1, // 1 es para imagen, esto es correcto para el thumbnailUrl
+                mediaType: 1, 
                 renderLargerThumbnail: true
             }
         }
     }, { quoted: m });
-}
+};
 
-let handler = async (m, { conn, args, text, usedPrefix, command }) => {
+// 🤖 Lógica principal del plugin
+let handler = async (m, { conn, args, usedPrefix, command }) => {
     const url = args?.[0];
     if (!url || !url.includes("facebook.com")) {
-        return m.reply(`🧠 Ingresa un enlace válido de Facebook.\n\n📌 Ejemplo:\n${usedPrefix}${command} https://www.facebook.com/share/r/...`);
+        return m.reply(`🧠 Por favor, ingresa un enlace válido de Facebook.\n\n📌 Ejemplo:\n${usedPrefix}${command} https://www.facebook.com/share/r/1B5sDSg6EU/`);
     }
 
     m.react("🌀");
 
     try {
-        const res = await axios.get(`https://api.vreden.my.id/api/fbdl?url=${encodeURIComponent(url)}`);
+        const apiUrl = `https://api.vreden.my.id/api/fbdl?url=${encodeURIComponent(url)}`;
+        const res = await axios.get(apiUrl);
         const data = res.data?.data;
 
-        if (!data || !data.status || (!data.hd_url && !data.sd_url)) {
-            return conn.reply(m.chat, `⚠️ No se pudo obtener el video. Intenta con otro enlace.`, m);
+        // Validar si la API devolvió un video
+        if (!data?.status || (!data.hd_url && !data.sd_url)) {
+            m.react("❌");
+            return m.reply(`⚠️ No se pudo encontrar un video en el enlace proporcionado. Intenta con otro.`);
         }
 
         const videoUrl = data.hd_url || data.sd_url;
         const calidad = data.hd_url ? "HD" : "SD";
 
-        const check = await axios.head(videoUrl).catch(() => null);
-        if (!check || !check.headers['content-type']?.includes('video')) {
-            return conn.sendMessage(m.chat, {
-                caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`,
-                contextInfo: {
-                    externalAdReply: {
-                        title: "Facebook Downloader",
-                        body: "Descarga alternativa disponible",
-                        thumbnailUrl: THUMBNAIL_URL,
-                        sourceUrl: url,
-                        mediaType: 1,
-                        renderLargerThumbnail: true
-                    }
-                }
-            }, { quoted: m });
-        }
-
+        // Enviar el video al chat
         await conn.sendMessage(m.chat, {
             video: { url: videoUrl },
             caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`,
             contextInfo: {
                 externalAdReply: {
                     title: "Facebook Downloader",
-                    body: "Descarga ritual completada",
+                    body: "Descarga completada",
                     thumbnailUrl: THUMBNAIL_URL,
                     sourceUrl: url,
                     mediaType: 1,
@@ -72,30 +60,39 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
             }
         }, { quoted: m });
 
-        // ✅ Reacción final encapsulada
-        try {
-            await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
-        } catch (err) {
-            console.warn(`No se pudo enviar la reacción final: ${err.message}`);
-        }
+        m.react("✅");
 
     } catch (e) {
-        // En este bloque, se capturan todos los errores.
-        const status = e.response?.status;
-        const tipo = e.name || "Error desconocido";
-        const mensaje = status === 429
-            ? "🚫 El servidor ha recibido demasiadas peticiones. Espera unos minutos antes de intentar nuevamente.\n\n≡ 🔁 Código: 429 (Rate Limit)"
-            : status
-            ? `⚠️ Error HTTP ${status}. La API respondió con un problema.`
-            : "⚠️ Ocurrió un error inesperado. Puede ser de red, formato o envío.";
+        // En este bloque se capturan y manejan todos los errores de forma controlada
+        m.react("❌");
+        
+        let mensaje = "Ocurrió un error inesperado al procesar tu solicitud.";
+        let tipo = "Error desconocido";
 
+        if (e.response) {
+            // Error de respuesta HTTP de la API (ej: 404, 500)
+            tipo = `Error HTTP ${e.response.status}`;
+            if (e.response.status === 429) {
+                mensaje = "Demasiadas peticiones. Intenta de nuevo en unos minutos.";
+            } else {
+                mensaje = "La API respondió con un error. Por favor, intenta de nuevo más tarde.";
+            }
+        } else if (e.request) {
+            // Error de red (sin respuesta de la API)
+            tipo = "Error de conexión";
+            mensaje = "No se pudo conectar con el servidor de la API. Revisa tu conexión a internet.";
+        } else {
+            // Otro tipo de error
+            tipo = e.name || "Error inesperado";
+            mensaje = e.message || "Ocurrió un problema. Intenta de nuevo.";
+        }
+        
         await responderError(conn, m, tipo, mensaje, url);
-        // El error aún se registrará en la consola.
-        console.error(`Error capturado: ${tipo} → ${e.message}`);
+        console.error(`[FB-DL] Error capturado: ${tipo} → ${e.message}`);
     }
 };
 
-handler.help = ['fb'];
+handler.help = ['fb <url>'];
 handler.command = ['fb', 'facebook'];
 handler.tags = ['download'];
 
