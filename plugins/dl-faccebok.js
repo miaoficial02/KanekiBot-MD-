@@ -20,24 +20,72 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
     const videoUrl = data.hd_url || data.sd_url;
     const calidad = data.hd_url ? "HD" : "SD";
 
-    // Verificamos si el video es accesible
     const check = await axios.head(videoUrl).catch(() => null);
     if (!check || !check.headers['content-type']?.includes('video')) {
       return conn.sendMessage(m.chat, {
         image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
-        caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`
+        caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`,
+        contextInfo: {
+          externalAdReply: {
+            title: "Facebook Downloader",
+            body: "Ritual multimedia en curso...",
+            thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+            sourceUrl: url,
+            mediaType: 1,
+            renderLargerThumbnail }
+        }
       }, { quoted: m });
     }
 
-    // Envío directo del video
     await conn.sendMessage(m.chat, {
       video: { url: videoUrl },
-      caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`
+      caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`,
+      contextInfo: {
+        externalAdReply: {
+          title: "Facebook Downloader",
+          body: "Descarga ritual completada",
+          thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+          sourceUrl: url,
+          mediaType: 1,
+          renderLargerThumbnail: true
+        }
+      }
     }, { quoted: m });
 
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
+
   } catch (e) {
-    conn.reply(m.chat, `💥 Error al descargar el video:\n\n${e}`, m);
+    if (e.response?.status === 429) {
+      return conn.sendMessage(m.chat, {
+        image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+        caption: `🚫 El servidor ha recibido demasiadas peticiones.\n\n🧘‍♂️ Espera unos minutos antes de intentar nuevamente.\n\n≡ 🔁 \`Código :\` 429 (Rate Limit)`,
+        contextInfo: {
+          externalAdReply: {
+            title: "Facebook Downloader",
+            body: "Demasiadas peticiones",
+            thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+            sourceUrl: url,
+            mediaType: 1,
+            renderLargerThumbnail: true
+          }
+        }
+      }, { quoted: m });
+    }
+
+    return conn.sendMessage(m.chat, {
+      image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+      caption: `💥 Ocurrió un error inesperado al intentar descargar el video.\n\n≡ 🧩 \`Tipo :\` ${e.name}\n≡ 📄 \`Mensaje :\` ${e.message}`,
+      contextInfo: {
+        externalAdReply: {
+          title: "Facebook Downloader",
+          body: "Error inesperado",
+          thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+          sourceUrl: url,
+          mediaType: 1,
+          renderLargerThumbnail: true
+        }
+      }
+    }, { quoted: m });
   }
 };
 
