@@ -1,48 +1,48 @@
-import { fetch } from "undici"
-let handler = async (m, { conn, usedPrefix, command, args }) => {
-    try {
-        if (!args[0]) return m.reply(`🌿 Ejemplo de uso: ${usedPrefix + command} https://www.facebook.com/share/v/1FwfwCUQEv/`);
-        if (!args[0].match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/)) {
-            return m.reply("Enlace inválido. Asegúrate de que sea un enlace de Facebook válido.");
-        }
-m.react('🕒');
-let fb = await aio(args[0]);
-if (!fb.medias[0]) {
-return m.reply("No se pudo obtener el video. Puede que el enlace no sea público o esté restringido.");
-}
-if (fb.medias[1]) {
-conn.sendFile(m.chat, fb.medias[1].url, `video.mp4`, `🌷 \`Calidad :\` ${fb.medias[1].quality}\n🌳 \`Peso :\` ${fb.medias[1].formattedSize}`, m);
-} else {
-conn.sendFile(m.chat, fb.medias[0].url, `video.mp4`, `🌷 \`Calidad :\` ${fb.medias[0].quality}\n🌳 \`Peso :\` ${fb.medias[0].formattedSize}`, m);
-}
-    } catch (e) {
-        return conn.reply(m.chat, `Error al descargar el video:\n${e.message}`, m);
-    }
+import { igdl } from 'ruhend-scraper';
+
+const handler = async (m, { text, conn, args, usedPrefix, command }) => {
+  if (!args[0]) {
+    return conn.reply(m.chat, '*\`Ingresa El link Del vídeo a descargar ❤️‍🔥\`*', m, fake);
+  }
+
+  await m.react('🕒');
+  let res;
+  try {
+    res = await igdl(args[0]);
+  } catch (error) {
+    return conn.reply(m.chat, '*`Error al obtener datos. Verifica el enlace.`*', m);
+  }
+
+  let result = res.data;
+  if (!result || result.length === 0) {
+    return conn.reply(m.chat, '*`No se encontraron resultados.`*', m);
+  }
+
+  let data;
+  try {
+    data = result.find(i => i.resolution === "720p (HD)") || result.find(i => i.resolution === "360p (SD)");
+  } catch (error) {
+    return conn.reply(m.chat, '*`Error al procesar los datos.`*', m);
+  }
+
+  if (!data) {
+    return conn.reply(m.chat, '*`No se encontró una resolución adecuada.`*', m);
+  }
+
+  await m.react('✅');
+  let video = data.url;
+
+  try {
+    await conn.sendMessage(m.chat, { video: { url: video }, caption: dev, fileName: 'fb.mp4', mimetype: 'video/mp4' }, { quoted: m });
+  } catch (error) {
+    return conn.reply(m.chat, '*`Error al enviar el video.`*', m);
+  await m.react('❌');
+  }
 };
 
-handler.help = ["facebook"];
-handler.command = ["fb", "facebook"];
-handler.tags = ["download"];
-export default handler;
+handler.help = ['fb *<link>*'];
+handler.estrellas = 2
+handler.tags = ['downloader']
+handler.command = /^(fb|facebook|fbdl)$/i;
 
-async function aio(url) {
-    try {
-        const response = await fetch("https://anydownloader.com/wp-json/aio-dl/video-data/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Referer": "https://anydownloader.com/",
-                "Token": "5b64d1dc13a4b859f02bcf9e572b66ea8e419f4b296488b7f32407f386571a0d"
-            },
-            body: new URLSearchParams({
-                url
-            }),
-        }, );
-        const data = await response.json();
-        if (!data.url) return data
-        return data;
-    } catch (error) {
-        console.error("Error fetching data:", );
-        throw error
-    }
-}
+export default handler;                                                                                                                                                                                                                                          
