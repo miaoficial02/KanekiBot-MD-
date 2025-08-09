@@ -574,8 +574,7 @@ global.dfail = (type, m, conn) => {
         admin: '🛡️ Este comando es solo para *Admins* del grupo',
         botAdmin: '💥 ¡Para usar este comando debo ser *Administrador!*',
         unreg: '📇 Regístrese para usar esta función  Escribiendo:\n\n*/reg nombre.edad*\n\n📌Ejemplo : */reg kaneki.16*',
-        restrict: '🔐 Esta característica está *deshabilitada*',
-        nsfw: '🔞 El modo NSFW no está activo en este grupo, no puedes usar este comando.' // <-- Agrega esta línea
+        restrict: '🔐 Esta característica está *deshabilitada*'
     }[type]
     if (msg) return m.reply(msg)
 }
