@@ -1,6 +1,24 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
+// 🛡️ Función auxiliar para respuestas rituales de error
+function responderError(conn, m, tipo, mensaje, url) {
+  return conn.sendMessage(m.chat, {
+    image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+    caption: `💥 ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
+    contextInfo: {
+      externalAdReply: {
+        title: "Facebook Downloader",
+        body: tipo,
+        thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+        sourceUrl: url || 'https://facebook.com',
+        mediaType: 1,
+        renderLargerThumbnail: true
+      }
+    }
+  }, { quoted: m });
+}
+
 let handler = async (m, { conn, args, text, usedPrefix, command }) => {
   const url = args[0];
   if (!url || !url.includes("facebook.com")) {
@@ -28,11 +46,12 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
         contextInfo: {
           externalAdReply: {
             title: "Facebook Downloader",
-            body: "Ritual multimedia en curso...",
+            body: "Descarga alternativa disponible",
             thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
             sourceUrl: url,
             mediaType: 1,
-            renderLargerThumbnail }
+            renderLargerThumbnail: true
+          }
         }
       }, { quoted: m });
     }
@@ -55,37 +74,16 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
 
   } catch (e) {
-    if (e.response?.status === 429) {
-      return conn.sendMessage(m.chat, {
-        image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
-        caption: `🚫 El servidor ha recibido demasiadas peticiones.\n\n🧘‍♂️ Espera unos minutos antes de intentar nuevamente.\n\n≡ 🔁 \`Código :\` 429 (Rate Limit)`,
-        contextInfo: {
-          externalAdReply: {
-            title: "Facebook Downloader",
-            body: "Demasiadas peticiones",
-            thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
-            sourceUrl: url,
-            mediaType: 1,
-            renderLargerThumbnail: true
-          }
-        }
-      }, { quoted: m });
-    }
+    const status = e.response?.status;
+    const tipo = e.name || "Error desconocido";
+    const mensaje = status === 429
+      ? "🚫 El servidor ha recibido demasiadas peticiones. antes de intentar nuevamente.\n\n≡ 🔁 Código: 429 (Rate Limit)"
+      : status
+        ? `⚠️ Error HTTP ${status}. La API respondió con un problema.`
+        : "⚠️ Ocurrió un error inesperado. Puede ser de red, formato o envío.";
 
-    return conn.sendMessage(m.chat, {
-      image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
-      caption: `💥 Ocurrió un error inesperado al intentar descargar el video.\n\n≡ 🧩 \`Tipo :\` ${e.name}\n≡ 📄 \`Mensaje :\` ${e.message}`,
-      contextInfo: {
-        externalAdReply: {
-          title: "Facebook Downloader",
-          body: "Error inesperado",
-          thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
-          sourceUrl: url,
-          mediaType: 1,
-          renderLargerThumbnail: true
-        }
-      }
-    }, { quoted: m });
+    await responderError(conn, m, tipo, mensaje, url);
+    console.error(`[FB-DL] Error capturado: ${tipo} → ${e.message}`);
   }
 };
 
