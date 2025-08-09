@@ -71,13 +71,18 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
       }
     }, { quoted: m });
 
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
+    // ✅ Reacción final encapsulada para evitar errores visibles
+    try {
+      await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
+    } catch (err) {
+      console.warn(`[FB-DL] No se pudo enviar la reacción final: ${err.message}`);
+    }
 
   } catch (e) {
     const status = e.response?.status;
     const tipo = e.name || "Error desconocido";
     const mensaje = status === 429
-      ? "🚫 El servidor ha recibido demasiadas peticiones. antes de intentar nuevamente.\n\n≡ 🔁 Código: 429 (Rate Limit)"
+      ? "🚫 El servidor ha recibido demasiadas peticiones. Espera unos minutos antes de intentar nuevamente.\n\n≡ 🔁 Código: 429 (Rate Limit)"
       : status
         ? `⚠️ Error HTTP ${status}. La API respondió con un problema.`
         : "⚠️ Ocurrió un error inesperado. Puede ser de red, formato o envío.";
