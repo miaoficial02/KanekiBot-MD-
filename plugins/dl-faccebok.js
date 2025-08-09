@@ -1,21 +1,13 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
-// No se usa la miniatura.
-const THUMBNAIL_URL = '';
+// No es necesario usar una miniatura predefinida, ya que la API nos proporciona una.
+const THUMBNAIL_URL_DEFAULT = 'https://telegra.ph/file/a40498305f6e522915640.jpg';
 
-// 🛡️ Función para enviar respuestas de error sin miniatura.
-const responderError = async (conn, m, tipo, mensaje, url) => {
+// 🛡️ Función para enviar respuestas de error de forma consistente.
+const responderError = async (conn, m, tipo, mensaje) => {
     await conn.sendMessage(m.chat, {
         caption: `💥 Error en el proceso: ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
-        contextInfo: {
-            externalAdReply: {
-                title: "Facebook Downloader",
-                body: tipo,
-                sourceUrl: url || 'https://facebook.com',
-                // No se incluye thumbnailUrl ni mediaType para evitar errores.
-            }
-        }
     }, { quoted: m });
 };
 
@@ -23,35 +15,46 @@ const responderError = async (conn, m, tipo, mensaje, url) => {
 let handler = async (m, { conn, args, usedPrefix, command }) => {
     const url = args?.[0];
     if (!url || !url.includes("facebook.com")) {
-        return m.reply(`🧠 Por favor, ingresa un enlace válido de Facebook.\n\n📌 Ejemplo:\n${usedPrefix}${command} https://www.facebook.com/share/r/1B5sDSg6EU/`);
+        return m.reply(`🧠 Por favor, ingresa un enlace válido de Facebook.\n\n📌 Ejemplo:\n${usedPrefix}${command} https://www.facebook.com/share/v/12DoEUCoFji/`);
     }
 
     m.react("🌀");
 
     try {
-        const apiUrl = `https://api.vreden.my.id/api/fbdl?url=${encodeURIComponent(url)}`;
+        const apiUrl = `https://api.dorratz.com/fbvideo?url=${encodeURIComponent(url)}`;
         const res = await axios.get(apiUrl);
-        const data = res.data?.data;
+        const videos = res.data;
 
-        if (!data?.status || (!data.hd_url && !data.sd_url)) {
+        if (!Array.isArray(videos) || videos.length === 0) {
             m.react("❌");
             return m.reply(`⚠️ No se pudo encontrar un video en el enlace proporcionado. Intenta con otro.`);
         }
 
-        const videoUrl = data.hd_url || data.sd_url;
-        const calidad = data.hd_url ? "HD" : "SD";
+        // Seleccionamos la mejor calidad de video que tenga un enlace directo.
+        // La API devuelve un array, iteramos sobre él para encontrar el mejor.
+        const videoData = videos.find(v => v.resolution.includes('720p')) || videos[0];
 
-        console.log(`[FB-DL] Intentando enviar el video desde la URL: ${videoUrl}`);
+        const videoUrl = videoData.url;
+        const thumbnailUrl = videoData.thumbnail;
+        const calidad = videoData.resolution;
+        
+        if (!videoUrl) {
+            m.react("❌");
+            return m.reply(`⚠️ La API no devolvió un enlace de video válido para la descarga.`);
+        }
 
+        // Enviamos el video al chat con la miniatura proporcionada por la API.
         await conn.sendMessage(m.chat, {
             video: { url: videoUrl, mimetype: 'video/mp4' },
-            caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`,
+            caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`,
             contextInfo: {
                 externalAdReply: {
                     title: "Facebook Downloader",
                     body: "Descarga completada",
                     sourceUrl: url,
-                    // No se incluye thumbnailUrl ni mediaType para evitar errores.
+                    thumbnailUrl: thumbnailUrl,
+                    mediaType: 1,
+                    renderLargerThumbnail: true,
                 }
             }
         }, { quoted: m });
@@ -66,11 +69,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
         if (e.response) {
             tipo = `Error HTTP ${e.response.status}`;
-            if (e.response.status === 429) {
-                mensaje = "Demasiadas peticiones. Intenta de nuevo en unos minutos.";
-            } else {
-                mensaje = "La API respondió con un error. Por favor, intenta de nuevo más tarde.";
-            }
+            mensaje = `La API respondió con un error: ${e.response.statusText}.`;
         } else if (e.request) {
             tipo = "Error de conexión";
             mensaje = "No se pudo conectar con el servidor de la API. Revisa tu conexión a internet.";
@@ -79,7 +78,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
             mensaje = e.message || "Ocurrió un problema. Intenta de nuevo.";
         }
         
-        await responderError(conn, m, tipo, mensaje, url);
+        await responderError(conn, m, tipo, mensaje);
         console.error(`[FB-DL] Error capturado: ${tipo} → ${e.message}`);
     }
 };
