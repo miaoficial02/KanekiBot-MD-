@@ -20,6 +20,16 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
     const videoUrl = data.hd_url || data.sd_url;
     const calidad = data.hd_url ? "HD" : "SD";
 
+    // Verificamos si el video es accesible
+    const check = await axios.head(videoUrl).catch(() => null);
+    if (!check || !check.headers['content-type']?.includes('video')) {
+      return conn.sendMessage(m.chat, {
+        image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+        caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`
+      }, { quoted: m });
+    }
+
+    // Envío directo del video
     await conn.sendMessage(m.chat, {
       video: { url: videoUrl },
       caption: `◜ Facebook Downloader ◞\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}\n≡ 🌐 \`Fuente :\` Facebook`
