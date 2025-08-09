@@ -1,10 +1,10 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
-// 🖼️ URL de la imagen de error (ya no se usará en el mensaje, pero se mantiene para thumbnailUrl)
-const THUMBNAIL_URL = 'https://raw.githubusercontent.com/diegojadibot/pix-bot/master/src/images/bot.png';
+// 🖼️ URL de la imagen de error proporcionada por el usuario.
+const THUMBNAIL_URL = 'https://h.uguu.se/PetltKyl.jpg';
 
-// 🛡️ Función auxiliar para respuestas rituales de error (SIN IMAGEN)
+// 🛡️ Función auxiliar para respuestas rituales de error (SIN IMAGEN en el cuerpo)
 function responderError(conn, m, tipo, mensaje, url) {
     return conn.sendMessage(m.chat, {
         caption: `💥 ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
@@ -14,7 +14,7 @@ function responderError(conn, m, tipo, mensaje, url) {
                 body: tipo,
                 thumbnailUrl: THUMBNAIL_URL,
                 sourceUrl: url || 'https://facebook.com',
-                mediaType: 1,
+                mediaType: 1, // 1 es para imagen, esto es correcto para el thumbnailUrl
                 renderLargerThumbnail: true
             }
         }
