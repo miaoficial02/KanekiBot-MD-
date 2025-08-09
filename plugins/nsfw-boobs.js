@@ -44,7 +44,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 };
 
 handler.help = ['boobs'];
-handler.command = ['boobs'];
+handler.command = ['boobs','tetas'];
 handler.tags = ['nsfw'];
 
 export default handler;
