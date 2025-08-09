@@ -53,6 +53,6 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 handler.help = ['pack'];
 handler.command = ['girls','pack'];
 handler.tags = ['nsfw'];
-handler.group = true;
+handler.group = false;
 
 export default handler;
