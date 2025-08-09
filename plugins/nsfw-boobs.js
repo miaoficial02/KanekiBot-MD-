@@ -1,9 +1,16 @@
-
 import axios from 'axios';
 
 let handler = async (m, { conn, usedPrefix, command }) => {
-    // ⚠️ Verificación NSFW eliminada por solicitud.
-    
+    // ⚠️ Se agregó la verificación de seguridad para NSFW.
+    if (m.isGroup) {
+        let isNsfw = global.db.data.chats[m.chat].isNsfw;
+        if (!isNsfw) {
+            return m.reply(`🚫 El comando ${usedPrefix + command} solo puede ser usado si el modo NSFW está activado en este grupo. \n\nPuedes activarlo con: ${usedPrefix}enable nsfw`);
+        }
+    } else {
+        return m.reply('🚫 Este comando solo se puede usar en grupos.');
+    }
+
     m.react("🔞");
 
     try {
@@ -46,5 +53,6 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 handler.help = ['boobs'];
 handler.command = ['boobs','tetas'];
 handler.tags = ['nsfw'];
+handler.group = true; // Agregado para indicar que solo funciona en grupos.
 
 export default handler;
