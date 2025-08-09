@@ -135,7 +135,8 @@ global.menu = async function getMenu() {
     download: "📥",
     anime: "🍙",
     roleplay: "🎭",
-    default: "📂"
+    default: "📂",
+    nsfw: "🔞"
   };
 
   for (const category of Object.keys(tags)) {
