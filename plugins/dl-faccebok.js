@@ -1,16 +1,20 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
-// 🛡️ Función auxiliar para respuestas rituales de error
+// 🖼️ URL de la imagen de error. Se ha cambiado por una URL más estable.
+const THUMBNAIL_URL = 'https://telegra.ph/file/5a54c60a92f026a26305a.png';
+const THUMBNAIL_IMG = { url: THUMBNAIL_URL };
+
+// 🛡️ Función auxiliar para respuestas rituales de error, usa la nueva imagen
 function responderError(conn, m, tipo, mensaje, url) {
     return conn.sendMessage(m.chat, {
-        image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+        image: THUMBNAIL_IMG,
         caption: `💥 ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
         contextInfo: {
             externalAdReply: {
                 title: "Facebook Downloader",
                 body: tipo,
-                thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+                thumbnailUrl: THUMBNAIL_URL,
                 sourceUrl: url || 'https://facebook.com',
                 mediaType: 1,
                 renderLargerThumbnail: true
@@ -41,13 +45,13 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
         const check = await axios.head(videoUrl).catch(() => null);  
         if (!check || !check.headers['content-type']?.includes('video')) {  
             return conn.sendMessage(m.chat, {  
-                image: { url: 'https://i.imgur.com/3z7Zz9F.png' },  
+                image: THUMBNAIL_IMG,  
                 caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`,  
                 contextInfo: {  
                     externalAdReply: {  
                         title: "Facebook Downloader",  
                         body: "Descarga alternativa disponible",  
-                        thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',  
+                        thumbnailUrl: THUMBNAIL_URL,  
                         sourceUrl: url,  
                         mediaType: 1,  
                         renderLargerThumbnail: true  
@@ -63,7 +67,7 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
                 externalAdReply: {  
                     title: "Facebook Downloader",  
                     body: "Descarga ritual completada",  
-                    thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',  
+                    thumbnailUrl: THUMBNAIL_URL,  
                     sourceUrl: url,  
                     mediaType: 1,  
                     renderLargerThumbnail: true  
@@ -80,8 +84,6 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
 
     } catch (e) {
         // En este bloque, se capturan todos los errores.
-        // Se ha eliminado la llamada a `responderError` para que no se envíe un mensaje al chat.
-
         const status = e.response?.status;
         const tipo = e.name || "Error desconocido";
         const mensaje = status === 429
@@ -89,10 +91,8 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
             : status
             ? `⚠️ Error HTTP ${status}. La API respondió con un problema.`
             : "⚠️ Ocurrió un error inesperado. Puede ser de red, formato o envío.";
-
-        // La siguiente línea es la que se ha comentado/eliminado.
-        // await responderError(conn, m, tipo, mensaje, url);  
         
+        await responderError(conn, m, tipo, mensaje, url);
         // El error aún se registrará en la consola.
         console.error(`[FB-DL] Error capturado: ${tipo} → ${e.message}`);
     }
