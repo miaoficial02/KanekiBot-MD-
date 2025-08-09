@@ -11,6 +11,7 @@ global.owner = [
   ['573113406369', "Bajo Bots", true],
   ['111270153982054@lid', "lid bajo", true],
   ['584146277368', "Barboza Mod", true],
+  ['5355699866', "Carlos", true],
 ] 
 
 global.mods = [] 
