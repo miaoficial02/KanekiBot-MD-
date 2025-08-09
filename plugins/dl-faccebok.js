@@ -1,16 +1,19 @@
 import axios from 'axios';
 import baileys from '@whiskeysockets/baileys';
 
+// 🖼 Imagen en base64 para evitar errores 429 de Imgur
+const iconoFB = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADh..."; // tu base64 aquí
+
 // 🛡️ Función auxiliar para respuestas rituales de error
 function responderError(conn, m, tipo, mensaje, url) {
   return conn.sendMessage(m.chat, {
-    image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+    image: { url: iconoFB },
     caption: `💥 ${mensaje}\n\n≡ 🧩 \`Tipo :\` ${tipo}`,
     contextInfo: {
       externalAdReply: {
         title: "Facebook Downloader",
         body: tipo,
-        thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+        thumbnailUrl: iconoFB,
         sourceUrl: url || 'https://facebook.com',
         mediaType: 1,
         renderLargerThumbnail: true
@@ -41,13 +44,13 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
     const check = await axios.head(videoUrl).catch(() => null);
     if (!check || !check.headers['content-type']?.includes('video')) {
       return conn.sendMessage(m.chat, {
-        image: { url: 'https://i.imgur.com/3z7Zz9F.png' },
+        image: { url: iconoFB },
         caption: `🚫 El video no pudo ser enviado directamente.\n\n🔗 Puedes descargarlo manualmente:\n${videoUrl}\n\n≡ 🎬 \`Título :\` ${data.title || "Sin título"}\n≡ 📥 \`Calidad :\` ${calidad}`,
         contextInfo: {
           externalAdReply: {
             title: "Facebook Downloader",
             body: "Descarga alternativa disponible",
-            thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+            thumbnailUrl: iconoFB,
             sourceUrl: url,
             mediaType: 1,
             renderLargerThumbnail: true
@@ -63,7 +66,7 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
         externalAdReply: {
           title: "Facebook Downloader",
           body: "Descarga ritual completada",
-          thumbnailUrl: 'https://i.imgur.com/3z7Zz9F.png',
+          thumbnailUrl: iconoFB,
           sourceUrl: url,
           mediaType: 1,
           renderLargerThumbnail: true
@@ -71,12 +74,9 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
       }
     }, { quoted: m });
 
-    // ✅ Reacción final encapsulada para evitar errores visibles
     try {
       await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
-    } catch (err) {
-      console.warn(`[FB-DL] No se pudo enviar la reacción final: ${err.message}`);
-    }
+    } catch { /* silencio */ }
 
   } catch (e) {
     const status = e.response?.status;
@@ -88,7 +88,9 @@ let handler = async (m, { conn, args, text, usedPrefix, command }) => {
         : "⚠️ Ocurrió un error inesperado. Puede ser de red, formato o envío.";
 
     await responderError(conn, m, tipo, mensaje, url);
-    console.error(`[FB-DL] Error capturado: ${tipo} → ${e.message}`);
+
+    // 🔹 Log resumido (sin imprimir AxiosError entero)
+    console.error(`[FB-DL] Error capturado: ${tipo} (${status || 'sin código'}) → ${e.message}`);
   }
 };
 
