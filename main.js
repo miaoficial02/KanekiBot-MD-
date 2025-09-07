@@ -192,7 +192,7 @@ if (!!phoneNumber) {
 addNumber = phoneNumber.replace(/[^0-9]/g, '')
 } else {
 do {
-phoneNumber = await question(chalk.bgBlack(chalk.bold.greenBright(`🌹  Por favor ingrese el número de WhatsApp. Ejemplo :\n+52 243 10x xxxx ( se recomienda copiarlo directamente de WhatsApp )\n${chalk.bold.magentaBright('---> ')}`)))
+phoneNumber = await question(chalk.bgBlack(chalk.bold.greenBright(`🌹  Por favor ingrese el número de WhatsApp. Ejemplo :\n+52 243 10x xxxx ( se recomienda copiarlo directamente de WhatsApp )\n${chalk.bold.magentaBright('✧')}`)))
 phoneNumber = phoneNumber.replace(/\D/g,'')
 if (!phoneNumber.startsWith('+')) {
 phoneNumber = `+${phoneNumber}`
